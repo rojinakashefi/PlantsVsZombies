@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SoundPlayer">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/SoundPlayer.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
