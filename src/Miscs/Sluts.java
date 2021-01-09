@@ -19,7 +19,7 @@ public class Sluts {
     }
 
     public static int[] getPlantLocation(int X, int Y) {
-        return sluts[X - 1][Y - 1];
+        return  sluts[X - 1][Y - 1];
     }
 
     public static int[] getZombieLocation(int Y) {
