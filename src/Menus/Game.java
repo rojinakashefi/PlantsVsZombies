@@ -58,7 +58,13 @@ public class Game extends JFrame {
 
 
     public static void shoot(Plant shooterPlant, boolean isFrozen) {
-
+        int[] pos = Sluts.getSlut(shooterPlant.getBounds().x, shooterPlant.getBounds().y);
+        if (pos != null) {
+            JLabel pea = new JLabel();
+            pea.setIcon(new ImageIcon("gfx/bullet.pvz"));
+            pea.setBounds(pos[0], pos[1], 28, 28);
+            //TODO:label.add()
+        } else System.out.println("goto bokhor");
     }
 
 
