@@ -165,8 +165,16 @@ public class Game extends JFrame {
     }
 
     private void backgrounds() {
-
-
+        label = new JLabel();// Setting the background
+        label.setIcon(new ImageIcon("gfx/back.pvz"));
+        label.setBounds(0, 0, 1400, 600);
+        add(label);
+        plants = new JLabel();
+        plants.setBounds(200, 0,542, 106);
+        clicked = new JLabel();
+        label.add(clicked);
+        label.add(plants);
+        label.addMouseListener(labelClickListener());
     }
 
     private void readySetPlant() {
