@@ -11,11 +11,15 @@ public class Sluts {
     static int[][][] sluts = new int[X][Y][2];
 
     public static void setSluts() {
-
+        for (int i = 0; i < X; i++)
+            for (int j = 0; j < Y; j++) {
+                sluts[i][j][0] = FIRST_X + i * 80;
+                sluts[i][j][1] = FIRST_Y + j * 100;
+            }
     }
 
     public static int[] getPlantLocation(int X, int Y) {
-
+        return sluts[X - 1][Y - 1];
     }
 
     public static int[] getZombieLocation(int Y) {
