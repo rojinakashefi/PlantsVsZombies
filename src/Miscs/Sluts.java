@@ -22,12 +22,15 @@ public class Sluts {
         return  sluts[X - 1][Y - 1];
     }
 
-    public static int[] getZombieLocation(int Y) {
-
-    }
 
     public static int[] getSlut(int posX, int posY) {
-
+        for (int i = 0; i < X; i++)
+            for (int j = 0; j < Y; j++) {
+                if (posX >= sluts[i][j][0] && posX < sluts[i][j][0] + 80 && posY >= sluts[i][j][1] && posY < sluts[i][j][1] + 100) {
+                    return new int[]{i + 1, j + 1};
+                }
+            }
+        return null;
     }
     public static int[] getSlut(Point p) {
 
