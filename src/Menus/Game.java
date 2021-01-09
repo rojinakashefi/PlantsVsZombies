@@ -182,7 +182,20 @@ public class Game extends JFrame {
     }
 
     private void readyLabel() throws InterruptedException {
-
+        JLabel start = new JLabel();
+        //noinspection SpellCheckingInspection
+        start.setFont(new Font("Segoe Script", Font.BOLD, 70));
+        start.setForeground(Color.red);
+        start.setHorizontalAlignment(SwingConstants.CENTER);
+        start.setBounds(360, 120, 300, 300);
+        label.add(start);
+        start.setText("Ready?");
+        Thread.sleep(600);
+        start.setText("Set");
+        Thread.sleep(600);
+        start.setText("Plant!");
+        Thread.sleep(800);
+        start.setText("");
     }
 
 
