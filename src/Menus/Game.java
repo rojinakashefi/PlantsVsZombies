@@ -135,11 +135,33 @@ public class Game extends JFrame {
                 }
             }
 
+            @Override
+            public void mousePressed(MouseEvent e) {
 
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        };
     }
 
     private MouseMotionListener motionListener() {
-
+        return new MouseMotionAdapter() {
+            public void mouseMoved(MouseEvent me)
+            {
+                clicked.setBounds( me.getX() - 50, me.getY() - 50, 100, 100);
+                clicked.repaint();
+            }
+        };
     }
 
     private void backgrounds() {
