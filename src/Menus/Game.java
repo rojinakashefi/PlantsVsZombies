@@ -118,6 +118,23 @@ public class Game extends JFrame {
     }
 
     private MouseListener cardsClickListener() {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Object source = e.getSource();
+                if (source.toString().contains("cardSun.pvz")) clicked.setIcon(new ImageIcon("gfx/sunflower.pvz"));
+                else if (source.toString().contains("cardPea.pvz")) clicked.setIcon(new ImageIcon("gfx/pea.pvz"));
+                else if (source.toString().contains("cardFreeze.pvz")) clicked.setIcon(new ImageIcon("gfx/snowPea.pvz"));
+                else if (source.toString().contains("cardWallnut.pvz")) clicked.setIcon(new ImageIcon("gfx/nut_1.pvz"));
+                else if (source.toString().contains("cardCherry.pvz")) clicked.setIcon(new ImageIcon("gfx/cherry.pvz"));
+                else System.out.println("Error In cardsClickListener");
+
+                if (!containsIcon) {
+                    containsIcon = true;
+                    label.addMouseMotionListener(motionListener());
+                }
+            }
+
 
     }
 
