@@ -33,14 +33,14 @@ public class Sluts {
         return null;
     }
     public static int[] getSlut(Point p) {
-
+        return getSlut(p.x, p.y);
     }
     public static int[] getSlut(Plant p) {
-
+        return getSlut(p.getX(), p.getY());
     }
 
     public static int[] getSlut(PeaBullet p) {
-
+        return getSlut(p.getX(), p.getY());
     }
     //public static int[] getSlut(Mower p) {
     //   return getSlut(p.x, p.y);
