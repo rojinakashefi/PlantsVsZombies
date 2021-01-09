@@ -95,7 +95,26 @@ public class Game extends JFrame {
             }
 
             private boolean isEmptySlut(int x, int y) {
+                boolean isEmpty = true;
+                for (Coordination object : objects) {
+                    if (object.coordination[0] == x)
+                        if (object.coordination[1] == y) {
+                            isEmpty = false;
+                            break;
+                        }
+                }
+                return isEmpty;
+            }
 
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        };
     }
 
     private MouseListener cardsClickListener() {
