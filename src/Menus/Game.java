@@ -226,6 +226,4 @@ public class Game extends JFrame {
         start.setText("");
     }
 
-
-
 }
