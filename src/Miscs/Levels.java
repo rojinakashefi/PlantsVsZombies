@@ -31,5 +31,21 @@ import static Main.Main.TESTING;
             }
             if (TESTING) System.out.println("File Sent!");
         }
+        public static Levels load() {
+            Reader in;
+            Levels temp = null;
+            if (seek()) {
+                try {
+                    in = new FileReader("save.json");
+                    Gson jsonReader = new Gson();
+                    temp = jsonReader.fromJson(in, Levels.class);
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (TESTING) System.out.println("File Loaded!");
+                return temp;
+            } else return null;
+        }
         static boolean seek() { return new File("save.json").exists(); }
 }
