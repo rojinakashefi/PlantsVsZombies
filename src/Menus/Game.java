@@ -58,14 +58,29 @@ public class Game extends JFrame {
 
 
 
-    public static void shoot(Plant shooterPlant, boolean isFrozen) {
-        int[] pos = Sluts.getSlut(shooterPlant.getBounds().x, shooterPlant.getBounds().y);
-        if (pos != null) {
-            JLabel pea = new JLabel();
-            pea.setIcon(new ImageIcon("gfx/bullet.pvz"));
-            pea.setBounds(pos[0], pos[1], 28, 28);
-            //TODO:label.add()
-        } else System.out.println("goto bokhor");
+
+    private void shoot(Plant shooterPlant, boolean isFrozen) {
+        new Thread( () -> {
+            if (shooterPlant.health > 0) {
+                if (TESTING)
+                    System.out.println("Shooter Position For pea: " + shooterPlant.getBounds().x + " " + shooterPlant.getBounds().y);
+                int[] pos = Sluts.getSlut(shooterPlant.getBounds().x, shooterPlant.getBounds().y);
+                if (pos != null) {
+                    do {
+                        try {
+                            PeaBullet pea = new PeaBullet(label, shooterPlant, isFrozen);
+                            if (isFrozen) pea.setIcon(new ImageIcon("gfx/snowBullet.pvz"));
+                            else pea.setIcon(new ImageIcon("gfx/bullet.pvz"));
+                            pea.setBounds(shooterPlant.getBounds().x + 46, shooterPlant.getBounds().y + 16, 28, 28);
+                            Thread.sleep(shooterPlant.speed * 1000L);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } while (shooterPlant.health > 0);
+                    while (true) shooterPlant.health--;
+                } else System.out.println("Pos is null");
+            }
+        }).start();
     }
 
 
@@ -205,9 +220,7 @@ public class Game extends JFrame {
         label.addMouseListener(labelClickListener());
     }
 
-    private void readySetPlant() {
 
-    }
 
     private void readyLabel() throws InterruptedException {
         JLabel start = new JLabel();
