@@ -21,8 +21,9 @@ public class Sluts {
     public static int[] getPlantLocation(int X, int Y) {
         return  sluts[X - 1][Y - 1];
     }
-
-
+    public static int[] getZombieLocation(int Y) {
+        return sluts[9][Y - 1];
+    }
     public static int[] getSlut(int posX, int posY) {
         for (int i = 0; i < X; i++)
             for (int j = 0; j < Y; j++) {
@@ -35,14 +36,4 @@ public class Sluts {
     public static int[] getSlut(Point p) {
         return getSlut(p.x, p.y);
     }
-    public static int[] getSlut(Plant p) {
-        return getSlut(p.getX(), p.getY());
-    }
-
-    public static int[] getSlut(PeaBullet p) {
-        return getSlut(p.getX(), p.getY());
-    }
-    //public static int[] getSlut(Mower p) {
-    //   return getSlut(p.x, p.y);
-    //}
 }

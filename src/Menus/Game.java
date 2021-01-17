@@ -57,7 +57,6 @@ public class Game extends JFrame {
 
 
 
-
     public static void shoot(Plant shooterPlant, boolean isFrozen) {
         int[] pos = Sluts.getSlut(shooterPlant.getBounds().x, shooterPlant.getBounds().y);
         if (pos != null) {
@@ -208,7 +207,6 @@ public class Game extends JFrame {
     private void readySetPlant() {
 
     }
-
     private void readyLabel() throws InterruptedException {
         JLabel start = new JLabel();
         //noinspection SpellCheckingInspection
