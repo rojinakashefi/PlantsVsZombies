@@ -70,7 +70,6 @@ public class Game extends JFrame {
 
 
     private  MouseListener labelClickListener() {
-
     }
 
     private MouseListener cardsClickListener() {
