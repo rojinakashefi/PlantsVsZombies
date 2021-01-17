@@ -14,4 +14,9 @@ public class Normal extends Zombie {
         setIcon(walk);
         Normal.zombies.add(this);
     }
+
+    @Override
+    public void lossHealth(int Amount, boolean isFrozen) {
+
+    }
 }
