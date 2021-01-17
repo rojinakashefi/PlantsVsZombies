@@ -19,7 +19,7 @@ import java.util.stream.IntStream;
 
 import static Main.Main.TESTING;
 import static Miscs.Sounds.*;
-import static Miscs.Sounds.PLANT;
+
 
 /**
  * This class shows the In game structure:
@@ -70,7 +70,79 @@ public class Game extends JFrame {
 
 
     private  MouseListener labelClickListener() {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {}
 
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (containsIcon) {
+                    int[] position = Sluts.getSlut(getMousePosition(true));
+                    int[] location = Sluts.getPlantLocation(position[0], position[1]);
+                    if (isEmptySlut(position[0], position[1])) {
+                        label.removeMouseMotionListener(motionListener());
+                        containsIcon = false;
+                        if (TESTING) System.out.println("Clicked Slut " + Arrays.toString(position));
+                        //if (TESTING) System.out.println("Cursor Icon: " + clicked.getIcon().toString());
+                        Plant tmp;
+                        int i;
+                        switch (clicked.getIcon().toString()) {
+                            case "gfx/sunflower.pvz" -> {
+                                tmp = new SunFlower(label, position);
+                                i = 0;
+                            }
+                            case "gfx/pea.pvz" -> {
+                                tmp = new PeaShooter(label, position);
+                                i = 1;
+                            }
+                            case "gfx/snowPea.pvz" -> {
+                                tmp = new SnowPea(label, position);
+                                i = 2;
+                            }
+                            case "gfx/nut_1.pvz" -> {
+                                tmp = new wallNut(label, position);
+                                i = 3;
+                            }
+                            case "gfx/cherry.pvz" -> {
+                                tmp = new Cherry(label, position);
+                                i = 4;
+                            }
+                            case "gfx/repeater.pvz" -> {
+                                tmp = new Repeater(label, position);
+                                i = 5;
+                            }
+                            default -> throw new RuntimeException("Error in labelClickListener switch");
+                        }
+
+                        tmp.setBounds(location[0], location[1], 100, 100);
+                        objects.add(new Coordination(tmp, position[0], position[1]));
+                        clicked.setIcon(null);
+
+                        if (tmp.getClass() == PeaShooter.class) shoot(tmp, false);
+                        else if (tmp.getClass() == SnowPea.class) shoot(tmp, true);
+
+                    }
+                }
+            }
+
+            private boolean isEmptySlut(int x, int y) {
+                boolean isEmpty = true;
+                for (Coordination object : objects) {
+                    if (object.coordination[0] == x)
+                        if (object.coordination[1] == y) {
+                            isEmpty = false;
+                            break;
+                        }
+                }
+                return isEmpty;
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        };
     }
 
     private MouseListener cardsClickListener() {
