@@ -49,6 +49,7 @@ import static Miscs.Sounds.*;
 public class Game extends JFrame {
     Zombie[] firstInRow = new Zombie[5];
     int gap = 5, suns = 25;
+    int difficulty;
     boolean won = false, containsIcon = false;
     JLabel clicked = null;
     JLabel label;
@@ -206,6 +207,36 @@ public class Game extends JFrame {
 
     private void readySetPlant() {
 
+    }
+    /**
+     * This methods place some random number of zombies in the road. Just before the game starts.
+     * @param label the container that we want to place the zombies (default is the background label.)
+     */
+    private void placeRandomZombies(Container label) {
+        new Thread(() -> {//1017, 84
+            Random random = new Random();
+            int count = random.nextInt(10 * difficulty + 1);
+            IntStream iX = random.ints(count, 1017, 1400);
+            int[] posX = iX.toArray();
+            IntStream iY = random.ints(count, 84, 600);
+            int[] posY = iY.toArray();
+            JLabel[] l1 = new JLabel[count];
+            for (int i = 0; i < count; i++) {
+                l1[i] = new JLabel();
+                l1[i].setIcon(new ImageIcon("gfx/zombies.pvz"));
+                label.add(l1[i]);
+                l1[i].setBounds(posX[i], posY[i], 62, 100);
+            }
+            try {
+                Thread.sleep(3000);
+                for (int i = 0; i < count; i++) {
+                    remove(l1[i]);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }).start();
     }
     private void sendZombies(Container label, int round) {
         int ss;
