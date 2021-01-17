@@ -9,7 +9,6 @@ import static Main.Main.TESTING;
 
 public class Levels {
     public int level, difficulty;
-
     public Levels() {
         new Levels(1, 1);
     }
