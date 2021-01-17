@@ -204,10 +204,24 @@ public class Game extends JFrame {
         label.add(plants);
         label.addMouseListener(labelClickListener());
     }
-
     private void readySetPlant() {
-
+        try {
+            placeRandomZombies(label);
+            new Thread(() -> Sounds.play(STARTING)).start();// Play starting music
+            label.setBounds(-300, 0, 1400, 600);
+            Thread.sleep(5000);
+            Timer t = new Timer(33, e ->
+                    label.setBounds(label.getX() + 10, label.getY(), 1400, 600));
+            t.start();
+            Thread.sleep(999);
+            t.stop();
+            new Thread(() -> Sounds.play(READY)).start();// Play background music
+            readyLabel();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
+
     /**
      * This methods place some random number of zombies in the road. Just before the game starts.
      * @param label the container that we want to place the zombies (default is the background label.)
