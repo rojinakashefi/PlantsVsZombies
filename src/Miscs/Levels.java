@@ -24,7 +24,6 @@ public class Levels {
     }
     public void save() {
         Writer out;
-
     }
     public static Levels load() {
         Reader in;
