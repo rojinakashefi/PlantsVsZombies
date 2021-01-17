@@ -5,6 +5,8 @@ import Miscs.Sounds;
 import javax.swing.*;
 import java.awt.*;
 
+import static Miscs.Sounds.MAIN_MENU;
+
 /**
  * This class shows the main menu of the game
  *
@@ -21,6 +23,6 @@ public class MainMenu extends JFrame {
         getContentPane().setBackground(Color.BLACK);
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        new Sounds(Sounds.MAIN_MENU);
+        Sounds.play(MAIN_MENU);
     }
 }

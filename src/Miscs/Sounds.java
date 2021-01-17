@@ -7,9 +7,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class Sounds {
-    public final static int MAIN_MENU = 0,CHOOSE_DECK = 1, IN_GAME = 2, SHOOT_PEA = 3, LAND_PEA = 4, EAT_PLANTS = 5,
-                     GRUNT = 6, WALK = 7, WIN = 8, LOSE = 9;
-    public Sounds(int number) {
+    public final static int MAIN_MENU = 0, CHOOSE_DECK = 1, IN_GAME = 2, SHOOT_PEA = 3, LAND_PEA = 4, EAT_PLANTS = 5,
+            GRUNT = 6, WALK = 7, WIN = 8, LOSE = 9, STARTING = 10, READY = 11;
+
+    public static void play(int number) {
         FileInputStream file;
         try {
             switch (number) {
@@ -23,10 +24,19 @@ public class Sounds {
                 case WALK -> file = new FileInputStream("sfx/game/walk1.pvz");
                 case WIN -> file = new FileInputStream("sfx/game/win.pvz");
                 case LOSE -> file = new FileInputStream("sfx/game/lose.pvz");
+                case READY -> file = new FileInputStream("sfx/game/ready.pvz");
+                case STARTING -> {
+                    file = new FileInputStream("sfx/back/deck.pvz");
+                    Player player = new Player(file);
+                    player.play(200);
+                    file = null;
+                }
                 default -> throw new RuntimeException("Wrong Sound Number");
             }
-            Player player = new Player(file);
-            player.play();
+            if (file != null) {
+                Player player = new Player(file);
+                player.play();
+            }
         } catch (FileNotFoundException | JavaLayerException e) {
             e.printStackTrace();
         }
