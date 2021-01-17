@@ -34,4 +34,5 @@ public abstract class Zombie extends JLabel {
             checkHealth(subject, timer);
         }
     }
+    public abstract void lossHealth(int Amount, boolean isFrozen);
 }
