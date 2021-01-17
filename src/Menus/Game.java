@@ -207,6 +207,31 @@ public class Game extends JFrame {
     private void readySetPlant() {
 
     }
+    private void sendZombies(Container label, int round) {
+        int ss;
+        if (round == 1) ss = 5;
+        else ss = 12;
+        Random random = new Random();
+        new Thread(() -> {
+            try {
+                if (round == 1) Thread.sleep(gap * 1000L);
+                int[] location;
+                for (int i = 0; i < ss; i++) {
+                    Normal normal;
+                    normal = new Normal(label);
+                    location = Sluts.getZombieLocation(random.nextInt(5) + 1);
+                    normal.setBounds(location[0], location[1] - 40, 31, 180);
+                    Timer t = new Timer(120, e ->
+                            normal.setBounds(normal.getX() - 1, normal.getY(), 81, 130));
+                    t.start();
+                    if (round == 1)  Thread.sleep(30000);
+                    else if (round == 3)  Thread.sleep(25000);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
     private void readyLabel() throws InterruptedException {
         JLabel start = new JLabel();
         //noinspection SpellCheckingInspection
