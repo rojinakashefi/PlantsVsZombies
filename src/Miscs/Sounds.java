@@ -23,7 +23,30 @@ public class Sounds {
     }
 
     public static void backPlay(int number) {
+        if (!muted)
+            new Thread(() -> {
+                FileInputStream file;
+                try {
+                    switch (number) {
+                        case SHOOT_PEA -> {
+                            if (new Random().nextInt(2) == 0) file = new FileInputStream("sfx/game/shoot1.pvz");
+                            else file = new FileInputStream("sfx/game/shoot2.pvz");
+                        }
+
+                        case PLANT -> file = new FileInputStream("sfx/game/plant.pvz");
+                        case FREEZE -> file = new FileInputStream("sfx/game/frozen.pvz");
+                        case GRUNT -> file = new FileInputStream("sfx/game/grunt1.pvz");
+                        case CHERRY_EXPLOSION -> file = new FileInputStream("sfx/game/exCherry.pvz");
+
+                        default -> throw new RuntimeException("Error in Sounds.play(1) switch");
+                    }
+                    startSound(file);
+                } catch (JavaLayerException | IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
     }
+
 
     public static void play(int number) {
     }
@@ -35,4 +58,4 @@ public class Sounds {
     private static void startSound(FileInputStream file) throws JavaLayerException, IOException {
         }
     }
-}
+
