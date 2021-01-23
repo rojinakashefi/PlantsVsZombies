@@ -1,15 +1,23 @@
 package Objects.Zombies;
 
+import Miscs.Sounds;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
 public abstract class Zombie extends JLabel {
-    int health;
-    int speed;
+    Container c;
+    boolean frozen = false;
+    public int row;
+    public int health;
+    public int speed;
     int damage;
-    ImageIcon walk, die;
+    ImageIcon walk, die, burned = new ImageIcon("gfx/burned.pvz");
+    public int sizeX = 81;
+    public int sizeY = 130;
     public static ArrayList<Zombie> zombies = new ArrayList<>();
+    String hitSound = Sounds.NONE;
 
     public Zombie(Container c, int health, int speed, int damage) {
         this.health = health;
