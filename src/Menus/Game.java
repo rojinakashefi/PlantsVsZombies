@@ -56,51 +56,49 @@ public class Game extends JFrame {
     JLabel plants;
     static ArrayList<Coordination> objects = new ArrayList<>();
     Levels newLevel;
-
+    private boolean mute;
+    boolean lost = false;
     public Game(Levels level) {
+        muted = mute;
+        this.mute = mute;
         setVisible(true);
+        Sluts.setSluts(); // Defines the checkered ground as sluts and calculates their coordinates
+        objects.clear();  // clears the list of last game spawned objects
+        newLevel = level;
+        difficulty = newLevel.difficulty;
+
+        //Game Page specs
+        setSize(1000, 635);
+        setResizable(false);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.getContentPane().setLayout(null);
+        setLocationRelativeTo(null);
+
+        label = new JLabel();// Setting the background
+
+        backgrounds(); // Creates the main and the plants menu background
+
+        //mower();
+
+        //In this Section the first animation of the game executed
+        readySetPlant();
+
+        plants.setIcon(new ImageIcon("gfx/pm.pvz"));
+       // plantsJob();
 
         new Thread(() -> {
-            Sluts.setSluts(); // Defines the checkered ground as sluts and calculates their coordinates
-            objects.clear();  // clears the list of last game spawned objects
-            newLevel = level;
-            difficulty = newLevel.difficulty;
-
-            backgrounds(); // Creates the main and the plants menu background
-
-            //Game Page specs
-            setSize(1000, 635);
-            setResizable(false);
-            setDefaultCloseOperation(EXIT_ON_CLOSE);
-            this.getContentPane().setLayout(null);
-
-            //In this Section the first animation of the game executed
-            Thread s = new Thread(this::readySetPlant);
-            s.start();
             try {
-                s.join();
+                while (!won || !lost) {
+                    Thread.sleep(20000);
+                    //sunLanding(null);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            plants.setIcon(new ImageIcon("gfx/pm.pvz"));
 
-
-            new Thread(() -> Sounds.play(IN_GAME)).start(); // Play before-game background music
-
-            sendZombies(label, 1); // Send Zombies to the field. This is all about Levels class.
-            try {
-                Thread.sleep(150000);
-                sendZombies(label, 2); // Send Zombies to the field. This is all about Levels class.
-                Thread.sleep(180000);
-                sendZombies(label, 3); // Send Zombies to the field. This is all about Levels class.
-                Thread.sleep(150000);
-                while (!Zombie.zombies.isEmpty());
-                won = true;
-                // TODO: won();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }).start();
+
+        //xwaves();
     }
 
 
@@ -348,6 +346,7 @@ public class Game extends JFrame {
             }
         }).start();
     }
+
 
     private void readyLabel() throws InterruptedException {
         JLabel start = new JLabel();
