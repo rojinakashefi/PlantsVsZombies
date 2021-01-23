@@ -61,4 +61,5 @@ public class Levels {
         } else return null;
     }
     static boolean seek() { return new File("save.json").exists(); }
+
 }

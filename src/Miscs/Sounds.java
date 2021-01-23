@@ -26,7 +26,6 @@ public class Sounds {
 
     }
 
-
     public static void play(int number) {
         if (!muted)
             new Thread(() -> {

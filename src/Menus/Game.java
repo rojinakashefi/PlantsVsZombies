@@ -221,7 +221,6 @@ public class Game extends JFrame {
     }
 
 
-
     private void readyLabel() throws InterruptedException {
         JLabel start = new JLabel();
         //noinspection SpellCheckingInspection
