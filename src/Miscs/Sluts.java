@@ -35,8 +35,15 @@ public class Sluts {
     public static int[] getSlut(Point p) {
         return getSlut(p.x, p.y);
     }
-    public static int[] getSlut(Plant p) {
-        return getSlut(p.getX(), p.getY());
+
+    public static int getYSlut(Rectangle R) {
+        for (int i = 0; i < X; i++)
+            for (int j = 0; j < Y; j++) {
+                if (R.y >= sluts[i][j][1] && R.y < sluts[i][j][1] + 100) {
+                    return j;
+                }
+            }
+        return -1;
     }
 
     public static int[] getSlut(PeaBullet p) {
