@@ -1,5 +1,6 @@
 package Objects.Zombies;
 
+import Menus.Game;
 import Miscs.Sounds;
 
 import javax.swing.*;
@@ -45,4 +46,12 @@ public abstract class Zombie extends JLabel {
         }
     }
     public abstract void lossHealth(int Amount, boolean isFrozen);
+    public void kill(boolean burn) {
+        Sounds.play(hitSound);
+        this.setIcon(burn?burned:die);
+        Game.removeZombie(this);
+        Timer t = new Timer(1000, e -> c.remove(this));
+        t.setRepeats(false);
+        t.start();
+    }
 }
