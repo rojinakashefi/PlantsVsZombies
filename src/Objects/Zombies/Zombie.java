@@ -19,12 +19,14 @@ public abstract class Zombie extends JLabel {
     public static ArrayList<Zombie> zombies = new ArrayList<>();
     String hitSound = Sounds.NONE;
 
-    public Zombie(Container c, int health, int speed, int damage) {
+    public Zombie(Container c, int health, int speed, int damage, int row) {
+        this.c = c;
         this.health = health;
         this.speed = speed;
         this.damage = damage;
         Zombie.zombies.add(this);
         c.add(this);
+        this.row = row;
     }
 
     private void checkHealth(Zombie subject, Timer timer) {
