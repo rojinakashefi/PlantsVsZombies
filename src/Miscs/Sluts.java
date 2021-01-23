@@ -46,10 +46,7 @@ public class Sluts {
         return -1;
     }
 
-    public static int[] getSlut(PeaBullet p) {
-        return getSlut(p.getX(), p.getY());
+    public static int getMowerLocation(int YSlut) {
+        return sluts[0][YSlut][1];
     }
-    //public static int[] getSlut(Mower p) {
-    //   return getSlut(p.x, p.y);
-    //}
 }
