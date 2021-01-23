@@ -1,7 +1,7 @@
 PlantsVsZombies 🌱🌵 Vs 🧟‍♂️🧟‍♀️
 
 
-##Authors:
+##Authors
 Helia Hashemipour & Rojina Kashefi
 
 
