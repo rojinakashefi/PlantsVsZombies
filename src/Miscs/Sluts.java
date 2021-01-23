@@ -1,10 +1,7 @@
 package Miscs;
 
-import Objects.Plants.PeaBullet;
-import Objects.Plants.Plant;
-import Objects.Zombies.Zombie;
-
-import java.awt.*;
+import java.awt.Rectangle;
+import java.awt.Point;
 
 public class Sluts {
     static final int FIRST_X = 260, FIRST_Y = 80, X = 10, Y = 5;
@@ -22,7 +19,6 @@ public class Sluts {
         return sluts[X][Y];
     }
 
-
     public static int[] getSlut(int posX, int posY) {
         for (int i = 0; i < X; i++)
             for (int j = 0; j < Y; j++) {
@@ -35,7 +31,6 @@ public class Sluts {
     public static int[] getSlut(Point p) {
         return getSlut(p.x, p.y);
     }
-
     public static int getYSlut(Rectangle R) {
         for (int i = 0; i < X; i++)
             for (int j = 0; j < Y; j++) {
