@@ -1,17 +1,16 @@
 package Objects.Plants;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
+import java.awt.Container;
+import javax.swing.ImageIcon;
+
 
 public class SunFlower extends Plant {
-    public static ArrayList<SunFlower> sunFlowers = new ArrayList<>();
 
-    public SunFlower(Container c) {
-        super(c, 100, 20);
+    public SunFlower(Container c, int[] slut) {
+        super(c, 100, 20, slut[0], slut[1], 50);
         ready = new ImageIcon("gfx/sunflower.pvz");
+        die = new ImageIcon("gfx/sunDie.pvz");
         setIcon(ready);
         setLocation(100, 1000);
-        SunFlower.sunFlowers.add(this);
     }
 }

@@ -20,6 +20,7 @@ import java.util.stream.IntStream;
 import static Main.Main.TESTING;
 import static Miscs.Sounds.*;
 
+
 /**
  * This class shows the In game structure:
  *
@@ -57,40 +58,85 @@ public class Game extends JFrame {
 
 
 
-    public static void shoot(Plant shooterPlant, boolean isFrozen) {
-        int[] pos = Sluts.getSlut(shooterPlant.getBounds().x, shooterPlant.getBounds().y);
-        if (pos != null) {
-            JLabel pea = new JLabel();
-            pea.setIcon(new ImageIcon("gfx/bullet.pvz"));
-            pea.setBounds(pos[0], pos[1], 28, 28);
-            //TODO:label.add()
-        } else System.out.println("goto bokhor");
+
+    private void shoot(Plant shooterPlant, boolean isFrozen) {
+        new Thread( () -> {
+            if (shooterPlant.health > 0) {
+                if (TESTING)
+                    System.out.println("Shooter Position For pea: " + shooterPlant.getBounds().x + " " + shooterPlant.getBounds().y);
+                int[] pos = Sluts.getSlut(shooterPlant.getBounds().x, shooterPlant.getBounds().y);
+                if (pos != null) {
+                    do {
+                        try {
+                            PeaBullet pea = new PeaBullet(label, shooterPlant, isFrozen);
+                            if (isFrozen) pea.setIcon(new ImageIcon("gfx/snowBullet.pvz"));
+                            else pea.setIcon(new ImageIcon("gfx/bullet.pvz"));
+                            pea.setBounds(shooterPlant.getBounds().x + 46, shooterPlant.getBounds().y + 16, 28, 28);
+                            Thread.sleep(shooterPlant.speed * 1000L);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } while (shooterPlant.health > 0);
+                    while (true) shooterPlant.health--;
+                } else System.out.println("Pos is null");
+            }
+        }).start();
     }
 
 
     private  MouseListener labelClickListener() {
         return new MouseListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                int[] position = Sluts.getSlut(getMousePosition(true));
-                int[] location = Sluts.getPlantLocation(position[0], position[1]);
-                if (containsIcon && isEmptySlut(position[0], position[1])) {
-                    label.removeMouseMotionListener(motionListener());
-                    containsIcon = false;
-                    if (TESTING) System.out.println("Clicked Slut " + Arrays.toString(position));
-                    if (TESTING) System.out.println("Cursor Icon: " + clicked.getIcon().toString());
-                    Plant tmp;
-                    switch (clicked.getIcon().toString()) {
-                        case "gfx/sunflower.pvz" -> tmp = new SunFlower(label);
-                        case "gfx/pea.pvz" -> tmp = new PeaShooter(label);
-                        case "gfx/snowPea.pvz" -> tmp = new SnowPea(label);
-                        case "gfx/nut_1.pvz" -> tmp = new Wall_nut(label);
-                        case "gfx/cherry.pvz" -> tmp = new Cherry(label);
-                        default -> throw new RuntimeException("Error in labelClickListener switch");
+            public void mouseClicked(MouseEvent e) {}
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (containsIcon) {
+                    int[] position = Sluts.getSlut(getMousePosition(true));
+                    int[] location = Sluts.getPlantLocation(position[0], position[1]);
+                    if (isEmptySlut(position[0], position[1])) {
+                        label.removeMouseMotionListener(motionListener());
+                        containsIcon = false;
+                        if (TESTING) System.out.println("Clicked Slut " + Arrays.toString(position));
+                        //if (TESTING) System.out.println("Cursor Icon: " + clicked.getIcon().toString());
+                        Plant tmp;
+                        int i;
+                        switch (clicked.getIcon().toString()) {
+                            case "gfx/sunflower.pvz" -> {
+                                tmp = new SunFlower(label, position);
+                                i = 0;
+                            }
+                            case "gfx/pea.pvz" -> {
+                                tmp = new PeaShooter(label, position);
+                                i = 1;
+                            }
+                            case "gfx/snowPea.pvz" -> {
+                                tmp = new SnowPea(label, position);
+                                i = 2;
+                            }
+                            case "gfx/nut_1.pvz" -> {
+                                tmp = new wallNut(label, position);
+                                i = 3;
+                            }
+                            case "gfx/cherry.pvz" -> {
+                                tmp = new Cherry(label, position);
+                                i = 4;
+                            }
+                            case "gfx/repeater.pvz" -> {
+                                tmp = new Repeater(label, position);
+                                i = 5;
+                            }
+                            default -> throw new RuntimeException("Error in labelClickListener switch");
+                        }
+
+                        tmp.setBounds(location[0], location[1], 100, 100);
+                        objects.add(new Coordination(tmp, position[0], position[1]));
+                        clicked.setIcon(null);
+
+                        if (tmp.getClass() == PeaShooter.class) shoot(tmp, false);
+                        else if (tmp.getClass() == SnowPea.class) shoot(tmp, true);
+
                     }
-                    tmp.setBounds(location[0], location[1], 100, 100);
-                    objects.add(new Coordination(tmp, position[0], position[1]));
-                    clicked.setIcon(null);
                 }
             }
 
@@ -105,9 +151,6 @@ public class Game extends JFrame {
                 }
                 return isEmpty;
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {}
             @Override
             public void mouseReleased(MouseEvent e) {}
             @Override
@@ -177,9 +220,6 @@ public class Game extends JFrame {
         label.addMouseListener(labelClickListener());
     }
 
-    private void readySetPlant() {
-
-    }
 
     private void readyLabel() throws InterruptedException {
         JLabel start = new JLabel();
@@ -197,7 +237,5 @@ public class Game extends JFrame {
         Thread.sleep(800);
         start.setText("");
     }
-
-
 
 }

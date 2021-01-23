@@ -1,17 +1,13 @@
 package Objects.Plants;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
+import javax.swing.ImageIcon;
+import java.awt.Container;
 
 public class Cherry extends Plant {
-    public static ArrayList<Cherry> cherries = new ArrayList<>();
 
-    public Cherry(Container c) {
-        super(c, 100, 3);
+    public Cherry(Container c, int[] slut) {
+        super(c, 100, 3, slut[0], slut[1], 150);
         ready = new ImageIcon("gfx/cherry.pvz");
         setIcon(ready);
-        setLocation(100, 1000);
-        Cherry.cherries.add(this);
     }
 }
