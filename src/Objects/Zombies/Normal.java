@@ -19,5 +19,17 @@ public class Normal extends Zombie {
 
     @Override
     public void lossHealth(int Amount, boolean isFrozen) {
+        health -= Amount;
+        if (isFrozen && !frozen) {
+            speed /= 2;
+            frozen = true;
+            Sounds.play(Sounds.FREEZE);
+        }
+        if (health > 0) {
+            Sounds.play(hitSound);
+        }
+        else {
+            kill(false);
+        }
     }
 }
