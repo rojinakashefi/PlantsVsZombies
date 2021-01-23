@@ -17,6 +17,9 @@ public class Sounds {
 
     public final static String NONE = "none", PLASTIC = "plastic", METAL = "metal";
     public static void mute() {
+        for (Player player : backgroundMusic) {
+            player.close();
+        }
     }
 
     public static void backPlay(int number) {
