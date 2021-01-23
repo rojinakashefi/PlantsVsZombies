@@ -4,8 +4,9 @@ import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Sounds {
     public static ArrayList<Player> backgroundMusic = new ArrayList<>();
@@ -15,5 +16,20 @@ public class Sounds {
             SELECT = 14, PLANT = 15, FREEZE = 16;
 
     public final static String NONE = "none", PLASTIC = "plastic", METAL = "metal";
+    public static void mute() {
+    }
 
+    public static void backPlay(int number) {
+    }
+
+    public static void play(int number) {
+    }
+
+    public static void play(String typeOfShield) {
+
+    }
+
+    private static void startSound(FileInputStream file) throws JavaLayerException, IOException {
+        }
+    }
 }
