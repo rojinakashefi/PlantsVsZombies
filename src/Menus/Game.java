@@ -56,6 +56,7 @@ public class Game extends JFrame {
     JLabel plants;
     static ArrayList<Coordination> objects = new ArrayList<>();
     Levels newLevel;
+
     public Game(Levels level) {
         setVisible(true);
 
@@ -264,10 +265,7 @@ public class Game extends JFrame {
         label.add(plants);
         label.addMouseListener(labelClickListener());
     }
-<<<<<<<<< Temporary merge branch 1
 
-
-=========
     private void readySetPlant() {
         try {
             placeRandomZombies(label);
@@ -285,7 +283,6 @@ public class Game extends JFrame {
             e.printStackTrace();
         }
     }
->>>>>>>>> Temporary merge branch 2
 
     /**
      * This methods place some random number of zombies in the road. Just before the game starts.
@@ -329,8 +326,8 @@ public class Game extends JFrame {
                 for (int i = 0; i < ss; i++) {
                     Normal normal;
                     normal = new Normal(label);
-                    location = Sluts.getZombieLocation(random.nextInt(5) + 1);
-                    normal.setBounds(location[0], location[1] - 40, 31, 180);
+                    //location = Sluts.getZombieLocation(random.nextInt(5) + 1);
+                    //normal.setBounds(location[0], location[1] - 40, 31, 180);
                     Timer t = new Timer(120, e ->
                             normal.setBounds(normal.getX() - 1, normal.getY(), 81, 130));
                     t.start();

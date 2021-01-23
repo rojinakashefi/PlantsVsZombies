@@ -52,7 +52,27 @@ public class Sounds {
     }
 
     public static void play(String typeOfShield) {
-
+        if (!muted)
+            new Thread(() -> {
+                FileInputStream file;
+                try {
+                    switch (typeOfShield) {
+                        case NONE -> {
+                            if (new Random().nextInt(2) == 0) file = new FileInputStream("sfx/game/splat1.pvz");
+                            else file = new FileInputStream("sfx/game/splat2.pvz");
+                        }
+                        case PLASTIC -> file = new FileInputStream("sfx/game/plastic.pvz");
+                        case METAL -> {
+                            if (new Random().nextInt(2) == 0) file = new FileInputStream("sfx/game/metal1.pvz");
+                            else file = new FileInputStream("sfx/game/metal2.pvz");
+                        }
+                        default -> throw new RuntimeException("Error in Sounds.play(2) switch");
+                    }
+                    startSound(file);
+                } catch (JavaLayerException | IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
     }
 
     private static void startSound(FileInputStream file) throws JavaLayerException, IOException {
