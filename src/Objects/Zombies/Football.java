@@ -1,5 +1,7 @@
 package Objects.Zombies;
 
+import Miscs.Sounds;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -7,12 +9,14 @@ import java.util.ArrayList;
 public class Football extends Zombie {
     public static ArrayList<Zombie> ConeHead = new ArrayList<>();
 
-    public Football(Container c) {
-        super(c, 100, 1, 30);
+    public Football(Container c, int row) {
+        super(c, 700, 6, 30, row);
         walk = new ImageIcon("gfx/football.pvz");
         die = new ImageIcon("gfx/footDead.pvz");
+        sizeX = 106;
+        sizeY = 126;
         setIcon(walk);
-        Normal.zombies.add(this);
+        hitSound = Sounds.PLASTIC;
     }
 
     @Override
