@@ -321,24 +321,34 @@ public class Game extends JFrame {
         Random random = new Random();
         new Thread(() -> {
             try {
-                if (round == 1) Thread.sleep(gap * 1000L);
                 int[] location;
                 for (int i = 0; i < ss; i++) {
-                    Normal normal;
-                    normal = new Normal(label);
-                    //location = Sluts.getZombieLocation(random.nextInt(5) + 1);
-                    //normal.setBounds(location[0], location[1] - 40, 31, 180);
-                    Timer t = new Timer(120, e ->
-                            normal.setBounds(normal.getX() - 1, normal.getY(), 81, 130));
-                    t.start();
-                    if (round == 1)  Thread.sleep(30000);
-                    else if (round == 3)  Thread.sleep(25000);
+                    int type = random.nextInt(5);
+                    Zombie zombie;
+                    int rand = random.nextInt(5);
+                    location = Sluts.getZombieLocation(rand);
+                    switch (type) {
+                        case 0, 4 -> zombie = new Normal(label, rand);
+                        case 1 -> zombie = new ConeHead(label, rand);
+                        case 2 -> zombie = new BucketHead(label, rand);
+                        case 3 -> zombie = new Football(label, rand);
+                        default -> throw new RuntimeException("sendZombies Switch");
+                    }
+                    if (zombie.getClass() == BucketHead.class)
+                        zombie.setBounds(location[0], location[1] + 10, zombie.sizeX, zombie.sizeY);
+                    else
+                        zombie.setBounds(location[0], location[1] - 40, zombie.sizeX, zombie.sizeY);
+                    objects.add(new Coordination(zombie, rand));
+                    //walk(zombie);
+                    if (round == 1) Thread.sleep(30000);
+                    else if (round == 3) Thread.sleep(25000);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
     }
+
     private void readyLabel() throws InterruptedException {
         JLabel start = new JLabel();
         //noinspection SpellCheckingInspection
