@@ -23,6 +23,11 @@ public class Sounds {
     }
 
     public static void backPlay(int number) {
+
+    }
+
+
+    public static void play(int number) {
         if (!muted)
             new Thread(() -> {
                 FileInputStream file;
@@ -47,15 +52,18 @@ public class Sounds {
             }).start();
     }
 
-
-    public static void play(int number) {
-    }
-
     public static void play(String typeOfShield) {
 
     }
 
     private static void startSound(FileInputStream file) throws JavaLayerException, IOException {
+        if (file != null) {
+            Player player = new Player(file);
+            player.play();
+            player.close();
+            file.close();
+
+        }
         }
     }
 
