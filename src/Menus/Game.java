@@ -49,58 +49,13 @@ import static Miscs.Sounds.*;
 public class Game extends JFrame {
     Zombie[] firstInRow = new Zombie[5];
     int gap = 5, suns = 25;
-    int difficulty;
     boolean won = false, containsIcon = false;
     JLabel clicked = null;
     JLabel label;
     JLabel plants;
     static ArrayList<Coordination> objects = new ArrayList<>();
-    Levels newLevel;
-    public Game(Levels level) {
-        setVisible(true);
-
-        new Thread(() -> {
-            Sluts.setSluts(); // Defines the checkered ground as sluts and calculates their coordinates
-            objects.clear();  // clears the list of last game spawned objects
-            newLevel = level;
-            difficulty = newLevel.difficulty;
-
-            backgrounds(); // Creates the main and the plants menu background
-
-            //Game Page specs
-            setSize(1000, 635);
-            setResizable(false);
-            setDefaultCloseOperation(EXIT_ON_CLOSE);
-            this.getContentPane().setLayout(null);
-
-            //In this Section the first animation of the game executed
-            Thread s = new Thread(this::readySetPlant);
-            s.start();
-            try {
-                s.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            plants.setIcon(new ImageIcon("gfx/pm.pvz"));
 
 
-            new Thread(() -> Sounds.play(IN_GAME)).start(); // Play before-game background music
-
-            sendZombies(label, 1); // Send Zombies to the field. This is all about Levels class.
-            try {
-                Thread.sleep(150000);
-                sendZombies(label, 2); // Send Zombies to the field. This is all about Levels class.
-                Thread.sleep(180000);
-                sendZombies(label, 3); // Send Zombies to the field. This is all about Levels class.
-                Thread.sleep(150000);
-                while (!Zombie.zombies.isEmpty());
-                won = true;
-                // TODO: won();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
 
 
     public static void shoot(Plant shooterPlant, boolean isFrozen) {
@@ -249,79 +204,11 @@ public class Game extends JFrame {
         label.add(plants);
         label.addMouseListener(labelClickListener());
     }
+
     private void readySetPlant() {
-        try {
-            placeRandomZombies(label);
-            new Thread(() -> Sounds.play(STARTING)).start();// Play starting music
-            label.setBounds(-300, 0, 1400, 600);
-            Thread.sleep(5000);
-            Timer t = new Timer(33, e ->
-                    label.setBounds(label.getX() + 10, label.getY(), 1400, 600));
-            t.start();
-            Thread.sleep(999);
-            t.stop();
-            new Thread(() -> Sounds.play(READY)).start();// Play background music
-            readyLabel();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
     }
 
-    /**
-     * This methods place some random number of zombies in the road. Just before the game starts.
-     * @param label the container that we want to place the zombies (default is the background label.)
-     */
-    private void placeRandomZombies(Container label) {
-        new Thread(() -> {//1017, 84
-            Random random = new Random();
-            int count = random.nextInt(10 * difficulty + 1);
-            IntStream iX = random.ints(count, 1017, 1400);
-            int[] posX = iX.toArray();
-            IntStream iY = random.ints(count, 84, 600);
-            int[] posY = iY.toArray();
-            JLabel[] l1 = new JLabel[count];
-            for (int i = 0; i < count; i++) {
-                l1[i] = new JLabel();
-                l1[i].setIcon(new ImageIcon("gfx/zombies.pvz"));
-                label.add(l1[i]);
-                l1[i].setBounds(posX[i], posY[i], 62, 100);
-            }
-            try {
-                Thread.sleep(3000);
-                for (int i = 0; i < count; i++) {
-                    remove(l1[i]);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }).start();
-    }
-    private void sendZombies(Container label, int round) {
-        int ss;
-        if (round == 1) ss = 5;
-        else ss = 12;
-        Random random = new Random();
-        new Thread(() -> {
-            try {
-                if (round == 1) Thread.sleep(gap * 1000L);
-                int[] location;
-                for (int i = 0; i < ss; i++) {
-                    Normal normal;
-                    normal = new Normal(label);
-                    location = Sluts.getZombieLocation(random.nextInt(5) + 1);
-                    normal.setBounds(location[0], location[1] - 40, 31, 180);
-                    Timer t = new Timer(120, e ->
-                            normal.setBounds(normal.getX() - 1, normal.getY(), 81, 130));
-                    t.start();
-                    if (round == 1)  Thread.sleep(30000);
-                    else if (round == 3)  Thread.sleep(25000);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
     private void readyLabel() throws InterruptedException {
         JLabel start = new JLabel();
         //noinspection SpellCheckingInspection
