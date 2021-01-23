@@ -21,6 +21,17 @@ public class Football extends Zombie {
 
     @Override
     public void lossHealth(int Amount, boolean isFrozen) {
-
+        health -= Amount;
+        if (health > 0) {
+            Sounds.play(hitSound);
+        }
+        else {
+            kill(false);
+        }
+        if (isFrozen && !frozen) {
+            speed /= 2;
+            frozen = true;
+            Sounds.play(Sounds.FREEZE);
+        }
     }
 }
