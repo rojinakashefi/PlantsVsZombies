@@ -1,5 +1,5 @@
 
-## PlantsVsZombies** 🌱🌵 Vs 🧟‍♂️🧟‍♀️
+## PlantsVsZombies🌱🌵 Vs 🧟‍♂️🧟‍♀️
 
 
 ## Authors
