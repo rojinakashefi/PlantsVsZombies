@@ -21,11 +21,51 @@ public class Sounds {
             player.close();
         }
     }
-
     public static void backPlay(int number) {
-
+        if (!muted)
+            new Thread(() -> {
+                FileInputStream file;
+                boolean loop = false;
+                try {
+                    switch (number) {
+                        case MAIN_MENU -> {
+                            file = new FileInputStream("sfx/back/main.pvz");
+                            loop = true;
+                        }
+                        case CHOOSE_DECK -> file = new FileInputStream("sfx/back/deck.pvz");
+                        case IN_GAME -> {
+                            file = new FileInputStream("sfx/back/game.pvz");
+                            loop = true;
+                        }
+                        case ZOMBIES_COMING -> file = new FileInputStream("sfx/back/startRound.pvz");
+                        case STARTING -> {
+                            file = new FileInputStream("sfx/back/deck.pvz");
+                            Player player = new Player(file);
+                            backgroundMusic.add(player);
+                            player.play(200);
+                            backgroundMusic.remove(player);
+                            file = null;
+                        }
+                        case MOWER -> file = new FileInputStream("sfx/game/mower.pvz");
+                        default -> throw new RuntimeException("BackPlay switch");
+                    }
+                    if (file != null) {
+                        Player player = new Player(file);
+                        backgroundMusic.add(player);
+                        player.play();
+                        if (loop) {
+                            while (true) player.play();
+                        } else {
+                            player.close();
+                            file.close();
+                            backgroundMusic.remove(player);
+                        }
+                    }
+                } catch (IOException | JavaLayerException e) {
+                    e.printStackTrace();
+                }
+            }).start();
     }
-
     public static void play(int number) {
         if (!muted)
             new Thread(() -> {
