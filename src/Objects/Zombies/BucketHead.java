@@ -2,12 +2,11 @@ package Objects.Zombies;
 
 import Miscs.Sounds;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
+import javax.swing.ImageIcon;
+import java.awt.Container;
 
 public class BucketHead extends Zombie {
-    public static ArrayList<Zombie> BucketHead = new ArrayList<>();
+    ImageIcon normWalk = new ImageIcon("gfx/normal.pvz");
 
     public BucketHead(Container c, int row) {
         super(c, 1100, 3, 30, row);
@@ -21,6 +20,23 @@ public class BucketHead extends Zombie {
 
     @Override
     public void lossHealth(int Amount, boolean isFrozen) {
-
+        health -= Amount;
+        if (health > 100) {
+            Sounds.play(hitSound);
+        }
+        else {
+            if (health <= 0) {
+                kill(false);
+            } else {
+                this.setIcon(normWalk);
+                this.sizeX = 81;
+                this.sizeY = 131;
+            }
+        }
+        if (isFrozen && !frozen) {
+            speed /= 2;
+            frozen = true;
+            Sounds.play(Sounds.FREEZE);
+        }
     }
 }
