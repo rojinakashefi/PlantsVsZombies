@@ -496,4 +496,8 @@ public class Game extends JFrame {
         timerPool.add(t);
     }
 
+    private void coolDown(int card, float v) {
+
+    }
+
 }
