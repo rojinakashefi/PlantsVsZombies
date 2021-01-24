@@ -677,9 +677,14 @@ public class Game extends JFrame {
         if (!won || !lost) {
             lost = true;
             Sounds.play(LOSE);
-            //pause();
+            pause();
             Thread.sleep(1000);
             newLevel.save();
         }
+    }
+    private void pause() {
+        for (Timer timer: timerPool) timer.stop();
+        muted = true;
+        paused = true;
     }
 }
