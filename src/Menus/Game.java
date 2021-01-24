@@ -538,7 +538,42 @@ public class Game extends JFrame {
         }).start();
     }
     private void plantsJob() {
+        JLabel[] cards = new JLabel[5];
 
+        keptSun = new JLabel();
+        JLabel score = new JLabel();
+        score.setIcon(new ImageIcon("gfx/score.pvz"));
+        keptSun.setFont(new Font(null, Font.BOLD, 26));
+        keptSun.setHorizontalAlignment(SwingConstants.CENTER);
+        plants.add(score);
+        score.add(keptSun);
+        score.setBounds(11, 72, 73, 30);
+
+        SpringLayout layout = new SpringLayout();
+        score.setLayout(layout);
+        keptSun.setText(suns + "");
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, keptSun, 0, SpringLayout.HORIZONTAL_CENTER, score);
+        layout.putConstraint(SpringLayout.VERTICAL_CENTER, keptSun, 0, SpringLayout.VERTICAL_CENTER, score);
+
+
+        cards[0] = Cards.getCard(SUNFLOWER, plants);
+        cards[0].setBounds(93, 7, 64, 90);
+
+        cards[1] = Cards.getCard(PEA_SHOOTER, plants);
+        cards[1].setBounds(158, 7, 64, 90);
+
+        cards[2] = Cards.getCard(SNOW_PEA, plants);
+        cards[2].setBounds(223, 7, 64, 90);
+
+        cards[3] = Cards.getCard(CHERRY, plants);
+        cards[3].setBounds(288, 7, 64, 90);
+
+        cards[4] = Cards.getCard(WALL_NUT, plants);
+        cards[4].setBounds(353, 7, 64, 90);
+
+        for (int i = 0; i < 5; i++) {
+            cards[i].addMouseListener(cardsClickListener());
+        }
     }
 
 }
