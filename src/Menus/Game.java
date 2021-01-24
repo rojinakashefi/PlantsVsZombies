@@ -497,7 +497,44 @@ public class Game extends JFrame {
     }
 
     private void coolDown(int card, float v) {
-
+        new Thread(() -> {
+            try {
+                switch (card) {
+                    case 0 -> {
+                        sunAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        sunAvail = true;
+                    }
+                    case 1 -> {
+                        peaAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        peaAvail = true;
+                    }
+                    case 2 -> {
+                        snowAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        snowAvail = true;
+                    }
+                    case 3 -> {
+                        nutAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        nutAvail = true;
+                    }
+                    case 4 -> {
+                        cherAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        cherAvail = true;
+                    }
+                    case 5 -> {
+                        repAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        repAvail = true;
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
 }
