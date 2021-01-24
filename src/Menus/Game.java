@@ -456,7 +456,24 @@ public class Game extends JFrame {
         timerPool.add(t);
     }
     private MouseListener sunClickListener(SunPoint sun) {
-
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+                remove(sun);
+                sun.setIcon(null);
+                sun.removeMouseListener(this);
+                addSun(sun.points);
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        };
     }
 
 
