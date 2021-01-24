@@ -18,6 +18,7 @@ import java.util.stream.IntStream;
 
 
 import static Main.Main.TESTING;
+import static Miscs.Cards.*;
 import static Miscs.Sounds.*;
 
 
@@ -535,6 +536,9 @@ public class Game extends JFrame {
                 e.printStackTrace();
             }
         }).start();
+    }
+    private void plantsJob() {
+
     }
 
 }
