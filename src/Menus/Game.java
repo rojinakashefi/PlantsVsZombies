@@ -108,7 +108,18 @@ public class Game extends JFrame {
     }
 
     private void mower() {
-
+        for (int i = 0; i < 5; i++) {
+            final int[] ii = {i};
+            new Thread(() -> {
+                int posY = Sluts.getMowerLocation(ii[0]);
+                int posX = 175;
+                mowers[ii[0]] = new JLabel();
+                mowers[ii[0]].setIcon(mowerIcon);
+                mowers[ii[0]].setBounds(posX, posY, 82, 70);
+                label.add(mowers[ii[0]]);
+                mowerAvailable[ii[0]] = true;
+            }).start();
+        }
     }
 
     private void runMower(int ySlut) {
