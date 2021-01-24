@@ -712,5 +712,19 @@ public class Game extends JFrame {
         paused = false;
         pauseButton.addMouseListener(pauseClickListener(pauseButton));
     }
+    private void pauseMenu() {
+        blackScreen = new JLabel();
+        blackScreen.setIcon(Icons.blackScreen);
+        label.add(blackScreen);
+        blackScreen.setBounds(0, 0, 1000, 645);
+        label.remove(plants);
+        label.add(plants);
+        for (JLabel mower : mowers) {
+            label.remove(mower);
+            label.add(mower);
+        }
+        //new PauseMenu(this);
+    }
+
 
 }
