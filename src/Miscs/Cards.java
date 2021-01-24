@@ -14,7 +14,16 @@ public class Cards {
     static final ImageIcon cherry = new ImageIcon("gfx/cardCherry.pvz");
 
     public static JLabel getCard(int number, Container c) {
+        JLabel tempLabel = new JLabel();
+        switch (number) {
+            case SNOW_PEA -> tempLabel.setIcon(snowPea);
+            case PEA_SHOOTER -> tempLabel.setIcon(peaShooter);
+            case SUNFLOWER -> tempLabel.setIcon(sunflower);
+            case WALL_NUT -> tempLabel.setIcon(wall);
+            case CHERRY -> tempLabel.setIcon(cherry);
+            default -> throw new RuntimeException("Wrong Input in Cards Class");
         }
-
-
+        c.add(tempLabel);
+        return tempLabel;
+    }
 }
