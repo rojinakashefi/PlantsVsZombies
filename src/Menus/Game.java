@@ -576,6 +576,10 @@ public class Game extends JFrame {
             cards[i].addMouseListener(cardsClickListener());
         }
     }
+    public static void removePlant (Plant plant) {
+
+
+    }
 
 
 }
