@@ -174,7 +174,24 @@ public class Game extends JFrame {
         }).start();
     }
 
-
+    private MouseListener pauseClickListener(JLabel pauseButton) {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                //pauseMenu();
+                pause();
+                pauseButton.removeMouseListener(pauseButton.getMouseListeners()[0]);
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        };
+    }
     private  MouseListener labelClickListener() {
         return new MouseListener() {
             @Override
@@ -687,4 +704,5 @@ public class Game extends JFrame {
         muted = true;
         paused = true;
     }
+
 }
