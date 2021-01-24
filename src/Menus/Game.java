@@ -359,15 +359,17 @@ public class Game extends JFrame {
 
         }).start();
     }
-    private void sendZombies(Container label, int round) {
-        int ss;
-        if (round == 1) ss = 5;
-        else ss = 12;
+    private void sendZombies() {
+        int zombies;
+        if (round == 1) zombies = 5;
+        else zombies = 12;
         Random random = new Random();
         new Thread(() -> {
+            byte count = 1;
             try {
                 int[] location;
-                for (int i = 0; i < ss; i++) {
+                threadPool.add(Thread.currentThread());
+                for (int i = 0; i < zombies; i++) {
                     int type = random.nextInt(5);
                     Zombie zombie;
                     int rand = random.nextInt(5);
@@ -385,14 +387,30 @@ public class Game extends JFrame {
                         zombie.setBounds(location[0], location[1] - 40, zombie.sizeX, zombie.sizeY);
                     objects.add(new Coordination(zombie, rand));
                     //walk(zombie);
+                    //progress();
                     if (round == 1) Thread.sleep(30000);
-                    else if (round == 3) Thread.sleep(25000);
+                    else if (round == 3) {
+                        if (count == 2) {
+                            Thread.sleep(25000);
+                            count--;
+                        }
+                        else count++;
+                    }
+                    else {
+                        if (count == 2) {
+                            Thread.sleep(30000);
+                            count--;
+                        }
+                        else count++;
+                    }
                 }
+                threadPool.remove(Thread.currentThread());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
     }
+
 
 
     private void readyLabel() throws InterruptedException {
