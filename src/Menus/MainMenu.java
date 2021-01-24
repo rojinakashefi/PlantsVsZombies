@@ -14,7 +14,6 @@ import java.awt.*;
  * TODO: Many... :)
  *
  */
-
 public class MainMenu extends JFrame {
     public MainMenu() {
         setSize(800, 600);
