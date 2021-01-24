@@ -18,6 +18,9 @@ public class Sluts {
     public static int[] getPlantLocation(int X, int Y) {
         return sluts[X][Y];
     }
+    public static int[] getZombieLocation(int Y) {
+        return sluts[9][Y];
+    }
 
     public static int[] getSlut(int posX, int posY) {
         for (int i = 0; i < X; i++)
