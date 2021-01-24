@@ -476,6 +476,9 @@ public class Game extends JFrame {
             public void mouseExited(MouseEvent e) {}
         };
     }
+    private void explode(Plant tmp) {
 
+
+    }
 
 }
