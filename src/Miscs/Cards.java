@@ -14,7 +14,6 @@ public class Cards {
     static final ImageIcon cherry = new ImageIcon("gfx/cardCherry.pvz");
 
     public static JLabel getCard(int number, Container c) {
-
         }
 
 
