@@ -387,7 +387,7 @@ public class Game extends JFrame {
                         zombie.setBounds(location[0], location[1] - 40, zombie.sizeX, zombie.sizeY);
                     objects.add(new Coordination(zombie, rand));
                     walk(zombie);
-                    //progress();
+                    progress();
                     if (round == 1) Thread.sleep(30000);
                     else if (round == 3) {
                         if (count == 2) {
@@ -669,5 +669,8 @@ public class Game extends JFrame {
         });
         t.start();
         timerPool.add(t);
+    }
+    private void progress() {
+        gone++;
     }
 }
