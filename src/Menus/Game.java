@@ -107,7 +107,13 @@ public class Game extends JFrame {
         //xwaves();
     }
 
+    private void mower() {
 
+    }
+
+    private void runMower(int ySlut) {
+
+    }
 
     private void shoot(Plant shooterPlant, boolean isFrozen) {
         new Thread( () -> {
