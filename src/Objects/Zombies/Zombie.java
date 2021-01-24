@@ -47,10 +47,14 @@ public abstract class Zombie extends JLabel {
     }
     public abstract void lossHealth(int Amount, boolean isFrozen);
     public void kill(boolean burn) {
+        health = 0;
         Sounds.play(hitSound);
         this.setIcon(burn?burned:die);
         Game.removeZombie(this);
-        Timer t = new Timer(1000, e -> c.remove(this));
+        Timer t = new Timer(getClass()==Football.class?500:1000, e -> {
+            this.setIcon(null);
+            c.remove(this);
+        });
         t.setRepeats(false);
         t.start();
     }
