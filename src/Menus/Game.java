@@ -418,7 +418,8 @@ public class Game extends JFrame {
 
     }
     private void addSun(int points) {
-
+        suns += points;
+        keptSun.setText(suns + "");
     }
     private void sunLanding(int[] pos) {
         SunPoint sun = new SunPoint(label);
