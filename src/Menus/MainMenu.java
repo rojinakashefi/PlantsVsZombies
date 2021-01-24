@@ -25,7 +25,7 @@ public class MainMenu extends JFrame {
     public MainMenu() {
         setVisible(true);
 
-       // background();
+        background();
 
         //Game Page specs
         setSize(860, 500);
@@ -66,6 +66,43 @@ public class MainMenu extends JFrame {
             @Override
             public void mouseReleased(MouseEvent e) {
                 newButton.setIcon(new ImageIcon("gfx/button.pvz"));
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        });
+        loadButton = new JLabel();
+        boolean loaded = Levels.load() != null;
+        if (loaded)
+            loadButton.setIcon(new ImageIcon("gfx/button.pvz"));
+        else
+            loadButton.setIcon(new ImageIcon("gfx/buttonOff.pvz"));
+        loadButton.setText("Load Game");
+        loadButton.setBounds(360, 390, 100, 45);
+        JLabel m = new JLabel();
+        loadButton.setLayout(layout);
+        m.setText("Load Game");
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, m, 0, SpringLayout.HORIZONTAL_CENTER, loadButton);
+        layout.putConstraint(SpringLayout.VERTICAL_CENTER, m, 0, SpringLayout.VERTICAL_CENTER, loadButton);
+
+        back.add(loadButton);
+        loadButton.add(m);
+        loadButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (loaded) {
+                    loadButton.setIcon(new ImageIcon("gfx/buttonHover.pvz"));
+                    mute();
+                    new Thread(() -> new Game(new Levels(), muted)).start();
+                    dispose();
+                }
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if(loaded) loadButton.setIcon(new ImageIcon("gfx/button.pvz"));
             }
             @Override
             public void mouseEntered(MouseEvent e) {}
