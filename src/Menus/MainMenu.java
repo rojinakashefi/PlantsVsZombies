@@ -136,5 +136,27 @@ public class MainMenu extends JFrame {
             @Override
             public void mouseExited(MouseEvent e) {}
         });
+        back.add(soundButton);
+        exitButton = new JLabel();
+        exitButton.setIcon(new ImageIcon("gfx/buttons/exit.pvz"));
+        exitButton.setBounds(745, 5, 100, 85);
+        exitButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+            @Override
+            public void mousePressed(MouseEvent e) {
+                exitButton.setIcon(new ImageIcon("gfx/buttons/exitHover.pvz"));
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                exitButton.setIcon(new ImageIcon("gfx/buttons/exit.pvz"));
+                System.exit(0);
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        });
+        back.add(exitButton);
     }
 }
