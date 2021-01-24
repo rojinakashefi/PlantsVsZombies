@@ -19,6 +19,7 @@ import java.util.stream.IntStream;
 
 import static Main.Main.TESTING;
 import static Miscs.Cards.*;
+import static Miscs.Icons.mowerIcon;
 import static Miscs.Sounds.*;
 
 
@@ -48,7 +49,7 @@ import static Miscs.Sounds.*;
  */
 
 public class Game extends JFrame {
-    int difficulty, gap = 50, suns = 50;
+    int difficulty, gap = 5, suns = 500;
     boolean[] mowerAvailable = new boolean[5];
     JLabel[] mowers = new JLabel[5];
     boolean sunAvail = true, peaAvail = true, nutAvail = true, snowAvail = true, cherAvail = true, repAvail = true;
@@ -57,13 +58,17 @@ public class Game extends JFrame {
     boolean won = false,lost = false, containsIcon = false;
     JLabel clicked = null;
     JLabel label, label2;
+    JLabel pauseButton;
     JLabel plants;
     JLabel keptSun;
-    ImageIcon mowerIcon = new ImageIcon("gfx/mower.pvz");
+    JLabel blackScreen;
     public static ArrayList<Coordination> objects = new ArrayList<>();
     Levels newLevel;
-    private boolean mute;
+    public static boolean mute;
     public static ArrayList<Timer> timerPool = new ArrayList<>();
+    public static ArrayList<Thread> threadPool = new ArrayList<>();
+    private boolean paused = false;
+    int gone = 0, round = 0;
 
     public Game(Levels level, boolean mute) {
         muted = mute;
@@ -585,7 +590,33 @@ public class Game extends JFrame {
             }
         }
     }
-
+    private void waves() {
+        new Thread(() -> {
+            Sounds.backPlay(IN_GAME); // Play before-game background music
+            try {
+                Thread.sleep(gap * 1000L - 500);
+                Sounds.backPlay(ZOMBIES_COMING); // Play The Zombies are coming sound effect
+                Thread.sleep(500);
+                while (paused) Thread.sleep(1000);
+                ++round;
+               // sendZombies(); // Send Zombies to the field. wave 1
+                Thread.sleep(150000);
+                while (paused) Thread.sleep(1000);
+                ++round;
+               // sendZombies(); // Send Zombies to the field. wave 2
+                Thread.sleep(180000);
+                while (paused) Thread.sleep(1000);
+                ++round;
+                //sendZombies(); // Send Zombies to the field. wave 3
+                Thread.sleep(150000);
+                //noinspection StatementWithEmptyBody
+                while (!Zombie.zombies.isEmpty()) ;
+                //win();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
 
 
 }
