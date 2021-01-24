@@ -421,6 +421,41 @@ public class Game extends JFrame {
 
     }
     private void sunLanding(int[] pos) {
+        SunPoint sun = new SunPoint(label);
+
+        Random random = new Random();
+        int posX, posY;
+        final int[] i;
+        if (pos == null) {
+            posY = 80;
+            posX = 200 + random.nextInt(700);
+            i = new int[]{0};
+        } else {
+            posX = pos[0];
+            posY = pos[1];
+            i = new int[]{380};
+        }
+        sun.setBounds(posX + 30, posY, 80, 80);
+        sun.addMouseListener(sunClickListener(sun));
+
+        Timer t = new Timer(20, e -> {
+            sun.setBounds(sun.getX(), sun.getY() + 1, 80, 80);
+            i[0]++;
+            if (i[0] == 400 || sun.getIcon() == null) {
+                ((Timer) e.getSource()).stop();
+                new Timer(5000, ee -> {
+                    sun.setIcon(null);
+                    remove(sun);
+                    sun.remove();
+                    sun.removeMouseListener(null);
+                    ((Timer) ee.getSource()).setRepeats(false);
+                }).start();
+            }
+        });
+        t.start();
+        timerPool.add(t);
+    }
+    private MouseListener sunClickListener(SunPoint sun) {
 
     }
 
