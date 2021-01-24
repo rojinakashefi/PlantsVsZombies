@@ -386,7 +386,7 @@ public class Game extends JFrame {
                     else
                         zombie.setBounds(location[0], location[1] - 40, zombie.sizeX, zombie.sizeY);
                     objects.add(new Coordination(zombie, rand));
-                    //walk(zombie);
+                    walk(zombie);
                     //progress();
                     if (round == 1) Thread.sleep(30000);
                     else if (round == 3) {
@@ -636,5 +636,38 @@ public class Game extends JFrame {
         }).start();
     }
 
-
+    @SuppressWarnings("RedundantCast")
+    private synchronized void walk(Zombie zombie) {
+        Timer t = new Timer(120, e -> {
+            if (zombie.health > 0) {
+                zombie.setBounds(zombie.getX() - zombie.speed, zombie.getY(), zombie.sizeX, zombie.sizeY);
+                int ySlut = zombie.row;
+                if (zombie.getX() - 205 < 20) {
+                    if (mowerAvailable[ySlut])
+                        runMower(ySlut);
+                    else {
+                        try {
+                            if (Zombie.zombies.contains(zombie) && zombie.getX() - 205 < 5)
+                               // lose();
+                        } catch (InterruptedException interruptedException) {
+                            interruptedException.printStackTrace();
+                        }
+                    }
+                }
+                for (Plant plant : Plant.plants) {
+                    if (-plant.getBounds().x + zombie.getBounds().x < 20 && plant.row == zombie.row
+                            && zombie.getBounds().x - plant.getBounds().x > 0) {
+                        //eatPlant(zombie, plant);
+                        ((Timer) e.getSource()).stop();
+                        timerPool.remove(((Timer) e.getSource()));
+                    }
+                }
+            }else {
+                ((Timer) e.getSource()).stop();
+                timerPool.remove(((Timer) e.getSource()));
+            }
+        });
+        t.start();
+        timerPool.add(t);
+    }
 }
