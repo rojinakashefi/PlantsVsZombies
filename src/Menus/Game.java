@@ -123,7 +123,24 @@ public class Game extends JFrame {
     }
 
     private void runMower(int ySlut) {
-
+        mowerAvailable[ySlut] = false;
+        Sounds.backPlay(MOWER);
+        Timer timer = new Timer(5, e -> {
+            mowers[ySlut].setBounds(mowers[ySlut].getX() + 1, mowers[ySlut].getY(), 87, 70);
+            //noinspection ForLoopReplaceableByForEach
+            for (int i = 0; i < objects.size(); i++) {
+                if (objects.get(i).zombie != null && objects.get(i).zombie.row == ySlut) {
+                    if (objects.get(i).zombie.getX() - mowers[ySlut].getX() < 20)
+                        objects.get(i).zombie.kill(false);
+                }
+            }
+            if (mowers[ySlut].getBounds().x > 1000) {
+                timerPool.remove(((Timer) e.getSource()));
+                ((Timer) e.getSource()).stop();
+            }
+        });
+        timerPool.add(timer);
+        timer.start();
     }
 
     private void shoot(Plant shooterPlant, boolean isFrozen) {
