@@ -704,5 +704,13 @@ public class Game extends JFrame {
         muted = true;
         paused = true;
     }
+    void resume() {
+        for (Timer timer: timerPool) timer.start();
+        if(!mute) muted = true;
+        blackScreen.setIcon(null);
+        remove(blackScreen);
+        paused = false;
+        pauseButton.addMouseListener(pauseClickListener(pauseButton));
+    }
 
 }
