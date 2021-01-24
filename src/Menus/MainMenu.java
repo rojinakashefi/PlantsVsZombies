@@ -109,5 +109,32 @@ public class MainMenu extends JFrame {
             @Override
             public void mouseExited(MouseEvent e) {}
         });
+        soundButton = new JLabel();
+        soundButton.setIcon(new ImageIcon("gfx/buttons/sound.pvz"));
+        soundButton.setBounds(745, 370, 100, 85);
+        soundButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (!muted) soundButton.setIcon(new ImageIcon("gfx/buttons/soundHover.pvz"));
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (!muted) {
+                    soundButton.setIcon(new ImageIcon("gfx/buttons/soundOff.pvz"));
+                    mute();
+                    muted = true;
+                } else {
+                    muted = false;
+                    backPlay(MAIN_MENU);
+                    soundButton.setIcon(new ImageIcon("gfx/buttons/sound.pvz"));
+                }
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        });
     }
 }
