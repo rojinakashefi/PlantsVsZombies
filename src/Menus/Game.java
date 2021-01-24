@@ -414,4 +414,15 @@ public class Game extends JFrame {
             }
         }
     }
+    private void produceSun(Plant tmp) {
+
+    }
+    private void addSun(int points) {
+
+    }
+    private void sunLanding(int[] pos) {
+
+    }
+
+
 }
