@@ -19,6 +19,7 @@ import java.util.stream.IntStream;
 
 import static Main.Main.TESTING;
 import static Miscs.Cards.*;
+import static Miscs.Icons.mowerIcon;
 import static Miscs.Sounds.*;
 
 
@@ -48,7 +49,7 @@ import static Miscs.Sounds.*;
  */
 
 public class Game extends JFrame {
-    int difficulty, gap = 50, suns = 50;
+    int difficulty, gap = 5, suns = 500;
     boolean[] mowerAvailable = new boolean[5];
     JLabel[] mowers = new JLabel[5];
     boolean sunAvail = true, peaAvail = true, nutAvail = true, snowAvail = true, cherAvail = true, repAvail = true;
@@ -57,13 +58,17 @@ public class Game extends JFrame {
     boolean won = false,lost = false, containsIcon = false;
     JLabel clicked = null;
     JLabel label, label2;
+    JLabel pauseButton;
     JLabel plants;
     JLabel keptSun;
-    ImageIcon mowerIcon = new ImageIcon("gfx/mower.pvz");
+    JLabel blackScreen;
     public static ArrayList<Coordination> objects = new ArrayList<>();
     Levels newLevel;
-    private boolean mute;
+    public static boolean mute;
     public static ArrayList<Timer> timerPool = new ArrayList<>();
+    public static ArrayList<Thread> threadPool = new ArrayList<>();
+    private boolean paused = false;
+    int gone = 0, round = 0;
 
     public Game(Levels level, boolean mute) {
         muted = mute;
@@ -169,7 +174,24 @@ public class Game extends JFrame {
         }).start();
     }
 
-
+    private MouseListener pauseClickListener(JLabel pauseButton) {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                //pauseMenu();
+                pause();
+                pauseButton.removeMouseListener(pauseButton.getMouseListeners()[0]);
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        };
+    }
     private  MouseListener labelClickListener() {
         return new MouseListener() {
             @Override
@@ -354,15 +376,17 @@ public class Game extends JFrame {
 
         }).start();
     }
-    private void sendZombies(Container label, int round) {
-        int ss;
-        if (round == 1) ss = 5;
-        else ss = 12;
+    private void sendZombies() {
+        int zombies;
+        if (round == 1) zombies = 5;
+        else zombies = 12;
         Random random = new Random();
         new Thread(() -> {
+            byte count = 1;
             try {
                 int[] location;
-                for (int i = 0; i < ss; i++) {
+                threadPool.add(Thread.currentThread());
+                for (int i = 0; i < zombies; i++) {
                     int type = random.nextInt(5);
                     Zombie zombie;
                     int rand = random.nextInt(5);
@@ -379,15 +403,31 @@ public class Game extends JFrame {
                     else
                         zombie.setBounds(location[0], location[1] - 40, zombie.sizeX, zombie.sizeY);
                     objects.add(new Coordination(zombie, rand));
-                    //walk(zombie);
+                    walk(zombie);
+                    progress();
                     if (round == 1) Thread.sleep(30000);
-                    else if (round == 3) Thread.sleep(25000);
+                    else if (round == 3) {
+                        if (count == 2) {
+                            Thread.sleep(25000);
+                            count--;
+                        }
+                        else count++;
+                    }
+                    else {
+                        if (count == 2) {
+                            Thread.sleep(30000);
+                            count--;
+                        }
+                        else count++;
+                    }
                 }
+                threadPool.remove(Thread.currentThread());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
     }
+
 
 
     private void readyLabel() throws InterruptedException {
@@ -585,7 +625,106 @@ public class Game extends JFrame {
             }
         }
     }
+    private void waves() {
+        new Thread(() -> {
+            Sounds.backPlay(IN_GAME); // Play before-game background music
+            try {
+                Thread.sleep(gap * 1000L - 500);
+                Sounds.backPlay(ZOMBIES_COMING); // Play The Zombies are coming sound effect
+                Thread.sleep(500);
+                while (paused) Thread.sleep(1000);
+                ++round;
+               // sendZombies(); // Send Zombies to the field. wave 1
+                Thread.sleep(150000);
+                while (paused) Thread.sleep(1000);
+                ++round;
+               // sendZombies(); // Send Zombies to the field. wave 2
+                Thread.sleep(180000);
+                while (paused) Thread.sleep(1000);
+                ++round;
+                //sendZombies(); // Send Zombies to the field. wave 3
+                Thread.sleep(150000);
+                //noinspection StatementWithEmptyBody
+                while (!Zombie.zombies.isEmpty()) ;
+                //win();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
 
+    @SuppressWarnings("RedundantCast")
+    private synchronized void walk(Zombie zombie) {
+        Timer t = new Timer(120, e -> {
+            if (zombie.health > 0) {
+                zombie.setBounds(zombie.getX() - zombie.speed, zombie.getY(), zombie.sizeX, zombie.sizeY);
+                int ySlut = zombie.row;
+                if (zombie.getX() - 205 < 20) {
+                    if (mowerAvailable[ySlut])
+                        runMower(ySlut);
+                    else {
+                        try {
+                            if (Zombie.zombies.contains(zombie) && zombie.getX() - 205 < 5)
+                               lose();
+                        } catch (InterruptedException interruptedException) {
+                            interruptedException.printStackTrace();
+                        }
+                    }
+                }
+                for (Plant plant : Plant.plants) {
+                    if (-plant.getBounds().x + zombie.getBounds().x < 20 && plant.row == zombie.row
+                            && zombie.getBounds().x - plant.getBounds().x > 0) {
+                        //eatPlant(zombie, plant);
+                        ((Timer) e.getSource()).stop();
+                        timerPool.remove(((Timer) e.getSource()));
+                    }
+                }
+            }else {
+                ((Timer) e.getSource()).stop();
+                timerPool.remove(((Timer) e.getSource()));
+            }
+        });
+        t.start();
+        timerPool.add(t);
+    }
+    private void progress() {
+        gone++;
+    }
+    private void lose() throws InterruptedException{
+        if (!won || !lost) {
+            lost = true;
+            Sounds.play(LOSE);
+            pause();
+            Thread.sleep(1000);
+            newLevel.save();
+        }
+    }
+    private void pause() {
+        for (Timer timer: timerPool) timer.stop();
+        muted = true;
+        paused = true;
+    }
+    void resume() {
+        for (Timer timer: timerPool) timer.start();
+        if(!mute) muted = true;
+        blackScreen.setIcon(null);
+        remove(blackScreen);
+        paused = false;
+        pauseButton.addMouseListener(pauseClickListener(pauseButton));
+    }
+    private void pauseMenu() {
+        blackScreen = new JLabel();
+        blackScreen.setIcon(Icons.blackScreen);
+        label.add(blackScreen);
+        blackScreen.setBounds(0, 0, 1000, 645);
+        label.remove(plants);
+        label.add(plants);
+        for (JLabel mower : mowers) {
+            label.remove(mower);
+            label.add(mower);
+        }
+        //new PauseMenu(this);
+    }
 
 
 }
