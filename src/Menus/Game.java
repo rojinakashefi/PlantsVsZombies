@@ -65,7 +65,7 @@ public class Game extends JFrame {
     private boolean mute;
     public static ArrayList<Timer> timerPool = new ArrayList<>();
 
-    public Game(Levels level) {
+    public Game(Levels level, boolean mute) {
         muted = mute;
         this.mute = mute;
         setVisible(true);
@@ -85,19 +85,19 @@ public class Game extends JFrame {
 
         backgrounds(); // Creates the main and the plants menu background
 
-        //mower();
+        mower();
 
         //In this Section the first animation of the game executed
         readySetPlant();
 
         plants.setIcon(new ImageIcon("gfx/pm.pvz"));
-        // plantsJob();
+        plantsJob();
 
         new Thread(() -> {
             try {
                 while (!won || !lost) {
                     Thread.sleep(20000);
-                    //sunLanding(null);
+                    sunLanding(null);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -105,7 +105,8 @@ public class Game extends JFrame {
 
         }).start();
 
-        //xwaves();
+
+
     }
 
     private void mower() {
@@ -575,5 +576,6 @@ public class Game extends JFrame {
             cards[i].addMouseListener(cardsClickListener());
         }
     }
+
 
 }
