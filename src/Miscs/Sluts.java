@@ -18,6 +18,7 @@ public class Sluts {
     public static int[] getPlantLocation(int X, int Y) {
         return sluts[X][Y];
     }
+
     public static int[] getZombieLocation(int Y) {
         return sluts[9][Y];
     }
@@ -43,7 +44,6 @@ public class Sluts {
             }
         return -1;
     }
-
     public static int getMowerLocation(int YSlut) {
         return sluts[0][YSlut][1];
     }

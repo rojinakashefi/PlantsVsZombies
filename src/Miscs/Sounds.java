@@ -21,6 +21,7 @@ public class Sounds {
             player.close();
         }
     }
+
     public static void backPlay(int number) {
         if (!muted)
             new Thread(() -> {
@@ -66,6 +67,7 @@ public class Sounds {
                 }
             }).start();
     }
+
     public static void play(int number) {
         if (!muted)
             new Thread(() -> {
@@ -76,10 +78,23 @@ public class Sounds {
                             if (new Random().nextInt(2) == 0) file = new FileInputStream("sfx/game/shoot1.pvz");
                             else file = new FileInputStream("sfx/game/shoot2.pvz");
                         }
-
+                        case EAT_PLANTS -> {
+                            switch (new Random().nextInt(4)) {
+                                case 0 -> file = new FileInputStream("sfx/game/eat1.pvz");
+                                case 1 -> file = new FileInputStream("sfx/game/eat2.pvz");
+                                case 2 -> file = new FileInputStream("sfx/game/eat3.pvz");
+                                case 3 -> file = new FileInputStream("sfx/game/eat4.pvz");
+                                default -> throw new RuntimeException("hir hir tar tar");
+                            }
+                        }
+                        case SELECT -> file = new FileInputStream("sfx/game/sClick.pvz");
+                        case INSUFFICIENT -> file = new FileInputStream("sfx/game/ins.pvz");
                         case PLANT -> file = new FileInputStream("sfx/game/plant.pvz");
                         case FREEZE -> file = new FileInputStream("sfx/game/frozen.pvz");
                         case GRUNT -> file = new FileInputStream("sfx/game/grunt1.pvz");
+                        case WIN -> file = new FileInputStream("sfx/game/win.pvz");
+                        case LOSE -> file = new FileInputStream("sfx/game/lose.pvz");
+                        case READY -> file = new FileInputStream("sfx/game/ready.pvz");
                         case CHERRY_EXPLOSION -> file = new FileInputStream("sfx/game/exCherry.pvz");
 
                         default -> throw new RuntimeException("Error in Sounds.play(1) switch");
@@ -114,7 +129,6 @@ public class Sounds {
                 }
             }).start();
     }
-
     private static void startSound(FileInputStream file) throws JavaLayerException, IOException {
         if (file != null) {
             Player player = new Player(file);

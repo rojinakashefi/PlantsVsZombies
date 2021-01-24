@@ -18,14 +18,14 @@ public class wallNut extends Plant {
     @Override
     public void lossHealth() {
         health -= 30;
-
+        Sounds.play(Sounds.EAT_PLANTS);
         if (health <= 70 && health > 0)
         {
             ready = new ImageIcon("gfx/nut_2.pvz");
         }
         if(health <= 0) {
             this.setIcon(die);
-
+            Game.removePlant(this);
             Timer t = new Timer(1000, e -> c.remove(this));
             c.remove(this);
             t.setRepeats(false);

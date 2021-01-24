@@ -576,6 +576,16 @@ public class Game extends JFrame {
             cards[i].addMouseListener(cardsClickListener());
         }
     }
+    public static void removePlant (Plant plant) {
+        Plant.plants.remove(plant);
+        for(int i = 0; i < objects.size(); i++) {
+            if(objects.get(i).plant == plant) {
+                objects.remove(i);
+                break;
+            }
+        }
+    }
+
 
 
 }
