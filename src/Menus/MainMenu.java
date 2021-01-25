@@ -19,7 +19,6 @@ import static Miscs.Sounds.*;
  * TODO: Many... :)
  *
  */
-
 public class MainMenu extends JFrame {
     JLabel back, newButton, loadButton, soundButton, exitButton;
     public MainMenu() {
