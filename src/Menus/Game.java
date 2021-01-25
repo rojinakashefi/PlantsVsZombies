@@ -751,5 +751,11 @@ public class Game extends JFrame {
             }
         }).start();
     }
+    private void win() throws InterruptedException {
 
+    }
+
+    private void lose() throws InterruptedException{
+
+    }
 }
