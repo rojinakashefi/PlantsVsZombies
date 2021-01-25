@@ -726,7 +726,30 @@ public class Game extends JFrame {
         //new PauseMenu(this);
     }
     private void waves() {
-
+        new Thread(() -> {
+            Sounds.backPlay(IN_GAME); // Play before-game background music
+            try {
+                Thread.sleep(gap * 1000L - 500);
+                Sounds.backPlay(ZOMBIES_COMING); // Play The Zombies are coming sound effect
+                Thread.sleep(500);
+                while (paused) Thread.sleep(1000);
+                ++round;
+                sendZombies(); // Send Zombies to the field. wave 1
+                Thread.sleep(150000);
+                while (paused) Thread.sleep(1000);
+                ++round;
+                sendZombies(); // Send Zombies to the field. wave 2
+                Thread.sleep(180000);
+                while (paused) Thread.sleep(1000);
+                ++round;
+                sendZombies(); // Send Zombies to the field. wave 3
+                Thread.sleep(150000);
+                //noinspection StatementWithEmptyBody
+                while (!Zombie.zombies.isEmpty()) ;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
 }
