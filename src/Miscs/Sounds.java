@@ -19,6 +19,7 @@ public class Sounds {
     public static void mute() {
         for (Player player : backgroundMusic) {
             player.close();
+            backgroundMusic.remove(player);
         }
     }
 
@@ -43,7 +44,7 @@ public class Sounds {
                             file = new FileInputStream("sfx/back/deck.pvz");
                             Player player = new Player(file);
                             backgroundMusic.add(player);
-                            player.play(200);
+                            player.play(230);
                             backgroundMusic.remove(player);
                             file = null;
                         }
@@ -129,6 +130,7 @@ public class Sounds {
                 }
             }).start();
     }
+
     private static void startSound(FileInputStream file) throws JavaLayerException, IOException {
         if (file != null) {
             Player player = new Player(file);

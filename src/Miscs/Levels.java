@@ -8,14 +8,13 @@ import java.io.*;
 import static Main.Main.TESTING;
 
 public class Levels {
-    public int level, difficulty;
+    public int difficulty;
 
     public Levels() {
-        new Levels(1, 1);
+        new Levels(1);
     }
 
-    public Levels(int level, int difficulty) {
-        this.level = level;
+    public Levels(int difficulty) {
         this.difficulty = difficulty;
     }
     public void gameSave(Game game) {
