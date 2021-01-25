@@ -44,6 +44,7 @@ public class Sluts {
             }
         return -1;
     }
+
     public static int getMowerLocation(int YSlut) {
         return sluts[0][YSlut][1];
     }
