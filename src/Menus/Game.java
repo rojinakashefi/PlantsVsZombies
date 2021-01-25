@@ -139,8 +139,9 @@ public class Game extends JFrame {
             //noinspection ForLoopReplaceableByForEach
             for (int i = 0; i < objects.size(); i++) {
                 if (objects.get(i).zombie != null && objects.get(i).zombie.row == ySlut) {
-                    if (objects.get(i).zombie.getX() - mowers[ySlut].getX() < 20)
+                    if (objects.get(i).zombie.getX() - mowers[ySlut].getX() < 20) {
                         objects.get(i).zombie.kill(false);
+                    }
                 }
             }
             if (mowers[ySlut].getBounds().x > 1000) {
