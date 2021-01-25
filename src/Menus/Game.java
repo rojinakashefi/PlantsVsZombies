@@ -725,6 +725,8 @@ public class Game extends JFrame {
         }
         //new PauseMenu(this);
     }
+    private void waves() {
 
+    }
 
 }
