@@ -273,36 +273,61 @@ public class Game extends JFrame {
         return new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Object source = e.getSource();
-                if (source.toString().contains("cardSun.pvz")) clicked.setIcon(new ImageIcon("gfx/sunflower.pvz"));
-                else if (source.toString().contains("cardPea.pvz")) clicked.setIcon(new ImageIcon("gfx/pea.pvz"));
-                else if (source.toString().contains("cardFreeze.pvz")) clicked.setIcon(new ImageIcon("gfx/snowPea.pvz"));
-                else if (source.toString().contains("cardWallnut.pvz")) clicked.setIcon(new ImageIcon("gfx/nut_1.pvz"));
-                else if (source.toString().contains("cardCherry.pvz")) clicked.setIcon(new ImageIcon("gfx/cherry.pvz"));
-                else System.out.println("Error In cardsClickListener");
-
-                if (!containsIcon) {
-                    containsIcon = true;
-                    label.addMouseMotionListener(motionListener());
-                }
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
+                boolean available = false;
+                Object source = e.getSource();
+                if (source.toString().contains("cardSun.pvz")) {
+                    if (suns >= 50 && sunAvail) {
+                        clicked.setIcon(Icons.sunflowerIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (source.toString().contains("cardPea.pvz")) {
+                    if (suns >= 100 && peaAvail) {
+                        clicked.setIcon(Icons.peaIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (source.toString().contains("cardFreeze.pvz")) {
+                    if (suns >= 175 && snowAvail) {
+                        clicked.setIcon(Icons.frozenIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (source.toString().contains("cardWallnut.pvz")) {
+                    if (suns >= 50 && nutAvail) {
+                        clicked.setIcon(Icons.walnutIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (source.toString().contains("cardCherry.pvz")) {
+                    if (suns >= 150 && cherAvail) {
+                        clicked.setIcon(Icons.cherryIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else System.out.println("Error In cardsClickListener");
 
+                if (!containsIcon && available) {
+                    containsIcon = true;
+                    label.addMouseMotionListener(motionListener());
+                    Sounds.play(SELECT);
+                }
             }
             @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
+            public void mouseReleased(MouseEvent e) {}
             @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
+            public void mouseEntered(MouseEvent e) {}
             @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
+            public void mouseExited(MouseEvent e) {}
         };
     }
 
@@ -519,6 +544,7 @@ public class Game extends JFrame {
             public void mouseExited(MouseEvent e) {}
         };
     }
+
     private void explode(Plant tmp) {
         Timer t = new Timer(2000, e -> {
             Sounds.play(CHERRY_EXPLOSION);
