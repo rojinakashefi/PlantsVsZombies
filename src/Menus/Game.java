@@ -153,7 +153,25 @@ public class Game extends JFrame {
         timer.start();
     }
     private void eatPlant(Zombie zombie, Plant victim) {
-
+        Thread t = new Thread( () -> {
+            threadPool.add(Thread.currentThread());
+            do {
+                if (zombie.health > 0)
+                    if (zombie.getClass() != Normal.class)
+                        victim.lossHealth(15);
+                    else victim.lossHealth(10);
+                else return;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (zombie.health > 0 && victim.health > 0 && !paused);
+            if (zombie.health > 0)
+                walk(zombie);
+            threadPool.remove(Thread.currentThread());
+        });
+        t.start();
     }
 
     private void shoot(Plant shooterPlant, boolean isFrozen) {
