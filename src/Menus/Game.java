@@ -521,21 +521,27 @@ public class Game extends JFrame {
     }
     private void explode(Plant tmp) {
         Timer t = new Timer(2000, e -> {
+            Sounds.play(CHERRY_EXPLOSION);
+            //noinspection ForLoopReplaceableByForEach
             for (int i = 0; i < objects.size(); i++) {
                 if (objects.get(i).zombie != null)
-                    if(tmp.getX() - objects.get(i).zombie.getX() < 100 &&
+                    if (tmp.getX() - objects.get(i).zombie.getX() < 100 &&
                             tmp.getX() - objects.get(i).zombie.getX() > 0 ||
-                            - tmp.getX() + objects.get(i).zombie.getX() < 100 &&
-                                    - tmp.getX() + objects.get(i).zombie.getX() > 0 ||
+                            -tmp.getX() + objects.get(i).zombie.getX() < 100 &&
+                                    -tmp.getX() + objects.get(i).zombie.getX() > 0 ||
                             tmp.getY() - objects.get(i).zombie.getY() < 100 &&
                                     tmp.getY() - objects.get(i).zombie.getY() > 0 ||
-                            - tmp.getY() + objects.get(i).zombie.getY() < 100 &&
-                                    - tmp.getY() + objects.get(i).zombie.getY() > 0) {
+                            -tmp.getY() + objects.get(i).zombie.getY() < 100 &&
+                                    -tmp.getY() + objects.get(i).zombie.getY() > 0) {
                         objects.get(i).zombie.kill(true);
                     }
             }
+            tmp.setIcon(null);
+            remove(tmp);
+            removePlant(tmp);
         });
         t.start();
+        t.setRepeats(false);
         timerPool.add(t);
     }
 
