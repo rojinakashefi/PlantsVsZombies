@@ -152,6 +152,9 @@ public class Game extends JFrame {
         timerPool.add(timer);
         timer.start();
     }
+    private void eatPlant(Zombie zombie, Plant victim) {
+
+    }
 
     private void shoot(Plant shooterPlant, boolean isFrozen) {
         new Thread(() -> {
