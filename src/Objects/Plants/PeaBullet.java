@@ -30,6 +30,7 @@ public class PeaBullet extends JLabel {
                 final PeaBullet This = this;
                 final Timer timer = new Timer(10, e -> {
                     setBounds(getX() + 3, getY(), 28, 28);
+
                 });
                 timer.start();
                 Game.timerPool.add(timer);
