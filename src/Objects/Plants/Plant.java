@@ -29,13 +29,16 @@ public abstract class Plant extends JLabel {
         c.add(this);
     }
 
-    public void lossHealth() {
-        health -= 30;
+    public void lossHealth(int Amount) {
+        health -= Amount;
         Sounds.play(Sounds.EAT_PLANTS);
         if(health <= 0) {
             this.setIcon(die);
             Game.removePlant(this);
-            Timer t = new Timer(1000, e -> c.remove(this));
+            Timer t = new Timer(1000, e -> {
+                setIcon(null);
+                c.remove(this);
+            });
             c.remove(this);
             t.setRepeats(false);
             t.start();
