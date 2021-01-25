@@ -151,7 +151,7 @@ public class Game extends JFrame {
     }
 
     private void shoot(Plant shooterPlant, boolean isFrozen) {
-        new Thread( () -> {
+        new Thread(() -> {
             if (shooterPlant.health > 0) {
                 if (TESTING)
                     System.out.println("Shooter Position For pea: " + shooterPlant.getBounds().x + " " + shooterPlant.getBounds().y);
@@ -160,15 +160,14 @@ public class Game extends JFrame {
                     do {
                         try {
                             PeaBullet pea = new PeaBullet(label, shooterPlant, isFrozen);
-                            if (isFrozen) pea.setIcon(new ImageIcon("gfx/snowBullet.pvz"));
-                            else pea.setIcon(new ImageIcon("gfx/bullet.pvz"));
+                            if (isFrozen) pea.setIcon(Icons.snowBulletIcon);
+                            else pea.setIcon(Icons.peaBulletIcon);
                             pea.setBounds(shooterPlant.getBounds().x + 46, shooterPlant.getBounds().y + 16, 28, 28);
                             Thread.sleep(shooterPlant.speed * 1000L);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                    } while (shooterPlant.health > 0);
-                    while (true) shooterPlant.health--;
+                    } while (shooterPlant.health > 0 && !paused);
                 } else System.out.println("Pos is null");
             }
         }).start();
