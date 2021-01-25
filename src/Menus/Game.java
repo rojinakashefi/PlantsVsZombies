@@ -752,7 +752,13 @@ public class Game extends JFrame {
         }).start();
     }
     private void win() throws InterruptedException {
-
+        if (!lost || !won) {
+            won = true;
+            Sounds.play(WIN);
+            pause();
+            Thread.sleep(1000);
+            newLevel.save();
+        }
     }
 
     private void lose() throws InterruptedException{
