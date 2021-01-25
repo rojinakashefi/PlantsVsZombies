@@ -625,33 +625,6 @@ public class Game extends JFrame {
             }
         }
     }
-    private void waves() {
-        new Thread(() -> {
-            Sounds.backPlay(IN_GAME); // Play before-game background music
-            try {
-                Thread.sleep(gap * 1000L - 500);
-                Sounds.backPlay(ZOMBIES_COMING); // Play The Zombies are coming sound effect
-                Thread.sleep(500);
-                while (paused) Thread.sleep(1000);
-                ++round;
-               // sendZombies(); // Send Zombies to the field. wave 1
-                Thread.sleep(150000);
-                while (paused) Thread.sleep(1000);
-                ++round;
-               // sendZombies(); // Send Zombies to the field. wave 2
-                Thread.sleep(180000);
-                while (paused) Thread.sleep(1000);
-                ++round;
-                //sendZombies(); // Send Zombies to the field. wave 3
-                Thread.sleep(150000);
-                //noinspection StatementWithEmptyBody
-                while (!Zombie.zombies.isEmpty()) ;
-                //win();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
 
     @SuppressWarnings("RedundantCast")
     private synchronized void walk(Zombie zombie) {
@@ -690,15 +663,7 @@ public class Game extends JFrame {
     private void progress() {
         gone++;
     }
-    private void lose() throws InterruptedException{
-        if (!won || !lost) {
-            lost = true;
-            Sounds.play(LOSE);
-            pause();
-            Thread.sleep(1000);
-            newLevel.save();
-        }
-    }
+
     private void pause() {
         for (Timer timer: timerPool) timer.stop();
         muted = true;
@@ -746,6 +711,7 @@ public class Game extends JFrame {
                 Thread.sleep(150000);
                 //noinspection StatementWithEmptyBody
                 while (!Zombie.zombies.isEmpty()) ;
+                win();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -762,6 +728,12 @@ public class Game extends JFrame {
     }
 
     private void lose() throws InterruptedException{
-
+        if (!won || !lost) {
+            lost = true;
+            Sounds.play(LOSE);
+            pause();
+            Thread.sleep(1000);
+            newLevel.save();
+        }
     }
 }
