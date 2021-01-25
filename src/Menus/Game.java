@@ -676,7 +676,7 @@ public class Game extends JFrame {
                     else {
                         try {
                             if (Zombie.zombies.contains(zombie) && zombie.getX() - 205 < 5)
-                               lose();
+                                lose();
                         } catch (InterruptedException interruptedException) {
                             interruptedException.printStackTrace();
                         }
