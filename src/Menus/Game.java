@@ -235,14 +235,16 @@ public class Game extends JFrame {
                             }
                             default -> throw new RuntimeException("Error in labelClickListener switch");
                         }
-
+                        Sounds.play(PLANT);
                         tmp.setBounds(location[0], location[1], 100, 100);
                         objects.add(new Coordination(tmp, position[0], position[1]));
                         clicked.setIcon(null);
-
+                        coolDown(i, difficulty==0?coolDownN[i]:coolDownH[i]);
+                        addSun(- tmp.cost);
                         if (tmp.getClass() == PeaShooter.class) shoot(tmp, false);
                         else if (tmp.getClass() == SnowPea.class) shoot(tmp, true);
-
+                        else if (tmp.getClass() == SunFlower.class) produceSun(tmp);
+                        else if (tmp.getClass() == Cherry.class) explode(tmp);
                     }
                 }
             }
