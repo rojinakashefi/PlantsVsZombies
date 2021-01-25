@@ -72,8 +72,7 @@ public class Game extends JFrame {
 
     public Game(Levels level, boolean mute) {
         muted = mute;
-        this.mute = mute;
-        setVisible(true);
+        Game.mute = mute;
         Sluts.setSluts(); // Defines the checkered ground as sluts and calculates their coordinates
         objects.clear();  // clears the list of last game spawned objects
         newLevel = level;
@@ -92,25 +91,28 @@ public class Game extends JFrame {
 
         mower();
 
+        setVisible(true);
         //In this Section the first animation of the game executed
         readySetPlant();
 
-        plants.setIcon(new ImageIcon("gfx/pm.pvz"));
+        plants.setIcon(Icons.plantMenuIcon);
         plantsJob();
 
         new Thread(() -> {
+            threadPool.add(Thread.currentThread());
             try {
                 while (!won || !lost) {
                     Thread.sleep(20000);
                     sunLanding(null);
+                    if (paused) break;
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
+            threadPool.remove(Thread.currentThread());
         }).start();
 
-
+        waves();
 
     }
 
