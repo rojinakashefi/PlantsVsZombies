@@ -5,6 +5,8 @@ import Miscs.Sounds;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class PauseMenu extends JFrame {
     SpringLayout layout = new SpringLayout();
@@ -33,5 +35,54 @@ public class PauseMenu extends JFrame {
                 Sounds.backPlay(Sounds.IN_GAME);
             }
         });
+        layout.putConstraint(SpringLayout.WEST, muteCheckBox, 35, SpringLayout.WEST, pane);
+        layout.putConstraint(SpringLayout.NORTH, muteCheckBox, 110, SpringLayout.NORTH, pane);
+
+        layout.putConstraint(SpringLayout.WEST, closeButton, 481, SpringLayout.WEST, pane);
+        layout.putConstraint(SpringLayout.NORTH, closeButton, 13, SpringLayout.NORTH, pane);
+
+        layout.putConstraint(SpringLayout.WEST, quitButton, 96, SpringLayout.WEST, pane);
+        layout.putConstraint(SpringLayout.NORTH, quitButton, 252, SpringLayout.NORTH, pane);
+        layout.putConstraint(SpringLayout.WEST, saveButton, 284, SpringLayout.WEST, pane);
+        layout.putConstraint(SpringLayout.NORTH, saveButton, 254, SpringLayout.NORTH, pane);
+
+        //addClickListeners();
+
+        setSize(533, 323);
+        setLocationRelativeTo(null);
+        setUndecorated(true);
+        setVisible(true);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+
+            }
+            @Override
+            public void windowClosing(WindowEvent e) {
+                game.resume();
+            }
+            @Override
+            public void windowClosed(WindowEvent e) {
+
+            }
+            @Override
+            public void windowIconified(WindowEvent e) {
+
+            }
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+
+            }
+            @Override
+            public void windowActivated(WindowEvent e) {
+
+            }
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+
+            }
+        });
+    }
     }
 }
