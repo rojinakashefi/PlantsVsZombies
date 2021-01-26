@@ -5,6 +5,8 @@ import Miscs.Sounds;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -46,7 +48,7 @@ public class PauseMenu extends JFrame {
         layout.putConstraint(SpringLayout.WEST, saveButton, 284, SpringLayout.WEST, pane);
         layout.putConstraint(SpringLayout.NORTH, saveButton, 254, SpringLayout.NORTH, pane);
 
-        //addClickListeners();
+        addClickListeners();
 
         setSize(533, 323);
         setLocationRelativeTo(null);
@@ -84,5 +86,76 @@ public class PauseMenu extends JFrame {
             }
         });
     }
+    private void addClickListeners() {
+        saveButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                mainGame.newLevel.gameSave(mainGame);
+                dispose();
+                mainGame.dispose();
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+        quitButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                System.exit(0);
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+        closeButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                mainGame.resume();
+                dispose();
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
     }
 }
+
