@@ -795,5 +795,19 @@ public class Game extends JFrame {
             newLevel.save();
         }
     }
+    public synchronized static Zombie getFirstZombieByRow(Plant plant) {
+        if (Zombie.zombies.size() != 0) {
+            Zombie first = Zombie.zombies.get(0);
+            for (int i = 1; i < Zombie.zombies.size(); i++) {
+                if (Zombie.zombies.get(i).row == Sluts.getYSlut(plant.getBounds())) {
+                    if (first.getBounds().x >= Zombie.zombies.get(i).getBounds().x)
+                        first = Zombie.zombies.get(i);
+                }
+            }
+            if(first.getX() < plant.getX()) first = null;
+            return first;
+        }
+        return null;
+    }
 
 }
