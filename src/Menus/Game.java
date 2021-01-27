@@ -75,6 +75,7 @@ public class Game extends JFrame {
     int gone = 0, round = 0;
 
     public Game(Levels level, boolean mute) {
+        this.setIconImage(new ImageIcon("icon.webp").getImage());
         muted = mute;
         Game.mute = mute;
         Sluts.setSluts(); // Defines the checkered ground as sluts and calculates their coordinates
@@ -91,6 +92,8 @@ public class Game extends JFrame {
 
         label = new JLabel();// Setting the background
 
+        pauseButton();
+
         backgrounds(); // Creates the main and the plants menu background
 
         mower();
@@ -106,7 +109,7 @@ public class Game extends JFrame {
             threadPool.add(Thread.currentThread());
             try {
                 while (!won || !lost) {
-                    Thread.sleep(20000);
+                    Thread.sleep(skyTimer[difficulty] * 1000L);
                     sunLanding(null);
                     if (paused) break;
                 }
@@ -117,22 +120,6 @@ public class Game extends JFrame {
         }).start();
 
         waves();
-
-    }
-
-    private void mower() {
-        for (int i = 0; i < 5; i++) {
-            final int[] ii = {i};
-            new Thread(() -> {
-                int posY = Sluts.getMowerLocation(ii[0]);
-                int posX = 175;
-                mowers[ii[0]] = new JLabel();
-                mowers[ii[0]].setIcon(mowerIcon);
-                mowers[ii[0]].setBounds(posX, posY, 82, 70);
-                label.add(mowers[ii[0]]);
-                mowerAvailable[ii[0]] = true;
-            }).start();
-        }
     }
 
     private void runMower(int ySlut) {
