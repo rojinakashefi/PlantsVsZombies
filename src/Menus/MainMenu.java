@@ -20,6 +20,8 @@ import static Miscs.Sounds.*;
  *
  */
 public class MainMenu extends JFrame {
+    public int mode = 0;
+    public String username = "newbie";
     JLabel back, newButton, loadButton, soundButton, exitButton;
     public MainMenu() {
         setVisible(true);
