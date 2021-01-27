@@ -49,6 +49,10 @@ import static Miscs.Sounds.*;
  */
 
 public class Game extends JFrame {
+    private final int[] skyTimer = {25, 30};
+    private final int[] sunflowerTimer = {20, 25};
+    private final int[] walkDelay = {120, 100};
+    private final int[] additionalDamage = {0, 10, 10, 10};
     int difficulty, gap = 5, suns = 500;
     boolean[] mowerAvailable = new boolean[5];
     JLabel[] mowers = new JLabel[5];
@@ -63,7 +67,7 @@ public class Game extends JFrame {
     JLabel keptSun;
     JLabel blackScreen;
     public static ArrayList<Coordination> objects = new ArrayList<>();
-    Levels newLevel;
+    public Levels newLevel;
     public static boolean mute;
     public static ArrayList<Timer> timerPool = new ArrayList<>();
     public static ArrayList<Thread> threadPool = new ArrayList<>();
@@ -71,6 +75,7 @@ public class Game extends JFrame {
     int gone = 0, round = 0;
 
     public Game(Levels level, boolean mute) {
+        this.setIconImage(new ImageIcon("icon.webp").getImage());
         muted = mute;
         Game.mute = mute;
         Sluts.setSluts(); // Defines the checkered ground as sluts and calculates their coordinates
@@ -87,6 +92,8 @@ public class Game extends JFrame {
 
         label = new JLabel();// Setting the background
 
+        pauseButton();
+
         backgrounds(); // Creates the main and the plants menu background
 
         mower();
@@ -102,7 +109,7 @@ public class Game extends JFrame {
             threadPool.add(Thread.currentThread());
             try {
                 while (!won || !lost) {
-                    Thread.sleep(20000);
+                    Thread.sleep(skyTimer[difficulty] * 1000L);
                     sunLanding(null);
                     if (paused) break;
                 }
@@ -113,7 +120,6 @@ public class Game extends JFrame {
         }).start();
 
         waves();
-
     }
 
     private void mower() {
@@ -130,7 +136,6 @@ public class Game extends JFrame {
             }).start();
         }
     }
-
     private void runMower(int ySlut) {
         mowerAvailable[ySlut] = false;
         Sounds.backPlay(MOWER);
@@ -808,6 +813,13 @@ public class Game extends JFrame {
             return first;
         }
         return null;
+    }
+    private void pauseButton() {
+        pauseButton = new JLabel();
+        label.add(pauseButton);
+        pauseButton.setIcon(Icons.pauseButtonIcon);
+        pauseButton.setBounds(950, 1, 40, 40);
+        pauseButton.addMouseListener(pauseClickListener(pauseButton));
     }
 
 }

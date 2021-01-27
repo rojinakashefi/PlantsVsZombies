@@ -22,4 +22,9 @@ public class Icons {
     public static ImageIcon closeDialogIcon = new ImageIcon("gfx/closeD.pvz");
     public static ImageIcon saveNExitIcon = new ImageIcon("gfx/saveNexit.pvz");
     public static ImageIcon quitGameIcon = new ImageIcon("gfx/quit.pvz");
+    public static ImageIcon modeHIcon = new ImageIcon("gfx/modeH.pvz");
+    public static ImageIcon modeHOffIcon = new ImageIcon("gfx/modeHOff.pvz");
+    public static ImageIcon modeNOffIcon = new ImageIcon("gfx/modeNOff.pvz");
+    public static ImageIcon modeNIcon = new ImageIcon("gfx/modeN.pvz");
+    public static ImageIcon settingsIcon = new ImageIcon("gfx/settings.pvz");
 }
