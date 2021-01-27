@@ -49,6 +49,10 @@ import static Miscs.Sounds.*;
  */
 
 public class Game extends JFrame {
+    private final int[] skyTimer = {25, 30};
+    private final int[] sunflowerTimer = {20, 25};
+    private final int[] walkDelay = {120, 100};
+    private final int[] additionalDamage = {0, 10, 10, 10};
     int difficulty, gap = 5, suns = 500;
     boolean[] mowerAvailable = new boolean[5];
     JLabel[] mowers = new JLabel[5];
@@ -63,7 +67,7 @@ public class Game extends JFrame {
     JLabel keptSun;
     JLabel blackScreen;
     public static ArrayList<Coordination> objects = new ArrayList<>();
-    Levels newLevel;
+    public Levels newLevel;
     public static boolean mute;
     public static ArrayList<Timer> timerPool = new ArrayList<>();
     public static ArrayList<Thread> threadPool = new ArrayList<>();
