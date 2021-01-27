@@ -1,7 +1,12 @@
 package Menus;
 
+import Miscs.Icons;
+import Miscs.Sounds;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class SettingMenu extends JFrame{
     SpringLayout layout = new SpringLayout();
