@@ -49,12 +49,20 @@ import static Miscs.Sounds.*;
  */
 
 public class Game extends JFrame {
-    int difficulty, gap = 5, suns = 500;
+    private final int[] skyTimer = {25, 30};
+    private final int[] sunflowerTimer = {20, 25};
+    private final int[] walkDelay = {130, 115};
+    private final int[] additionalDamage = {0, 10, 10, 15, 5};
+    int difficulty, gap = 5, suns = 2500; //TODO
     boolean[] mowerAvailable = new boolean[5];
     JLabel[] mowers = new JLabel[5];
-    boolean sunAvail = true, peaAvail = true, nutAvail = true, snowAvail = true, cherAvail = true, repAvail = true;
-    float[] coolDownN = {7.5f, 7.5f, 7.5f, 30f, 30f, 15f};
-    float[] coolDownH = {7.5f, 7.5f, 30f, 30f, 45f, 25f};
+    boolean sunAvail = true, peaAvail = true,
+            nutAvail = true, snowAvail = true,
+            cherAvail = true, repAvail = true,
+            threeAvail = true, potAvail = true,
+            gatAvail = true, beetAvail = true;
+    float[] coolDownN = {7.5f, 7.5f, 7.5f, 30f, 30f, 15f, 30f, 15f, 30f, 25f};
+    float[] coolDownH = {7.5f, 7.5f, 30f, 30f, 45f, 25f, 30f, 25f, 45f, 30f};
     boolean won = false,lost = false, containsIcon = false;
     JLabel clicked = null;
     JLabel label, label2;
@@ -62,8 +70,9 @@ public class Game extends JFrame {
     JLabel plants;
     JLabel keptSun;
     JLabel blackScreen;
+    JLabel deck;
     public static ArrayList<Coordination> objects = new ArrayList<>();
-    Levels newLevel;
+    public Levels newLevel;
     public static boolean mute;
     public static ArrayList<Timer> timerPool = new ArrayList<>();
     public static ArrayList<Thread> threadPool = new ArrayList<>();
@@ -782,7 +791,7 @@ public class Game extends JFrame {
             Sounds.play(WIN);
             pause();
             Thread.sleep(1000);
-            newLevel.save();
+
         }
     }
 
@@ -792,7 +801,7 @@ public class Game extends JFrame {
             Sounds.play(LOSE);
             pause();
             Thread.sleep(1000);
-            newLevel.save();
+
         }
     }
 
