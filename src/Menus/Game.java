@@ -891,6 +891,14 @@ public class Game extends JFrame {
         paused = false;
         pauseButton.addMouseListener(pauseClickListener(pauseButton));
     }
-
+    public static void main(String[] args) {
+        if (Levels.load() == null)
+            new Game(new Levels(), false);
+        else {
+            ArrayList<Levels> level= Levels.load();
+            assert level != null;
+            new Game(level.get(0), false);
+        }
+    }
 
 }
