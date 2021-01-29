@@ -10,7 +10,6 @@ import java.util.List;
 
 import static Main.Main.*;
 
-
 public class Levels implements Comparable<Levels> {
     public int difficulty;
     public int wins, losses, score;
@@ -64,5 +63,8 @@ public class Levels implements Comparable<Levels> {
         int compareScore=(compare).score;
         return this.score - compareScore;
     }
-
+    public void save() {
+        loadedPlayers.remove(loadedPlayers.get(findPlayerIndex(this.username)));
+        loadedPlayers.add(this);
+    }
 }
