@@ -279,6 +279,15 @@ public class Game extends JFrame {
             newLevel.save();
         }
     }
+    private void lose() throws InterruptedException{
+        if (!won || !lost) {
+            lost = true;
+            Sounds.play(LOSE);
+            pause();
+            Thread.sleep(1000);
+            newLevel.save();
+        }
+    }
     private void eatPlant(Zombie zombie, Plant victim) {
         Thread t = new Thread( () -> {
             threadPool.add(Thread.currentThread());
@@ -808,15 +817,5 @@ public class Game extends JFrame {
         //new PauseMenu(this);
     }
 
-
-    private void lose() throws InterruptedException{
-        if (!won || !lost) {
-            lost = true;
-            Sounds.play(LOSE);
-            pause();
-            Thread.sleep(1000);
-
-        }
-    }
 
 }
