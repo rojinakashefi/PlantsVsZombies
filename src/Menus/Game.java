@@ -694,6 +694,69 @@ public class Game extends JFrame {
         label.add(clicked);
         label.addMouseListener(labelClickListener());
     }
+    private void readySetPlant() {
+        try {
+            placeRandomZombies(label);
+            new Thread(() -> Sounds.play(STARTING)).start();// Play starting music
+            label.setBounds(-300, 0, 1400, 600);
+            Thread.sleep(5000);
+            Timer t = new Timer(33, e ->
+                    label.setBounds(label.getX() + 10, label.getY(), 1400, 600));
+            t.start();
+            Thread.sleep(999);
+            t.stop();
+            new Thread(() -> Sounds.play(READY)).start();// Play background music
+            readyLabel();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    private void readyLabel() throws InterruptedException {
+        JLabel start = new JLabel();
+        //noinspection SpellCheckingInspection
+        start.setFont(new Font("Segoe Script", Font.BOLD, 70));
+        start.setForeground(Color.red);
+        start.setHorizontalAlignment(SwingConstants.CENTER);
+        start.setBounds(360, 120, 300, 300);
+        label.add(start);
+        start.setText("Ready?");
+        Thread.sleep(600);
+        start.setText("Set");
+        Thread.sleep(600);
+        start.setText("Plant!");
+        Thread.sleep(800);
+        start.setText("");
+    }
+    /**
+     * This methods place some random number of zombies in the road. Just before the game starts.
+     * @param label the container that we want to place the zombies (default is the background label.)
+     */
+    private void placeRandomZombies(Container label) {
+        new Thread(() -> {//1017, 84
+            Random random = new Random();
+            int count = 5 + random.nextInt(10);
+            IntStream iX = random.ints(count, 1017, 1200);
+            int[] posX = iX.toArray();
+            IntStream iY = random.ints(count, 84, 510);
+            int[] posY = iY.toArray();
+            JLabel[] randomZombie = new JLabel[count];
+            for (int i = 0; i < count; i++) {
+                randomZombie[i] = new JLabel();
+                randomZombie[i].setIcon(Icons.constantZombieIcon);
+                label.add(randomZombie[i]);
+                randomZombie[i].setBounds(posX[i], posY[i], 62, 100);
+            }
+            try {
+                Thread.sleep(3000);
+                for (int i = 0; i < count; i++) {
+                    remove(randomZombie[i]);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }).start();
+    }
 
     private void eatPlant(Zombie zombie, Plant victim) {
         Thread t = new Thread( () -> {
@@ -717,54 +780,6 @@ public class Game extends JFrame {
         t.start();
     }
 
-    private void readySetPlant() {
-        try {
-            placeRandomZombies(label);
-            new Thread(() -> Sounds.play(STARTING)).start();// Play starting music
-            label.setBounds(-300, 0, 1400, 600);
-            Thread.sleep(5000);
-            Timer t = new Timer(33, e ->
-                    label.setBounds(label.getX() + 10, label.getY(), 1400, 600));
-            t.start();
-            Thread.sleep(999);
-            t.stop();
-            new Thread(() -> Sounds.play(READY)).start();// Play background music
-            readyLabel();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * This methods place some random number of zombies in the road. Just before the game starts.
-     * @param label the container that we want to place the zombies (default is the background label.)
-     */
-    private void placeRandomZombies(Container label) {
-        new Thread(() -> {//1017, 84
-            Random random = new Random();
-            int count = random.nextInt(10 * difficulty + 1);
-            IntStream iX = random.ints(count, 1017, 1400);
-            int[] posX = iX.toArray();
-            IntStream iY = random.ints(count, 84, 600);
-            int[] posY = iY.toArray();
-            JLabel[] l1 = new JLabel[count];
-            for (int i = 0; i < count; i++) {
-                l1[i] = new JLabel();
-                l1[i].setIcon(new ImageIcon("gfx/zombies.pvz"));
-                label.add(l1[i]);
-                l1[i].setBounds(posX[i], posY[i], 62, 100);
-            }
-            try {
-                Thread.sleep(3000);
-                for (int i = 0; i < count; i++) {
-                    remove(l1[i]);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }).start();
-    }
     private void sendZombies() {
         int zombies;
         if (round == 1) zombies = 5;
@@ -819,22 +834,6 @@ public class Game extends JFrame {
 
 
 
-    private void readyLabel() throws InterruptedException {
-        JLabel start = new JLabel();
-        //noinspection SpellCheckingInspection
-        start.setFont(new Font("Segoe Script", Font.BOLD, 70));
-        start.setForeground(Color.red);
-        start.setHorizontalAlignment(SwingConstants.CENTER);
-        start.setBounds(360, 120, 300, 300);
-        label.add(start);
-        start.setText("Ready?");
-        Thread.sleep(600);
-        start.setText("Set");
-        Thread.sleep(600);
-        start.setText("Plant!");
-        Thread.sleep(800);
-        start.setText("");
-    }
 
     @SuppressWarnings("RedundantCast")
     private synchronized void walk(Zombie zombie) {
