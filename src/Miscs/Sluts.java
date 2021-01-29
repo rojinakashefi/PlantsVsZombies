@@ -48,4 +48,23 @@ public class Sluts {
     public static int getMowerLocation(int YSlut) {
         return sluts[0][YSlut][1];
     }
+
+    static int[][][] cardSluts = new int[6][2][2];
+    static final int FIRST_CARD_X = 4, FIRST_CARD_Y = 8;
+
+    public static void setCardSluts() {
+        for (int i = 0; i < cardSluts.length; i++) {
+            for (int j = 0; j < cardSluts[i].length; j++) {
+                cardSluts[i][j][0] = FIRST_CARD_X + i * 53;
+                cardSluts[i][j][1] = FIRST_CARD_Y + j * 75;
+            }
+        }
+    }
+
+    public static Rectangle getCardSlut(int i) {
+
+    }
+
+    public static Rectangle getCardPos(int i) {
+    }
 }
