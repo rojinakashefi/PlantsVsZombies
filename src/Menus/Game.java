@@ -234,6 +234,51 @@ public class Game extends JFrame {
         }
         return null;
     }
+    public static void removePlant (Plant plant) {
+        Plant.plants.remove(plant);
+        for(int i = 0; i < objects.size(); i++) {
+            if(objects.get(i).plant == plant) {
+                objects.remove(i);
+                break;
+            }
+        }
+    }
+    private void waves() {
+        new Thread(() -> {
+            Sounds.backPlay(IN_GAME); // Play before-game background music
+            try {
+                Thread.sleep(gap * 1000L - 500);
+                Sounds.backPlay(ZOMBIES_COMING); // Play The Zombies are coming sound effect
+                Thread.sleep(500);
+                while (paused) Thread.sleep(1000);
+                ++round;
+                sendZombies(); // Send Zombies to the field. wave 1
+                Thread.sleep(150000);
+                while (paused) Thread.sleep(1000);
+                ++round;
+                sendZombies(); // Send Zombies to the field. wave 2
+                Thread.sleep(180000);
+                while (paused) Thread.sleep(1000);
+                ++round;
+                sendZombies(); // Send Zombies to the field. wave 3
+                Thread.sleep(150000);
+                //noinspection StatementWithEmptyBody
+                while (!Zombie.zombies.isEmpty()) ;
+                win();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+    private void win() throws InterruptedException {
+        if (!lost || !won) {
+            won = true;
+            Sounds.play(WIN);
+            pause();
+            Thread.sleep(1000);
+            newLevel.save();
+        }
+    }
     private void eatPlant(Zombie zombie, Plant victim) {
         Thread t = new Thread( () -> {
             threadPool.add(Thread.currentThread());
@@ -697,15 +742,6 @@ public class Game extends JFrame {
             }
         }).start();
     }
-    public static void removePlant (Plant plant) {
-        Plant.plants.remove(plant);
-        for(int i = 0; i < objects.size(); i++) {
-            if(objects.get(i).plant == plant) {
-                objects.remove(i);
-                break;
-            }
-        }
-    }
 
     @SuppressWarnings("RedundantCast")
     private synchronized void walk(Zombie zombie) {
@@ -771,42 +807,7 @@ public class Game extends JFrame {
         }
         //new PauseMenu(this);
     }
-    private void waves() {
-        new Thread(() -> {
-            Sounds.backPlay(IN_GAME); // Play before-game background music
-            try {
-                Thread.sleep(gap * 1000L - 500);
-                Sounds.backPlay(ZOMBIES_COMING); // Play The Zombies are coming sound effect
-                Thread.sleep(500);
-                while (paused) Thread.sleep(1000);
-                ++round;
-                sendZombies(); // Send Zombies to the field. wave 1
-                Thread.sleep(150000);
-                while (paused) Thread.sleep(1000);
-                ++round;
-                sendZombies(); // Send Zombies to the field. wave 2
-                Thread.sleep(180000);
-                while (paused) Thread.sleep(1000);
-                ++round;
-                sendZombies(); // Send Zombies to the field. wave 3
-                Thread.sleep(150000);
-                //noinspection StatementWithEmptyBody
-                while (!Zombie.zombies.isEmpty()) ;
-                win();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-    private void win() throws InterruptedException {
-        if (!lost || !won) {
-            won = true;
-            Sounds.play(WIN);
-            pause();
-            Thread.sleep(1000);
 
-        }
-    }
 
     private void lose() throws InterruptedException{
         if (!won || !lost) {
