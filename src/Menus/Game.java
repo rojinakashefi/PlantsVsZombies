@@ -212,6 +212,9 @@ public class Game extends JFrame {
             }
         }).start();
     }
+    private void tripleShot(Plant shooterPlant) {
+
+    }
 
     private MouseListener pauseClickListener(JLabel pauseButton) {
         return new MouseListener() {
