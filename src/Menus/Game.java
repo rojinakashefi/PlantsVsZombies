@@ -196,14 +196,7 @@ public class Game extends JFrame {
                             if (isFrozen) pea.setIcon(Icons.snowBulletIcon);
                             else pea.setIcon(Icons.peaBulletIcon);
                             pea.setBounds(shooterPlant.getBounds().x + 46, shooterPlant.getBounds().y + 16, 28, 28);
-                            long sleep;
-                            switch (shooterPlant.speed) {
-                                case 1 -> sleep = 1000L;
-                                case 2 -> sleep = 500L;
-                                case 3 -> sleep = 333L;
-                                default -> throw new IllegalStateException("Unexpected value: " + shooterPlant.speed);
-                            }
-                            Thread.sleep(sleep);
+                            Thread.sleep(shooterPlant.speed * 1000L);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -211,9 +204,6 @@ public class Game extends JFrame {
                 } else System.out.println("Pos is null");
             }
         }).start();
-    }
-    private void tripleShot(Plant shooterPlant) {
-
     }
 
     private MouseListener pauseClickListener(JLabel pauseButton) {
@@ -801,7 +791,7 @@ public class Game extends JFrame {
             Sounds.play(WIN);
             pause();
             Thread.sleep(1000);
-            newLevel.save();
+
         }
     }
 
