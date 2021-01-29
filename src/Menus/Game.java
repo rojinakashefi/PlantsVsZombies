@@ -681,6 +681,20 @@ public class Game extends JFrame {
             }
         };
     }
+    private void backgrounds() {
+        label2 = new JLabel();// Setting the background
+        label2.setIcon(Icons.background);
+        label.setIcon(Icons.background);
+        label.setBounds(0, 0, 1400, 600);
+        plants = new JLabel();
+        add(label2);
+        add(label);
+
+        clicked = new JLabel();
+        label.add(clicked);
+        label.addMouseListener(labelClickListener());
+    }
+
     private void eatPlant(Zombie zombie, Plant victim) {
         Thread t = new Thread( () -> {
             threadPool.add(Thread.currentThread());
@@ -701,19 +715,6 @@ public class Game extends JFrame {
             threadPool.remove(Thread.currentThread());
         });
         t.start();
-    }
-
-    private void backgrounds() {
-        label = new JLabel();// Setting the background
-        label.setIcon(new ImageIcon("gfx/back.pvz"));
-        label.setBounds(0, 0, 1400, 600);
-        add(label);
-        plants = new JLabel();
-        plants.setBounds(200, 0,542, 106);
-        clicked = new JLabel();
-        label.add(clicked);
-        label.add(plants);
-        label.addMouseListener(labelClickListener());
     }
 
     private void readySetPlant() {
