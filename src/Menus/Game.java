@@ -196,7 +196,14 @@ public class Game extends JFrame {
                             if (isFrozen) pea.setIcon(Icons.snowBulletIcon);
                             else pea.setIcon(Icons.peaBulletIcon);
                             pea.setBounds(shooterPlant.getBounds().x + 46, shooterPlant.getBounds().y + 16, 28, 28);
-                            Thread.sleep(shooterPlant.speed * 1000L);
+                            long sleep;
+                            switch (shooterPlant.speed) {
+                                case 1 -> sleep = 1000L;
+                                case 2 -> sleep = 500L;
+                                case 3 -> sleep = 333L;
+                                default -> throw new IllegalStateException("Unexpected value: " + shooterPlant.speed);
+                            }
+                            Thread.sleep(sleep);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
