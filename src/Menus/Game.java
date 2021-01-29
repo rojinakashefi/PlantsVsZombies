@@ -51,14 +51,18 @@ import static Miscs.Sounds.*;
 public class Game extends JFrame {
     private final int[] skyTimer = {25, 30};
     private final int[] sunflowerTimer = {20, 25};
-    private final int[] walkDelay = {120, 100};
-    private final int[] additionalDamage = {0, 10, 10, 10};
-    int difficulty, gap = 5, suns = 500;
+    private final int[] walkDelay = {130, 115};
+    private final int[] additionalDamage = {0, 10, 10, 15, 5};
+    int difficulty, gap = 5, suns = 2500; //TODO
     boolean[] mowerAvailable = new boolean[5];
     JLabel[] mowers = new JLabel[5];
-    boolean sunAvail = true, peaAvail = true, nutAvail = true, snowAvail = true, cherAvail = true, repAvail = true;
-    float[] coolDownN = {7.5f, 7.5f, 7.5f, 30f, 30f, 15f};
-    float[] coolDownH = {7.5f, 7.5f, 30f, 30f, 45f, 25f};
+    boolean sunAvail = true, peaAvail = true,
+            nutAvail = true, snowAvail = true,
+            cherAvail = true, repAvail = true,
+            threeAvail = true, potAvail = true,
+            gatAvail = true, beetAvail = true;
+    float[] coolDownN = {7.5f, 7.5f, 7.5f, 30f, 30f, 15f, 30f, 15f, 30f, 25f};
+    float[] coolDownH = {7.5f, 7.5f, 30f, 30f, 45f, 25f, 30f, 25f, 45f, 30f};
     boolean won = false,lost = false, containsIcon = false;
     JLabel clicked = null;
     JLabel label, label2;
@@ -66,6 +70,7 @@ public class Game extends JFrame {
     JLabel plants;
     JLabel keptSun;
     JLabel blackScreen;
+    JLabel deck;
     public static ArrayList<Coordination> objects = new ArrayList<>();
     public Levels newLevel;
     public static boolean mute;
@@ -75,7 +80,6 @@ public class Game extends JFrame {
     int gone = 0, round = 0;
 
     public Game(Levels level, boolean mute) {
-        this.setIconImage(new ImageIcon("icon.webp").getImage());
         muted = mute;
         Game.mute = mute;
         Sluts.setSluts(); // Defines the checkered ground as sluts and calculates their coordinates
@@ -92,8 +96,6 @@ public class Game extends JFrame {
 
         label = new JLabel();// Setting the background
 
-        pauseButton();
-
         backgrounds(); // Creates the main and the plants menu background
 
         mower();
@@ -109,7 +111,7 @@ public class Game extends JFrame {
             threadPool.add(Thread.currentThread());
             try {
                 while (!won || !lost) {
-                    Thread.sleep(skyTimer[difficulty] * 1000L);
+                    Thread.sleep(20000);
                     sunLanding(null);
                     if (paused) break;
                 }
@@ -120,6 +122,7 @@ public class Game extends JFrame {
         }).start();
 
         waves();
+
     }
 
     private void mower() {
@@ -136,6 +139,7 @@ public class Game extends JFrame {
             }).start();
         }
     }
+
     private void runMower(int ySlut) {
         mowerAvailable[ySlut] = false;
         Sounds.backPlay(MOWER);
@@ -210,7 +214,7 @@ public class Game extends JFrame {
             public void mousePressed(MouseEvent e) {}
             @Override
             public void mouseReleased(MouseEvent e) {
-                pauseMenu();
+                //pauseMenu();
                 pause();
                 pauseButton.removeMouseListener(pauseButton.getMouseListeners()[0]);
             }
@@ -787,7 +791,7 @@ public class Game extends JFrame {
             Sounds.play(WIN);
             pause();
             Thread.sleep(1000);
-            newLevel.save();
+
         }
     }
 
@@ -797,29 +801,8 @@ public class Game extends JFrame {
             Sounds.play(LOSE);
             pause();
             Thread.sleep(1000);
-            newLevel.save();
+
         }
-    }
-    public synchronized static Zombie getFirstZombieByRow(Plant plant) {
-        if (Zombie.zombies.size() != 0) {
-            Zombie first = Zombie.zombies.get(0);
-            for (int i = 1; i < Zombie.zombies.size(); i++) {
-                if (Zombie.zombies.get(i).row == Sluts.getYSlut(plant.getBounds())) {
-                    if (first.getBounds().x >= Zombie.zombies.get(i).getBounds().x)
-                        first = Zombie.zombies.get(i);
-                }
-            }
-            if(first.getX() < plant.getX()) first = null;
-            return first;
-        }
-        return null;
-    }
-    private void pauseButton() {
-        pauseButton = new JLabel();
-        label.add(pauseButton);
-        pauseButton.setIcon(Icons.pauseButtonIcon);
-        pauseButton.setBounds(950, 1, 40, 40);
-        pauseButton.addMouseListener(pauseClickListener(pauseButton));
     }
 
 }
