@@ -757,29 +757,6 @@ public class Game extends JFrame {
 
         }).start();
     }
-
-    private void eatPlant(Zombie zombie, Plant victim) {
-        Thread t = new Thread( () -> {
-            threadPool.add(Thread.currentThread());
-            do {
-                if (zombie.health > 0)
-                    if (zombie.getClass() != Normal.class)
-                        victim.lossHealth(15);
-                    else victim.lossHealth(10);
-                else return;
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            } while (zombie.health > 0 && victim.health > 0 && !paused);
-            if (zombie.health > 0)
-                walk(zombie);
-            threadPool.remove(Thread.currentThread());
-        });
-        t.start();
-    }
-
     private void sendZombies() {
         int zombies;
         if (round == 1) zombies = 5;
@@ -791,7 +768,7 @@ public class Game extends JFrame {
                 int[] location;
                 threadPool.add(Thread.currentThread());
                 for (int i = 0; i < zombies; i++) {
-                    int type = random.nextInt(5);
+                    int type = random.nextInt(7);
                     Zombie zombie;
                     int rand = random.nextInt(5);
                     location = Sluts.getZombieLocation(rand);
@@ -800,6 +777,8 @@ public class Game extends JFrame {
                         case 1 -> zombie = new ConeHead(label, rand);
                         case 2 -> zombie = new BucketHead(label, rand);
                         case 3 -> zombie = new Football(label, rand);
+                        case 5 -> zombie = new Newspaper(label, rand);
+                        case 6 -> zombie = new PoleVaulting(label, rand);
                         default -> throw new RuntimeException("sendZombies Switch");
                     }
                     if (zombie.getClass() == BucketHead.class)
@@ -831,9 +810,27 @@ public class Game extends JFrame {
             }
         }).start();
     }
-
-
-
+    private void eatPlant(Zombie zombie, Plant victim) {
+        Thread t = new Thread( () -> {
+            threadPool.add(Thread.currentThread());
+            do {
+                if (zombie.health > 0)
+                    if (zombie.getClass() != Normal.class)
+                        victim.lossHealth(15);
+                    else victim.lossHealth(10);
+                else return;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (zombie.health > 0 && victim.health > 0 && !paused);
+            if (zombie.health > 0)
+                walk(zombie);
+            threadPool.remove(Thread.currentThread());
+        });
+        t.start();
+    }
 
     @SuppressWarnings("RedundantCast")
     private synchronized void walk(Zombie zombie) {
