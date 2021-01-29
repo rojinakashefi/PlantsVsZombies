@@ -852,15 +852,19 @@ public class Game extends JFrame {
         t.start();
         timerPool.add(t);
     }
-
     private void eatPlant(Zombie zombie, Plant victim) {
         Thread t = new Thread( () -> {
+            int i;
+            if (zombie.getClass() == Normal.class) i = 0;
+            else if (zombie.getClass() == ConeHead.class) i = 1;
+            else if (zombie.getClass() == BucketHead.class) i = 2;
+            else if (zombie.getClass() == Football.class) i = 3;
+            else i = -1;
+            int amount = zombie.damage + additionalDamage[i] * difficulty;
             threadPool.add(Thread.currentThread());
             do {
                 if (zombie.health > 0)
-                    if (zombie.getClass() != Normal.class)
-                        victim.lossHealth(15);
-                    else victim.lossHealth(10);
+                    victim.lossHealth(amount);
                 else return;
                 try {
                     Thread.sleep(1000);
@@ -874,7 +878,6 @@ public class Game extends JFrame {
         });
         t.start();
     }
-
     private void pause() {
         for (Timer timer: timerPool) timer.stop();
         muted = true;
