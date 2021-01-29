@@ -98,7 +98,7 @@ public class PauseMenu extends JFrame {
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                mainGame.newLevel.gameSave(mainGame);
+                mainGame.newLevel.save();
                 dispose();
                 mainGame.dispose();
             }

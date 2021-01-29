@@ -13,7 +13,7 @@ public abstract class Zombie extends JLabel {
     public int row;
     public int health;
     public int speed;
-    int damage;
+    public int damage;
     ImageIcon walk, die, burned = new ImageIcon("gfx/burned.pvz");
     public int sizeX = 81;
     public int sizeY = 130;
