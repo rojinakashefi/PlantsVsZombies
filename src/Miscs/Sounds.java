@@ -9,17 +9,22 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Sounds {
-    public static ArrayList<Player> backgroundMusic = new ArrayList<>();
+
+    public static ArrayList<SoundPlayer> backgroundMusic = new ArrayList<>();
     public static boolean muted = false;
     public final static int MAIN_MENU = 0, CHOOSE_DECK = 1, IN_GAME = 2, SHOOT_PEA = 3, MOWER = 4, EAT_PLANTS = 5,
             GRUNT = 6, INSUFFICIENT = 7, WIN = 8, LOSE = 9, STARTING = 10, READY = 11, ZOMBIES_COMING = 12, CHERRY_EXPLOSION = 13,
-            SELECT = 14, PLANT = 15, FREEZE = 16;
+            SELECT = 14, PLANT = 15, FREEZE = 16, NEWSPAPER_GRUNT = 17;
 
-    public final static String NONE = "none", PLASTIC = "plastic", METAL = "metal";
+    public final static String NONE = "none", PLASTIC = "plastic", METAL = "metal", PAPER = "paper";
     public static void mute() {
-        for (Player player : backgroundMusic) {
-            player.close();
-            backgroundMusic.remove(player);
+        for (SoundPlayer soundPlayer : backgroundMusic) {
+            soundPlayer.player.close();
+            try {
+                soundPlayer.file.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -43,9 +48,12 @@ public class Sounds {
                         case STARTING -> {
                             file = new FileInputStream("sfx/back/deck.pvz");
                             Player player = new Player(file);
-                            backgroundMusic.add(player);
+                            SoundPlayer sp = new SoundPlayer(player, file);
+                            backgroundMusic.add(sp);
                             player.play(230);
-                            backgroundMusic.remove(player);
+                            backgroundMusic.remove(sp);
+                            player.close();
+                            file.close();
                             file = null;
                         }
                         case MOWER -> file = new FileInputStream("sfx/game/mower.pvz");
@@ -53,14 +61,15 @@ public class Sounds {
                     }
                     if (file != null) {
                         Player player = new Player(file);
-                        backgroundMusic.add(player);
+                        SoundPlayer sp = new SoundPlayer(player, file);
+                        backgroundMusic.add(sp);
                         player.play();
                         if (loop) {
                             while (true) player.play();
                         } else {
                             player.close();
                             file.close();
-                            backgroundMusic.remove(player);
+                            backgroundMusic.remove(sp);
                         }
                     }
                 } catch (IOException | JavaLayerException e) {
@@ -78,6 +87,10 @@ public class Sounds {
                         case SHOOT_PEA -> {
                             if (new Random().nextInt(2) == 0) file = new FileInputStream("sfx/game/shoot1.pvz");
                             else file = new FileInputStream("sfx/game/shoot2.pvz");
+                        }
+                        case NEWSPAPER_GRUNT -> {
+                            if (new Random().nextInt(2) == 0) file = new FileInputStream("sfx/game/news_1.pvz");
+                            else file = new FileInputStream("sfx/game/news_2.pvz");
                         }
                         case EAT_PLANTS -> {
                             switch (new Random().nextInt(4)) {
@@ -122,6 +135,7 @@ public class Sounds {
                             if (new Random().nextInt(2) == 0) file = new FileInputStream("sfx/game/metal1.pvz");
                             else file = new FileInputStream("sfx/game/metal2.pvz");
                         }
+                        case PAPER -> file = new FileInputStream("sfx/game/paper.pvz");
                         default -> throw new RuntimeException("Error in Sounds.play(2) switch");
                     }
                     startSound(file);
@@ -139,5 +153,15 @@ public class Sounds {
             file.close();
 
         }
+    }
+}
+
+class SoundPlayer {
+    FileInputStream file;
+    Player player;
+
+    SoundPlayer(Player player, FileInputStream file) {
+        this.file = file;
+        this.player = player;
     }
 }
