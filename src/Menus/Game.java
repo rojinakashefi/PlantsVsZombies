@@ -791,7 +791,7 @@ public class Game extends JFrame {
             Sounds.play(WIN);
             pause();
             Thread.sleep(1000);
-
+            newLevel.save();
         }
     }
 
