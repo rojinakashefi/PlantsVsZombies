@@ -161,6 +161,79 @@ public class Game extends JFrame {
         timerPool.add(timer);
         timer.start();
     }
+    private void sunLanding(int[] pos) {
+        SunPoint sun = new SunPoint(label);
+
+        Random random = new Random();
+        int posX, posY;
+        final int[] i;
+        if (pos == null) {
+            posY = 80;
+            posX = 200 + random.nextInt(700);
+            i = new int[]{0};
+        } else {
+            posX = pos[0];
+            posY = pos[1];
+            i = new int[]{380};
+        }
+        sun.setBounds(posX + 30, posY, 80, 80);
+        sun.addMouseListener(sunClickListener(sun));
+
+        Timer t = new Timer(20, e -> {
+            sun.setBounds(sun.getX(), sun.getY() + 1, 80, 80);
+            i[0]++;
+            if (i[0] == 400 || sun.getIcon() == null) {
+                ((Timer) e.getSource()).stop();
+                new Timer(5000, ee -> {
+                    sun.setIcon(null);
+                    remove(sun);
+                    sun.remove();
+                    sun.removeMouseListener(null);
+                    ((Timer) ee.getSource()).setRepeats(false);
+                }).start();
+            }
+        });
+        t.start();
+        timerPool.add(t);
+    }
+    private MouseListener sunClickListener(SunPoint sun) {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+                remove(sun);
+                sun.setIcon(null);
+                sun.removeMouseListener(this);
+                addSun(sun.points);
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        };
+    }
+    private void addSun(int points) {
+        suns += points;
+        keptSun.setText(suns + "");
+    }
+    public synchronized static Zombie getFirstZombieByRow(JLabel plant) {
+        if (Zombie.zombies.size() != 0) {
+            Zombie first = Zombie.zombies.get(0);
+            for (int i = 1; i < Zombie.zombies.size(); i++) {
+                if (Zombie.zombies.get(i).row == Sluts.getYSlut(plant.getBounds())) {
+                    if (first.getBounds().x >= Zombie.zombies.get(i).getBounds().x)
+                        first = Zombie.zombies.get(i);
+                }
+            }
+            if(first.getX() < plant.getX()) first = null;
+            return first;
+        }
+        return null;
+    }
     private void eatPlant(Zombie zombie, Plant victim) {
         Thread t = new Thread( () -> {
             threadPool.add(Thread.currentThread());
@@ -518,66 +591,6 @@ public class Game extends JFrame {
     private void produceSun(Plant tmp) {
 
     }
-    private void addSun(int points) {
-        suns += points;
-        keptSun.setText(suns + "");
-    }
-    private void sunLanding(int[] pos) {
-        SunPoint sun = new SunPoint(label);
-
-        Random random = new Random();
-        int posX, posY;
-        final int[] i;
-        if (pos == null) {
-            posY = 80;
-            posX = 200 + random.nextInt(700);
-            i = new int[]{0};
-        } else {
-            posX = pos[0];
-            posY = pos[1];
-            i = new int[]{380};
-        }
-        sun.setBounds(posX + 30, posY, 80, 80);
-        sun.addMouseListener(sunClickListener(sun));
-
-        Timer t = new Timer(20, e -> {
-            sun.setBounds(sun.getX(), sun.getY() + 1, 80, 80);
-            i[0]++;
-            if (i[0] == 400 || sun.getIcon() == null) {
-                ((Timer) e.getSource()).stop();
-                new Timer(5000, ee -> {
-                    sun.setIcon(null);
-                    remove(sun);
-                    sun.remove();
-                    sun.removeMouseListener(null);
-                    ((Timer) ee.getSource()).setRepeats(false);
-                }).start();
-            }
-        });
-        t.start();
-        timerPool.add(t);
-    }
-    private MouseListener sunClickListener(SunPoint sun) {
-        return new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-            }
-            @Override
-            public void mousePressed(MouseEvent e) {
-                remove(sun);
-                sun.setIcon(null);
-                sun.removeMouseListener(this);
-                addSun(sun.points);
-            }
-            @Override
-            public void mouseReleased(MouseEvent e) {}
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-            @Override
-            public void mouseExited(MouseEvent e) {}
-        };
-    }
-
     private void explode(Plant tmp) {
         Timer t = new Timer(2000, e -> {
             Sounds.play(CHERRY_EXPLOSION);
