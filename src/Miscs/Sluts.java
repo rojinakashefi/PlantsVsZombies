@@ -66,5 +66,7 @@ public class Sluts {
     }
 
     public static Rectangle getCardPos(int i) {
+        int x = 85 + i * 60;
+        return new Rectangle(x, 8, 50, 72);
     }
 }
