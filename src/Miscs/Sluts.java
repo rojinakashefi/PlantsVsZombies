@@ -62,7 +62,12 @@ public class Sluts {
     }
 
     public static Rectangle getCardSlut(int i) {
-
+        int j = 0;
+        if (i >= 6) {
+            i -= 6;
+            j++;
+        }
+        return new Rectangle(cardSluts[i][j][0], cardSluts[i][j][1], 50, 72);
     }
 
     public static Rectangle getCardPos(int i) {
