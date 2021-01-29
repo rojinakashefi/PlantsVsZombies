@@ -288,6 +288,44 @@ public class Game extends JFrame {
             newLevel.save();
         }
     }
+    public static void removeZombie(Zombie zombie) {
+        Zombie.zombies.remove(zombie);
+        for(int i = 0; i < objects.size(); i++) {
+            if(objects.get(i).zombie == zombie) {
+                objects.remove(i);
+                break;
+            }
+        }
+    }
+    private void shoot(Plant shooterPlant, boolean isFrozen) {
+        new Thread(() -> {
+            if (shooterPlant.health > 0) {
+                if (TESTING)
+                    System.out.println("Shooter Position For pea: " + shooterPlant.getBounds().x + " " + shooterPlant.getBounds().y);
+                int[] pos = Sluts.getSlut(shooterPlant.getBounds().x, shooterPlant.getBounds().y);
+                if (pos != null) {
+                    do {
+                        try {
+                            PeaBullet pea = new PeaBullet(label, shooterPlant, isFrozen);
+                            if (isFrozen) pea.setIcon(Icons.snowBulletIcon);
+                            else pea.setIcon(Icons.peaBulletIcon);
+                            pea.setBounds(shooterPlant.getBounds().x + 46, shooterPlant.getBounds().y + 16, 28, 28);
+                            long sleep;
+                            switch (shooterPlant.speed) {
+                                case 1 -> sleep = 1000L;
+                                case 2 -> sleep = 500L;
+                                case 3 -> sleep = 333L;
+                                default -> throw new IllegalStateException("Unexpected value: " + shooterPlant.speed);
+                            }
+                            Thread.sleep(sleep);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } while (shooterPlant.health > 0 && !paused);
+                } else System.out.println("Pos is null");
+            }
+        }).start();
+    }
     private void eatPlant(Zombie zombie, Plant victim) {
         Thread t = new Thread( () -> {
             threadPool.add(Thread.currentThread());
@@ -310,28 +348,6 @@ public class Game extends JFrame {
         t.start();
     }
 
-    private void shoot(Plant shooterPlant, boolean isFrozen) {
-        new Thread(() -> {
-            if (shooterPlant.health > 0) {
-                if (TESTING)
-                    System.out.println("Shooter Position For pea: " + shooterPlant.getBounds().x + " " + shooterPlant.getBounds().y);
-                int[] pos = Sluts.getSlut(shooterPlant.getBounds().x, shooterPlant.getBounds().y);
-                if (pos != null) {
-                    do {
-                        try {
-                            PeaBullet pea = new PeaBullet(label, shooterPlant, isFrozen);
-                            if (isFrozen) pea.setIcon(Icons.snowBulletIcon);
-                            else pea.setIcon(Icons.peaBulletIcon);
-                            pea.setBounds(shooterPlant.getBounds().x + 46, shooterPlant.getBounds().y + 16, 28, 28);
-                            Thread.sleep(shooterPlant.speed * 1000L);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    } while (shooterPlant.health > 0 && !paused);
-                } else System.out.println("Pos is null");
-            }
-        }).start();
-    }
 
     private MouseListener pauseClickListener(JLabel pauseButton) {
         return new MouseListener() {
@@ -633,15 +649,6 @@ public class Game extends JFrame {
         start.setText("");
     }
 
-    public static void removeZombie(Zombie zombie) {
-        Zombie.zombies.remove(zombie);
-        for(int i = 0; i < objects.size(); i++) {
-            if(objects.get(i).zombie == zombie) {
-                objects.remove(i);
-                break;
-            }
-        }
-    }
     private void produceSun(Plant tmp) {
 
     }
