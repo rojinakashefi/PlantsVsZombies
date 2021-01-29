@@ -1,41 +1,38 @@
 package Miscs;
 
-import Menus.Game;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import static Main.Main.TESTING;
+import static Main.Main.*;
 
-public class Levels {
+
+public class Levels implements Comparable<Levels> {
     public int difficulty;
+    public int wins, losses, score;
+    public String username;
 
     public Levels() {
-        new Levels(1);
+        new Levels(1, 0, 0, 0, "newbie");
     }
 
-    public Levels(int difficulty) {
+    public Levels(int difficulty, int wins, int losses, int score, String username) {
+        this.wins = wins;
+        this.losses = losses;
+        this.score = score;
+        this.username = username;
         this.difficulty = difficulty;
     }
-    public void gameSave(Game game) {
-        Writer out;
-        try {
-            out = new FileWriter("lastSave.json", false);
-            Gson jsonWriter = new Gson();
-            jsonWriter.toJson(game, out);
-            out.flush();
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (TESTING) System.out.println("File Sent!");
-    }
-    public void save() {
+    public static void save(ArrayList<Levels> levels) {
         Writer out;
         try {
             out = new FileWriter("save.json", false);
             Gson jsonWriter = new Gson();
-            jsonWriter.toJson(this, out);
+            jsonWriter.toJson(levels, out);
             out.flush();
             out.close();
         } catch (IOException e) {
@@ -43,21 +40,29 @@ public class Levels {
         }
         if (TESTING) System.out.println("File Sent!");
     }
-    public static Levels load() {
+    public static ArrayList<Levels> load() {
         Reader in;
-        Levels temp = null;
+        ArrayList<Levels> temp = new ArrayList<>();
         if (seek()) {
             try {
                 in = new FileReader("save.json");
                 Gson jsonReader = new Gson();
-                temp = jsonReader.fromJson(in, Levels.class);
+                temp = jsonReader.fromJson(in, new TypeToken<List<Levels>>(){}.getType());
                 in.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             if (TESTING) System.out.println("File Loaded!");
+            System.out.println(Arrays.toString(temp.toArray()));
             return temp;
         } else return null;
     }
     static boolean seek() { return new File("save.json").exists(); }
+
+    @Override
+    public int compareTo(Levels compare) {
+        int compareScore=(compare).score;
+        return this.score - compareScore;
+    }
+
 }
