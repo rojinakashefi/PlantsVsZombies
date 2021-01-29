@@ -375,28 +375,6 @@ public class Game extends JFrame {
         pauseButton.setBounds(950, 1, 40, 40);
         pauseButton.addMouseListener(pauseClickListener(pauseButton));
     }
-    private void eatPlant(Zombie zombie, Plant victim) {
-        Thread t = new Thread( () -> {
-            threadPool.add(Thread.currentThread());
-            do {
-                if (zombie.health > 0)
-                    if (zombie.getClass() != Normal.class)
-                        victim.lossHealth(15);
-                    else victim.lossHealth(10);
-                else return;
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            } while (zombie.health > 0 && victim.health > 0 && !paused);
-            if (zombie.health > 0)
-                walk(zombie);
-            threadPool.remove(Thread.currentThread());
-        });
-        t.start();
-    }
-
 
     private MouseListener pauseClickListener(JLabel pauseButton) {
         return new MouseListener() {
@@ -416,6 +394,20 @@ public class Game extends JFrame {
             public void mouseExited(MouseEvent e) {}
         };
     }
+    private void pauseMenu() {
+        blackScreen = new JLabel();
+        blackScreen.setIcon(Icons.blackScreen);
+        label.add(blackScreen);
+        blackScreen.setBounds(0, 0, 1000, 645);
+        label.remove(plants);
+        label.add(plants);
+        for (JLabel mower : mowers) {
+            label.remove(mower);
+            label.add(mower);
+        }
+        new PauseMenu(this);
+    }
+    //2methodscommented
     private  MouseListener labelClickListener() {
         return new MouseListener() {
             @Override
@@ -458,18 +450,34 @@ public class Game extends JFrame {
                                 tmp = new Repeater(label, position);
                                 i = 5;
                             }
+                            case "gfx/threepeater.pvz" -> {
+                                tmp = new Threepeater(label, position);
+                                i = 6;
+                            }
+                            case "gfx/gatPea.pvz" -> {
+                                tmp = new GatlingPea(label, position);
+                                i = 7;
+                            }
+                            case "gfx/potato_2.pvz" -> {
+                                tmp = new Potato(label, position);
+                                i = 8;
+                            }
                             default -> throw new RuntimeException("Error in labelClickListener switch");
                         }
                         Sounds.play(PLANT);
-                        tmp.setBounds(location[0], location[1], 100, 100);
+                        tmp.setBounds(location[0], location[1], tmp.getIcon().getIconWidth(), tmp.getIcon().getIconHeight());
                         objects.add(new Coordination(tmp, position[0], position[1]));
                         clicked.setIcon(null);
                         coolDown(i, difficulty==0?coolDownN[i]:coolDownH[i]);
                         addSun(- tmp.cost);
-                        if (tmp.getClass() == PeaShooter.class) shoot(tmp, false);
+                        if (tmp.getClass() == PeaShooter.class
+                                || tmp.getClass() == Repeater.class
+                                || tmp.getClass() == GatlingPea.class) shoot(tmp, false);
                         else if (tmp.getClass() == SnowPea.class) shoot(tmp, true);
                         else if (tmp.getClass() == SunFlower.class) produceSun(tmp);
                         else if (tmp.getClass() == Cherry.class) explode(tmp);
+                        else if (tmp.getClass() == Potato.class) mineSet(tmp);
+                       // else if (tmp.getClass() == Threepeater.class) tripleShot(tmp);
                     }
                 }
             }
@@ -493,6 +501,54 @@ public class Game extends JFrame {
             public void mouseExited(MouseEvent e) {}
         };
     }
+
+    private void mineSet(Plant tmp) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            tmp.setIcon(Icons.potatoBIcon);
+            while (tmp.health > 0) {
+                Zombie aim = getFirstZombieByRow(tmp);
+                if (aim != null)
+                    if (aim.getX() - tmp.getX() < 20) {
+                        play(CHERRY_EXPLOSION);
+                        tmp.setIcon(Icons.potatoCIcon);
+                        aim.kill(true);
+                        new Timer(1000, e -> {
+                            label.remove(tmp);
+                            label.repaint();
+                            ((Timer)e.getSource()).setRepeats(false);
+                        }).start();
+                    }
+            }
+        }).start();
+    }
+
+    private void eatPlant(Zombie zombie, Plant victim) {
+        Thread t = new Thread( () -> {
+            threadPool.add(Thread.currentThread());
+            do {
+                if (zombie.health > 0)
+                    if (zombie.getClass() != Normal.class)
+                        victim.lossHealth(15);
+                    else victim.lossHealth(10);
+                else return;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (zombie.health > 0 && victim.health > 0 && !paused);
+            if (zombie.health > 0)
+                walk(zombie);
+            threadPool.remove(Thread.currentThread());
+        });
+        t.start();
+    }
+
 
     private MouseListener cardsClickListener() {
         return new MouseListener() {
@@ -818,19 +874,6 @@ public class Game extends JFrame {
         remove(blackScreen);
         paused = false;
         pauseButton.addMouseListener(pauseClickListener(pauseButton));
-    }
-    private void pauseMenu() {
-        blackScreen = new JLabel();
-        blackScreen.setIcon(Icons.blackScreen);
-        label.add(blackScreen);
-        blackScreen.setBounds(0, 0, 1000, 645);
-        label.remove(plants);
-        label.add(plants);
-        for (JLabel mower : mowers) {
-            label.remove(mower);
-            label.add(mower);
-        }
-        //new PauseMenu(this);
     }
 
 
