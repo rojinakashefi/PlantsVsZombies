@@ -1,5 +1,7 @@
 package Objects.Zombies;
 
+import Miscs.Sounds;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -16,6 +18,19 @@ public class Newspaper extends Zombie{
     }
     @Override
     public void lossHealth(int Amount, boolean isFrozen) {
-
+        if (health - Amount > 165) Sounds.play(Sounds.NEWSPAPER_GRUNT);
+        health -= Amount;
+        if (health > 0) {
+            if(health >= 200) Sounds.play(Sounds.PAPER);
+            else {
+                Sounds.play(Sounds.NONE);
+                this.setIcon(normWalk);
+            }
+        }
+        if (isFrozen && !frozen) {
+            Sounds.play(Sounds.FREEZE);
+            speed /= 2;
+            frozen = true;
+        }
     }
 }
