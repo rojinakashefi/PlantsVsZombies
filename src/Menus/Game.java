@@ -567,28 +567,6 @@ public class Game extends JFrame {
             }
         }).start();
     }
-    private void eatPlant(Zombie zombie, Plant victim) {
-        Thread t = new Thread( () -> {
-            threadPool.add(Thread.currentThread());
-            do {
-                if (zombie.health > 0)
-                    if (zombie.getClass() != Normal.class)
-                        victim.lossHealth(15);
-                    else victim.lossHealth(10);
-                else return;
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            } while (zombie.health > 0 && victim.health > 0 && !paused);
-            if (zombie.health > 0)
-                walk(zombie);
-            threadPool.remove(Thread.currentThread());
-        });
-        t.start();
-    }
-
 
     private MouseListener cardsClickListener() {
         return new MouseListener() {
@@ -651,15 +629,78 @@ public class Game extends JFrame {
             public void mouseExited(MouseEvent e) {}
         };
     }
+    private void coolDown(int card, float v) {
+        new Thread(() -> {
+            try {
+                switch (card) {
+                    case 0 -> {
+                        sunAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        sunAvail = true;
+                    }
+                    case 1 -> {
+                        peaAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        peaAvail = true;
+                    }
+                    case 2 -> {
+                        snowAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        snowAvail = true;
+                    }
+                    case 3 -> {
+                        nutAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        nutAvail = true;
+                    }
+                    case 4 -> {
+                        cherAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        cherAvail = true;
+                    }
+                    case 5 -> {
+                        repAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        repAvail = true;
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
 
     private MouseMotionListener motionListener() {
         return new MouseMotionAdapter() {
             public void mouseMoved(MouseEvent me)
             {
-                clicked.setBounds( me.getX() - 50, me.getY() - 50, 100, 100);
-                clicked.repaint();
+                if (clicked.getIcon() != null) {
+                    clicked.setBounds(me.getX() - 50, me.getY() - 50, clicked.getIcon().getIconWidth(), clicked.getIcon().getIconHeight());
+                    clicked.repaint();
+                }
             }
         };
+    }
+    private void eatPlant(Zombie zombie, Plant victim) {
+        Thread t = new Thread( () -> {
+            threadPool.add(Thread.currentThread());
+            do {
+                if (zombie.health > 0)
+                    if (zombie.getClass() != Normal.class)
+                        victim.lossHealth(15);
+                    else victim.lossHealth(10);
+                else return;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (zombie.health > 0 && victim.health > 0 && !paused);
+            if (zombie.health > 0)
+                walk(zombie);
+            threadPool.remove(Thread.currentThread());
+        });
+        t.start();
     }
 
     private void backgrounds() {
@@ -792,47 +833,6 @@ public class Game extends JFrame {
         start.setText("Plant!");
         Thread.sleep(800);
         start.setText("");
-    }
-
-    private void coolDown(int card, float v) {
-        new Thread(() -> {
-            try {
-                switch (card) {
-                    case 0 -> {
-                        sunAvail = false;
-                        Thread.sleep((long) (v * 1000));
-                        sunAvail = true;
-                    }
-                    case 1 -> {
-                        peaAvail = false;
-                        Thread.sleep((long) (v * 1000));
-                        peaAvail = true;
-                    }
-                    case 2 -> {
-                        snowAvail = false;
-                        Thread.sleep((long) (v * 1000));
-                        snowAvail = true;
-                    }
-                    case 3 -> {
-                        nutAvail = false;
-                        Thread.sleep((long) (v * 1000));
-                        nutAvail = true;
-                    }
-                    case 4 -> {
-                        cherAvail = false;
-                        Thread.sleep((long) (v * 1000));
-                        cherAvail = true;
-                    }
-                    case 5 -> {
-                        repAvail = false;
-                        Thread.sleep((long) (v * 1000));
-                        repAvail = true;
-                    }
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
     }
 
     @SuppressWarnings("RedundantCast")
