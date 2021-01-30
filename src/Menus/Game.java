@@ -49,12 +49,20 @@ import static Miscs.Sounds.*;
  */
 
 public class Game extends JFrame {
-    int difficulty, gap = 5, suns = 500;
+    private final int[] skyTimer = {25, 30};
+    private final int[] sunflowerTimer = {20, 25};
+    private final int[] walkDelay = {130, 115};
+    private final int[] additionalDamage = {0, 10, 10, 15, 5};
+    int difficulty, gap = 5, suns = 2500; //TODO
     boolean[] mowerAvailable = new boolean[5];
     JLabel[] mowers = new JLabel[5];
-    boolean sunAvail = true, peaAvail = true, nutAvail = true, snowAvail = true, cherAvail = true, repAvail = true;
-    float[] coolDownN = {7.5f, 7.5f, 7.5f, 30f, 30f, 15f};
-    float[] coolDownH = {7.5f, 7.5f, 30f, 30f, 45f, 25f};
+    boolean sunAvail = true, peaAvail = true,
+            nutAvail = true, snowAvail = true,
+            cherAvail = true, repAvail = true,
+            threeAvail = true, potAvail = true,
+            gatAvail = true, beetAvail = true;
+    float[] coolDownN = {7.5f, 7.5f, 7.5f, 30f, 30f, 15f, 30f, 15f, 30f, 25f};
+    float[] coolDownH = {7.5f, 7.5f, 30f, 30f, 45f, 25f, 30f, 25f, 45f, 30f};
     boolean won = false,lost = false, containsIcon = false;
     JLabel clicked = null;
     JLabel label, label2;
@@ -62,8 +70,9 @@ public class Game extends JFrame {
     JLabel plants;
     JLabel keptSun;
     JLabel blackScreen;
+    JLabel deck;
     public static ArrayList<Coordination> objects = new ArrayList<>();
-    Levels newLevel;
+    public Levels newLevel;
     public static boolean mute;
     public static ArrayList<Timer> timerPool = new ArrayList<>();
     public static ArrayList<Thread> threadPool = new ArrayList<>();
@@ -152,367 +161,6 @@ public class Game extends JFrame {
         timerPool.add(timer);
         timer.start();
     }
-    private void eatPlant(Zombie zombie, Plant victim) {
-        Thread t = new Thread( () -> {
-            threadPool.add(Thread.currentThread());
-            do {
-                if (zombie.health > 0)
-                    if (zombie.getClass() != Normal.class)
-                        victim.lossHealth(15);
-                    else victim.lossHealth(10);
-                else return;
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            } while (zombie.health > 0 && victim.health > 0 && !paused);
-            if (zombie.health > 0)
-                walk(zombie);
-            threadPool.remove(Thread.currentThread());
-        });
-        t.start();
-    }
-
-    private void shoot(Plant shooterPlant, boolean isFrozen) {
-        new Thread(() -> {
-            if (shooterPlant.health > 0) {
-                if (TESTING)
-                    System.out.println("Shooter Position For pea: " + shooterPlant.getBounds().x + " " + shooterPlant.getBounds().y);
-                int[] pos = Sluts.getSlut(shooterPlant.getBounds().x, shooterPlant.getBounds().y);
-                if (pos != null) {
-                    do {
-                        try {
-                            PeaBullet pea = new PeaBullet(label, shooterPlant, isFrozen);
-                            if (isFrozen) pea.setIcon(Icons.snowBulletIcon);
-                            else pea.setIcon(Icons.peaBulletIcon);
-                            pea.setBounds(shooterPlant.getBounds().x + 46, shooterPlant.getBounds().y + 16, 28, 28);
-                            Thread.sleep(shooterPlant.speed * 1000L);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    } while (shooterPlant.health > 0 && !paused);
-                } else System.out.println("Pos is null");
-            }
-        }).start();
-    }
-
-    private MouseListener pauseClickListener(JLabel pauseButton) {
-        return new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {}
-            @Override
-            public void mousePressed(MouseEvent e) {}
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                //pauseMenu();
-                pause();
-                pauseButton.removeMouseListener(pauseButton.getMouseListeners()[0]);
-            }
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-            @Override
-            public void mouseExited(MouseEvent e) {}
-        };
-    }
-    private  MouseListener labelClickListener() {
-        return new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {}
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (containsIcon) {
-                    int[] position = Sluts.getSlut(getMousePosition(true));
-                    int[] location = Sluts.getPlantLocation(position[0], position[1]);
-                    if (isEmptySlut(position[0], position[1])) {
-                        label.removeMouseMotionListener(motionListener());
-                        containsIcon = false;
-                        if (TESTING) System.out.println("Clicked Slut " + Arrays.toString(position));
-                        //if (TESTING) System.out.println("Cursor Icon: " + clicked.getIcon().toString());
-                        Plant tmp;
-                        int i;
-                        switch (clicked.getIcon().toString()) {
-                            case "gfx/sunflower.pvz" -> {
-                                tmp = new SunFlower(label, position);
-                                i = 0;
-                            }
-                            case "gfx/pea.pvz" -> {
-                                tmp = new PeaShooter(label, position);
-                                i = 1;
-                            }
-                            case "gfx/snowPea.pvz" -> {
-                                tmp = new SnowPea(label, position);
-                                i = 2;
-                            }
-                            case "gfx/nut_1.pvz" -> {
-                                tmp = new wallNut(label, position);
-                                i = 3;
-                            }
-                            case "gfx/cherry.pvz" -> {
-                                tmp = new Cherry(label, position);
-                                i = 4;
-                            }
-                            case "gfx/repeater.pvz" -> {
-                                tmp = new Repeater(label, position);
-                                i = 5;
-                            }
-                            default -> throw new RuntimeException("Error in labelClickListener switch");
-                        }
-                        Sounds.play(PLANT);
-                        tmp.setBounds(location[0], location[1], 100, 100);
-                        objects.add(new Coordination(tmp, position[0], position[1]));
-                        clicked.setIcon(null);
-                        coolDown(i, difficulty==0?coolDownN[i]:coolDownH[i]);
-                        addSun(- tmp.cost);
-                        if (tmp.getClass() == PeaShooter.class) shoot(tmp, false);
-                        else if (tmp.getClass() == SnowPea.class) shoot(tmp, true);
-                        else if (tmp.getClass() == SunFlower.class) produceSun(tmp);
-                        else if (tmp.getClass() == Cherry.class) explode(tmp);
-                    }
-                }
-            }
-
-            private boolean isEmptySlut(int x, int y) {
-                boolean isEmpty = true;
-                for (Coordination object : objects) {
-                    if (object.coordination[0] == x)
-                        if (object.coordination[1] == y) {
-                            isEmpty = false;
-                            break;
-                        }
-                }
-                return isEmpty;
-            }
-            @Override
-            public void mouseReleased(MouseEvent e) {}
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-            @Override
-            public void mouseExited(MouseEvent e) {}
-        };
-    }
-
-    private MouseListener cardsClickListener() {
-        return new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                boolean available = false;
-                Object source = e.getSource();
-                if (source.toString().contains("cardSun.pvz")) {
-                    if (suns >= 50 && sunAvail) {
-                        clicked.setIcon(Icons.sunflowerIcon);
-                        available = true;
-                    }
-                    else Sounds.play(Sounds.INSUFFICIENT);
-                }
-                else if (source.toString().contains("cardPea.pvz")) {
-                    if (suns >= 100 && peaAvail) {
-                        clicked.setIcon(Icons.peaIcon);
-                        available = true;
-                    }
-                    else Sounds.play(Sounds.INSUFFICIENT);
-                }
-                else if (source.toString().contains("cardFreeze.pvz")) {
-                    if (suns >= 175 && snowAvail) {
-                        clicked.setIcon(Icons.frozenIcon);
-                        available = true;
-                    }
-                    else Sounds.play(Sounds.INSUFFICIENT);
-                }
-                else if (source.toString().contains("cardWallnut.pvz")) {
-                    if (suns >= 50 && nutAvail) {
-                        clicked.setIcon(Icons.walnutIcon);
-                        available = true;
-                    }
-                    else Sounds.play(Sounds.INSUFFICIENT);
-                }
-                else if (source.toString().contains("cardCherry.pvz")) {
-                    if (suns >= 150 && cherAvail) {
-                        clicked.setIcon(Icons.cherryIcon);
-                        available = true;
-                    }
-                    else Sounds.play(Sounds.INSUFFICIENT);
-                }
-                else System.out.println("Error In cardsClickListener");
-
-                if (!containsIcon && available) {
-                    containsIcon = true;
-                    label.addMouseMotionListener(motionListener());
-                    Sounds.play(SELECT);
-                }
-            }
-            @Override
-            public void mouseReleased(MouseEvent e) {}
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-            @Override
-            public void mouseExited(MouseEvent e) {}
-        };
-    }
-
-    private MouseMotionListener motionListener() {
-        return new MouseMotionAdapter() {
-            public void mouseMoved(MouseEvent me)
-            {
-                clicked.setBounds( me.getX() - 50, me.getY() - 50, 100, 100);
-                clicked.repaint();
-            }
-        };
-    }
-
-    private void backgrounds() {
-        label = new JLabel();// Setting the background
-        label.setIcon(new ImageIcon("gfx/back.pvz"));
-        label.setBounds(0, 0, 1400, 600);
-        add(label);
-        plants = new JLabel();
-        plants.setBounds(200, 0,542, 106);
-        clicked = new JLabel();
-        label.add(clicked);
-        label.add(plants);
-        label.addMouseListener(labelClickListener());
-    }
-
-    private void readySetPlant() {
-        try {
-            placeRandomZombies(label);
-            new Thread(() -> Sounds.play(STARTING)).start();// Play starting music
-            label.setBounds(-300, 0, 1400, 600);
-            Thread.sleep(5000);
-            Timer t = new Timer(33, e ->
-                    label.setBounds(label.getX() + 10, label.getY(), 1400, 600));
-            t.start();
-            Thread.sleep(999);
-            t.stop();
-            new Thread(() -> Sounds.play(READY)).start();// Play background music
-            readyLabel();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * This methods place some random number of zombies in the road. Just before the game starts.
-     * @param label the container that we want to place the zombies (default is the background label.)
-     */
-    private void placeRandomZombies(Container label) {
-        new Thread(() -> {//1017, 84
-            Random random = new Random();
-            int count = random.nextInt(10 * difficulty + 1);
-            IntStream iX = random.ints(count, 1017, 1400);
-            int[] posX = iX.toArray();
-            IntStream iY = random.ints(count, 84, 600);
-            int[] posY = iY.toArray();
-            JLabel[] l1 = new JLabel[count];
-            for (int i = 0; i < count; i++) {
-                l1[i] = new JLabel();
-                l1[i].setIcon(new ImageIcon("gfx/zombies.pvz"));
-                label.add(l1[i]);
-                l1[i].setBounds(posX[i], posY[i], 62, 100);
-            }
-            try {
-                Thread.sleep(3000);
-                for (int i = 0; i < count; i++) {
-                    remove(l1[i]);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }).start();
-    }
-    private void sendZombies() {
-        int zombies;
-        if (round == 1) zombies = 5;
-        else zombies = 12;
-        Random random = new Random();
-        new Thread(() -> {
-            byte count = 1;
-            try {
-                int[] location;
-                threadPool.add(Thread.currentThread());
-                for (int i = 0; i < zombies; i++) {
-                    int type = random.nextInt(5);
-                    Zombie zombie;
-                    int rand = random.nextInt(5);
-                    location = Sluts.getZombieLocation(rand);
-                    switch (type) {
-                        case 0, 4 -> zombie = new Normal(label, rand);
-                        case 1 -> zombie = new ConeHead(label, rand);
-                        case 2 -> zombie = new BucketHead(label, rand);
-                        case 3 -> zombie = new Football(label, rand);
-                        default -> throw new RuntimeException("sendZombies Switch");
-                    }
-                    if (zombie.getClass() == BucketHead.class)
-                        zombie.setBounds(location[0], location[1] + 10, zombie.sizeX, zombie.sizeY);
-                    else
-                        zombie.setBounds(location[0], location[1] - 40, zombie.sizeX, zombie.sizeY);
-                    objects.add(new Coordination(zombie, rand));
-                    walk(zombie);
-                    progress();
-                    if (round == 1) Thread.sleep(30000);
-                    else if (round == 3) {
-                        if (count == 2) {
-                            Thread.sleep(25000);
-                            count--;
-                        }
-                        else count++;
-                    }
-                    else {
-                        if (count == 2) {
-                            Thread.sleep(30000);
-                            count--;
-                        }
-                        else count++;
-                    }
-                }
-                threadPool.remove(Thread.currentThread());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-
-
-    private void readyLabel() throws InterruptedException {
-        JLabel start = new JLabel();
-        //noinspection SpellCheckingInspection
-        start.setFont(new Font("Segoe Script", Font.BOLD, 70));
-        start.setForeground(Color.red);
-        start.setHorizontalAlignment(SwingConstants.CENTER);
-        start.setBounds(360, 120, 300, 300);
-        label.add(start);
-        start.setText("Ready?");
-        Thread.sleep(600);
-        start.setText("Set");
-        Thread.sleep(600);
-        start.setText("Plant!");
-        Thread.sleep(800);
-        start.setText("");
-    }
-
-    public static void removeZombie(Zombie zombie) {
-        Zombie.zombies.remove(zombie);
-        for(int i = 0; i < objects.size(); i++) {
-            if(objects.get(i).zombie == zombie) {
-                objects.remove(i);
-                break;
-            }
-        }
-    }
-    private void produceSun(Plant tmp) {
-
-    }
-    private void addSun(int points) {
-        suns += points;
-        keptSun.setText(suns + "");
-    }
     private void sunLanding(int[] pos) {
         SunPoint sun = new SunPoint(label);
 
@@ -568,112 +216,23 @@ public class Game extends JFrame {
             public void mouseExited(MouseEvent e) {}
         };
     }
-
-    private void explode(Plant tmp) {
-        Timer t = new Timer(2000, e -> {
-            Sounds.play(CHERRY_EXPLOSION);
-            //noinspection ForLoopReplaceableByForEach
-            for (int i = 0; i < objects.size(); i++) {
-                if (objects.get(i).zombie != null)
-                    if (tmp.getX() - objects.get(i).zombie.getX() < 100 &&
-                            tmp.getX() - objects.get(i).zombie.getX() > 0 ||
-                            -tmp.getX() + objects.get(i).zombie.getX() < 100 &&
-                                    -tmp.getX() + objects.get(i).zombie.getX() > 0 ||
-                            tmp.getY() - objects.get(i).zombie.getY() < 100 &&
-                                    tmp.getY() - objects.get(i).zombie.getY() > 0 ||
-                            -tmp.getY() + objects.get(i).zombie.getY() < 100 &&
-                                    -tmp.getY() + objects.get(i).zombie.getY() > 0) {
-                        objects.get(i).zombie.kill(true);
-                    }
-            }
-            tmp.setIcon(null);
-            remove(tmp);
-            removePlant(tmp);
-        });
-        t.start();
-        t.setRepeats(false);
-        timerPool.add(t);
+    private void addSun(int points) {
+        suns += points;
+        keptSun.setText(suns + "");
     }
-
-    private void coolDown(int card, float v) {
-        new Thread(() -> {
-            try {
-                switch (card) {
-                    case 0 -> {
-                        sunAvail = false;
-                        Thread.sleep((long) (v * 1000));
-                        sunAvail = true;
-                    }
-                    case 1 -> {
-                        peaAvail = false;
-                        Thread.sleep((long) (v * 1000));
-                        peaAvail = true;
-                    }
-                    case 2 -> {
-                        snowAvail = false;
-                        Thread.sleep((long) (v * 1000));
-                        snowAvail = true;
-                    }
-                    case 3 -> {
-                        nutAvail = false;
-                        Thread.sleep((long) (v * 1000));
-                        nutAvail = true;
-                    }
-                    case 4 -> {
-                        cherAvail = false;
-                        Thread.sleep((long) (v * 1000));
-                        cherAvail = true;
-                    }
-                    case 5 -> {
-                        repAvail = false;
-                        Thread.sleep((long) (v * 1000));
-                        repAvail = true;
-                    }
+    public synchronized static Zombie getFirstZombieByRow(JLabel plant) {
+        if (Zombie.zombies.size() != 0) {
+            Zombie first = Zombie.zombies.get(0);
+            for (int i = 1; i < Zombie.zombies.size(); i++) {
+                if (Zombie.zombies.get(i).row == Sluts.getYSlut(plant.getBounds())) {
+                    if (first.getBounds().x >= Zombie.zombies.get(i).getBounds().x)
+                        first = Zombie.zombies.get(i);
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
-        }).start();
-    }
-    private void plantsJob() {
-        new Thread(() -> {
-            JLabel[] cards = new JLabel[5];
-
-            keptSun = new JLabel();
-            JLabel score = new JLabel();
-            score.setIcon(Icons.scoreBoxIcon);
-            keptSun.setFont(new Font(null, Font.BOLD, 26));
-            keptSun.setHorizontalAlignment(SwingConstants.CENTER);
-            plants.add(score);
-            score.add(keptSun);
-            score.setBounds(11, 72, 73, 30);
-
-            SpringLayout layout = new SpringLayout();
-            score.setLayout(layout);
-            keptSun.setText(suns + "");
-            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, keptSun, 0, SpringLayout.HORIZONTAL_CENTER, score);
-            layout.putConstraint(SpringLayout.VERTICAL_CENTER, keptSun, 0, SpringLayout.VERTICAL_CENTER, score);
-
-
-            cards[0] = Cards.getCard(SUNFLOWER, plants);
-            cards[0].setBounds(93, 7, 64, 90);
-
-            cards[1] = Cards.getCard(PEA_SHOOTER, plants);
-            cards[1].setBounds(158, 7, 64, 90);
-
-            cards[2] = Cards.getCard(SNOW_PEA, plants);
-            cards[2].setBounds(223, 7, 64, 90);
-
-            cards[3] = Cards.getCard(CHERRY, plants);
-            cards[3].setBounds(288, 7, 64, 90);
-
-            cards[4] = Cards.getCard(WALL_NUT, plants);
-            cards[4].setBounds(353, 7, 64, 90);
-
-            for (int i = 0; i < 5; i++) {
-                cards[i].addMouseListener(cardsClickListener());
-            }
-        }).start();
+            if(first.getX() < plant.getX()) first = null;
+            return first;
+        }
+        return null;
     }
     public static void removePlant (Plant plant) {
         Plant.plants.remove(plant);
@@ -683,71 +242,6 @@ public class Game extends JFrame {
                 break;
             }
         }
-    }
-
-    @SuppressWarnings("RedundantCast")
-    private synchronized void walk(Zombie zombie) {
-        Timer t = new Timer(120, e -> {
-            if (zombie.health > 0) {
-                zombie.setBounds(zombie.getX() - zombie.speed, zombie.getY(), zombie.sizeX, zombie.sizeY);
-                int ySlut = zombie.row;
-                if (zombie.getX() - 205 < 20) {
-                    if (mowerAvailable[ySlut])
-                        runMower(ySlut);
-                    else {
-                        try {
-                            if (Zombie.zombies.contains(zombie) && zombie.getX() - 205 < 5)
-                                lose();
-                        } catch (InterruptedException interruptedException) {
-                            interruptedException.printStackTrace();
-                        }
-                    }
-                }
-                for (Plant plant : Plant.plants) {
-                    if (-plant.getBounds().x + zombie.getBounds().x < 20 && plant.row == zombie.row
-                            && zombie.getBounds().x - plant.getBounds().x > 0) {
-                        //eatPlant(zombie, plant);
-                        ((Timer) e.getSource()).stop();
-                        timerPool.remove(((Timer) e.getSource()));
-                    }
-                }
-            }else {
-                ((Timer) e.getSource()).stop();
-                timerPool.remove(((Timer) e.getSource()));
-            }
-        });
-        t.start();
-        timerPool.add(t);
-    }
-    private void progress() {
-        gone++;
-    }
-
-    private void pause() {
-        for (Timer timer: timerPool) timer.stop();
-        muted = true;
-        paused = true;
-    }
-    void resume() {
-        for (Timer timer: timerPool) timer.start();
-        if(!mute) muted = true;
-        blackScreen.setIcon(null);
-        remove(blackScreen);
-        paused = false;
-        pauseButton.addMouseListener(pauseClickListener(pauseButton));
-    }
-    private void pauseMenu() {
-        blackScreen = new JLabel();
-        blackScreen.setIcon(Icons.blackScreen);
-        label.add(blackScreen);
-        blackScreen.setBounds(0, 0, 1000, 645);
-        label.remove(plants);
-        label.add(plants);
-        for (JLabel mower : mowers) {
-            label.remove(mower);
-            label.add(mower);
-        }
-        //new PauseMenu(this);
     }
     private void waves() {
         new Thread(() -> {
@@ -785,7 +279,6 @@ public class Game extends JFrame {
             newLevel.save();
         }
     }
-
     private void lose() throws InterruptedException{
         if (!won || !lost) {
             lost = true;
@@ -793,6 +286,761 @@ public class Game extends JFrame {
             pause();
             Thread.sleep(1000);
             newLevel.save();
+        }
+    }
+    public static void removeZombie(Zombie zombie) {
+        Zombie.zombies.remove(zombie);
+        for(int i = 0; i < objects.size(); i++) {
+            if(objects.get(i).zombie == zombie) {
+                objects.remove(i);
+                break;
+            }
+        }
+    }
+    private void shoot(Plant shooterPlant, boolean isFrozen) {
+        new Thread(() -> {
+            if (shooterPlant.health > 0) {
+                if (TESTING)
+                    System.out.println("Shooter Position For pea: " + shooterPlant.getBounds().x + " " + shooterPlant.getBounds().y);
+                int[] pos = Sluts.getSlut(shooterPlant.getBounds().x, shooterPlant.getBounds().y);
+                if (pos != null) {
+                    do {
+                        try {
+                            PeaBullet pea = new PeaBullet(label, shooterPlant, isFrozen);
+                            if (isFrozen) pea.setIcon(Icons.snowBulletIcon);
+                            else pea.setIcon(Icons.peaBulletIcon);
+                            pea.setBounds(shooterPlant.getBounds().x + 46, shooterPlant.getBounds().y + 16, 28, 28);
+                            long sleep;
+                            switch (shooterPlant.speed) {
+                                case 1 -> sleep = 1000L;
+                                case 2 -> sleep = 500L;
+                                case 3 -> sleep = 333L;
+                                default -> throw new IllegalStateException("Unexpected value: " + shooterPlant.speed);
+                            }
+                            Thread.sleep(sleep);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } while (shooterPlant.health > 0 && !paused);
+                } else System.out.println("Pos is null");
+            }
+        }).start();
+    }
+    private void tripleShot(Plant shooterPlant) {
+        new Thread(() -> {
+            if (shooterPlant.health > 0) {
+                int[] pos = Sluts.getSlut(shooterPlant.getBounds().x, shooterPlant.getBounds().y);
+                if (pos != null) {
+                    do {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } while (shooterPlant.health > 0 && !paused);
+                } else System.out.println("Pos is null");
+            }
+        }).start();
+    }
+
+    private void plantsJob() {
+        new Thread(() -> {
+
+            keptSun = new JLabel();
+            JLabel score = new JLabel();
+            score.setIcon(Icons.scoreBoxIcon);
+            keptSun.setFont(new Font(null, Font.BOLD, 26));
+            keptSun.setHorizontalAlignment(SwingConstants.CENTER);
+            plants.add(score);
+            score.add(keptSun);
+            score.setBounds(11, 60, 56, 25);
+
+            SpringLayout layout = new SpringLayout();
+            score.setLayout(layout);
+            keptSun.setText(suns + "");
+            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, keptSun, 0, SpringLayout.HORIZONTAL_CENTER, score);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, keptSun, 0, SpringLayout.VERTICAL_CENTER, score);
+
+            label.add(plants);
+            plants.setBounds(200, 0,450, 88);
+            label.repaint();
+
+        }).start();
+    }
+    private void pauseButton() {
+        pauseButton = new JLabel();
+        label.add(pauseButton);
+        pauseButton.setIcon(Icons.pauseButtonIcon);
+        pauseButton.setBounds(950, 1, 40, 40);
+        pauseButton.addMouseListener(pauseClickListener(pauseButton));
+    }
+
+    private MouseListener pauseClickListener(JLabel pauseButton) {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                //pauseMenu();
+                pause();
+                pauseButton.removeMouseListener(pauseButton.getMouseListeners()[0]);
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        };
+    }
+    private void pauseMenu() {
+        blackScreen = new JLabel();
+        blackScreen.setIcon(Icons.blackScreen);
+        label.add(blackScreen);
+        blackScreen.setBounds(0, 0, 1000, 645);
+        label.remove(plants);
+        label.add(plants);
+        for (JLabel mower : mowers) {
+            label.remove(mower);
+            label.add(mower);
+        }
+        new PauseMenu(this);
+    }
+    //2methodscommented
+    private  MouseListener labelClickListener() {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (containsIcon) {
+                    int[] position = Sluts.getSlut(getMousePosition(true));
+                    int[] location = Sluts.getPlantLocation(position[0], position[1]);
+                    if (isEmptySlut(position[0], position[1])) {
+                        label.removeMouseMotionListener(motionListener());
+                        containsIcon = false;
+                        if (TESTING) System.out.println("Clicked Slut " + Arrays.toString(position));
+                        //if (TESTING) System.out.println("Cursor Icon: " + clicked.getIcon().toString());
+                        Plant tmp;
+                        int i;
+                        switch (clicked.getIcon().toString()) {
+                            case "gfx/sunflower.pvz" -> {
+                                tmp = new SunFlower(label, position);
+                                i = 0;
+                            }
+                            case "gfx/pea.pvz" -> {
+                                tmp = new PeaShooter(label, position);
+                                i = 1;
+                            }
+                            case "gfx/snowPea.pvz" -> {
+                                tmp = new SnowPea(label, position);
+                                i = 2;
+                            }
+                            case "gfx/nut_1.pvz" -> {
+                                tmp = new wallNut(label, position);
+                                i = 3;
+                            }
+                            case "gfx/cherry.pvz" -> {
+                                tmp = new Cherry(label, position);
+                                i = 4;
+                            }
+                            case "gfx/repeater.pvz" -> {
+                                tmp = new Repeater(label, position);
+                                i = 5;
+                            }
+                            case "gfx/threepeater.pvz" -> {
+                                tmp = new Threepeater(label, position);
+                                i = 6;
+                            }
+                            case "gfx/gatPea.pvz" -> {
+                                tmp = new GatlingPea(label, position);
+                                i = 7;
+                            }
+                            case "gfx/potato_2.pvz" -> {
+                                tmp = new Potato(label, position);
+                                i = 8;
+                            }
+                            default -> throw new RuntimeException("Error in labelClickListener switch");
+                        }
+                        Sounds.play(PLANT);
+                        tmp.setBounds(location[0], location[1], tmp.getIcon().getIconWidth(), tmp.getIcon().getIconHeight());
+                        objects.add(new Coordination(tmp, position[0], position[1]));
+                        clicked.setIcon(null);
+                        coolDown(i, difficulty==0?coolDownN[i]:coolDownH[i]);
+                        addSun(- tmp.cost);
+                        if (tmp.getClass() == PeaShooter.class
+                                || tmp.getClass() == Repeater.class
+                                || tmp.getClass() == GatlingPea.class) shoot(tmp, false);
+                        else if (tmp.getClass() == SnowPea.class) shoot(tmp, true);
+                        else if (tmp.getClass() == SunFlower.class) produceSun(tmp);
+                        else if (tmp.getClass() == Cherry.class) explode(tmp);
+                        else if (tmp.getClass() == Potato.class) mineSet(tmp);
+                       // else if (tmp.getClass() == Threepeater.class) tripleShot(tmp);
+                    }
+                }
+            }
+
+            private boolean isEmptySlut(int x, int y) {
+                boolean isEmpty = true;
+                for (Coordination object : objects) {
+                    if (object.coordination[0] == x)
+                        if (object.coordination[1] == y) {
+                            isEmpty = false;
+                            break;
+                        }
+                }
+                return isEmpty;
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        };
+    }
+
+    private void mineSet(Plant tmp) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            tmp.setIcon(Icons.potatoBIcon);
+            while (tmp.health > 0) {
+                Zombie aim = getFirstZombieByRow(tmp);
+                if (aim != null)
+                    if (aim.getX() - tmp.getX() < 20) {
+                        play(CHERRY_EXPLOSION);
+                        tmp.setIcon(Icons.potatoCIcon);
+                        aim.kill(true);
+                        new Timer(1000, e -> {
+                            label.remove(tmp);
+                            label.repaint();
+                            ((Timer)e.getSource()).setRepeats(false);
+                        }).start();
+                    }
+            }
+        }).start();
+    }
+    private void explode(Plant tmp) {
+        Timer t = new Timer(2000, e -> {
+            Sounds.play(CHERRY_EXPLOSION);
+            //noinspection ForLoopReplaceableByForEach
+            for (int i = 0; i < objects.size(); i++) {
+                if (objects.get(i).zombie != null)
+                    if (tmp.getX() - objects.get(i).zombie.getX() < 100 &&
+                            tmp.getX() - objects.get(i).zombie.getX() > 0 ||
+                            -tmp.getX() + objects.get(i).zombie.getX() < 100 &&
+                                    -tmp.getX() + objects.get(i).zombie.getX() > 0 ||
+                            tmp.getY() - objects.get(i).zombie.getY() < 100 &&
+                                    tmp.getY() - objects.get(i).zombie.getY() > 0 ||
+                            -tmp.getY() + objects.get(i).zombie.getY() < 100 &&
+                                    -tmp.getY() + objects.get(i).zombie.getY() > 0) {
+                        objects.get(i).zombie.kill(true);
+                    }
+            }
+            tmp.setIcon(null);
+            remove(tmp);
+            removePlant(tmp);
+        });
+        t.start();
+        t.setRepeats(false);
+        timerPool.add(t);
+    }
+    private void produceSun(Plant tmp) {
+        new Thread(() -> {
+            threadPool.add(Thread.currentThread());
+            while (!won || !lost) {
+                try {
+                    Thread.sleep(sunflowerTimer[difficulty] * 1000L);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (paused) break;
+                if (tmp.health > 0)
+                    sunLanding(new int[] {tmp.getBounds().x, tmp.getBounds().y});
+                else return;
+            }
+        }).start();
+    }
+
+    private MouseListener cardsClickListener() {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                boolean available = false;
+                Icon icon = ((JLabel)e.getSource()).getIcon();
+                if (icon == Icons.sunflowerCard) {
+                    if (suns >= 50 && sunAvail) {
+                        clicked.setIcon(Icons.sunflowerIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (icon == Icons.peaShooterCard) {
+                    if (suns >= 100 && peaAvail) {
+                        clicked.setIcon(Icons.peaIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (icon == Icons.snowPeaCard) {
+                    if (suns >= 175 && snowAvail) {
+                        clicked.setIcon(Icons.frozenIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (icon == Icons.wallCard) {
+                    if (suns >= 50 && nutAvail) {
+                        clicked.setIcon(Icons.walnutIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (icon == Icons.cherryCard) {
+                    if (suns >= 150 && cherAvail) {
+                        clicked.setIcon(Icons.cherryIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (icon == Icons.repeaterCard) {
+                    if (suns >= 150 && repAvail) {
+                        clicked.setIcon(Icons.repeaterIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (icon == Icons.threePeaCard) {
+                    if (suns >= 325 && threeAvail) {
+                        clicked.setIcon(Icons.threePeaIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (icon == Icons.gatlingCard) {
+                    if (suns >= 250 && gatAvail) {
+                        clicked.setIcon(Icons.gatlingIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (icon == Icons.potatoCard) {
+                    if (suns >= 25 && potAvail) {
+                        clicked.setIcon(Icons.potatoBIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else System.out.println("Error In cardsClickListener");
+
+                if (!containsIcon && available) {
+                    containsIcon = true;
+                    label.addMouseMotionListener(motionListener());
+                    Sounds.play(SELECT);
+                }
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        };
+    }
+    private void coolDown(int card, float v) {
+        new Thread(() -> {
+            threadPool.add(Thread.currentThread());
+            try {
+                switch (card) {
+                    case 0 -> {
+                        sunAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        sunAvail = true;
+                    }
+                    case 1 -> {
+                        peaAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        peaAvail = true;
+                    }
+                    case 2 -> {
+                        snowAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        snowAvail = true;
+                    }
+                    case 3 -> {
+                        nutAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        nutAvail = true;
+                    }
+                    case 4 -> {
+                        cherAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        cherAvail = true;
+                    }
+                    case 5 -> {
+                        repAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        repAvail = true;
+                    }
+                    case 6 -> {
+                        threeAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        threeAvail = true;
+                    }
+                    case 7 -> {
+                        potAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        potAvail = true;
+                    }
+                    case 8 -> {
+                        gatAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        gatAvail = true;
+                    }
+                    case 9 -> {
+                        beetAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        beetAvail = true;
+                    }
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            threadPool.remove(Thread.currentThread());
+        }).start();
+    }
+
+    private MouseMotionListener motionListener() {
+        return new MouseMotionAdapter() {
+            public void mouseMoved(MouseEvent me)
+            {
+                if (clicked.getIcon() != null) {
+                    clicked.setBounds(me.getX() - 50, me.getY() - 50, clicked.getIcon().getIconWidth(), clicked.getIcon().getIconHeight());
+                    clicked.repaint();
+                }
+            }
+        };
+    }
+    private void backgrounds() {
+        label2 = new JLabel();// Setting the background
+        label2.setIcon(Icons.background);
+        label.setIcon(Icons.background);
+        label.setBounds(0, 0, 1400, 600);
+        plants = new JLabel();
+        add(label2);
+        add(label);
+
+        clicked = new JLabel();
+        label.add(clicked);
+        label.addMouseListener(labelClickListener());
+    }
+    private void readySetPlant() {
+        Thread n = new Thread(() -> {
+            try {
+                placeRandomZombies(label2);
+                Sounds.backPlay(CHOOSE_DECK);
+                label2.setBounds(-300, 0, 1400, 600);
+                deck = new JLabel();
+                deck.setBounds(380, 98, 325, 180);
+                deck.setIcon(Icons.deckIcon);
+                label2.add(deck);
+                plants.setBounds(330, 0, 450, 88);
+                label2.add(plants);
+                JLabel[] cards = new JLabel[10];
+
+                Sluts.setCardSluts();
+
+                for (int i = 0; i < cards.length; i++) {
+                    cards[i] = Cards.getCard(i, deck);
+                    cards[i].setBounds(Sluts.getCardSlut(i));
+                    cards[i].setName(String.valueOf(i));
+                    cards[i].addMouseListener(deckClickListener());
+                }
+
+                Thread.sleep(5000);
+
+                label2.remove(plants);
+                label2.remove(deck);
+                label2.repaint();
+
+                //noinspection ForLoopReplaceableByForEach
+                for (int i = 0; i < cards.length; i++) {
+                    cards[i].removeMouseListener(cards[i].getMouseListeners()[0]);
+                    cards[i].addMouseListener(cardsClickListener());
+                }
+                Timer t = new Timer(33, e ->
+                        label2.setBounds(label2.getX() + 10, label2.getY(), 1400, 600));
+                t.start();
+                Thread.sleep(999);
+                t.stop();
+                label2.setBounds(0, 0, 1400, 600);
+                Sounds.mute();
+                Sounds.play(READY);// Play background music
+                remove(label2);
+                readyLabel();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        n.start();
+        try {
+            n.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    ArrayList<Integer> cardsList = new ArrayList<>();
+
+    private MouseListener deckClickListener() {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                JLabel aim = ((JLabel)e.getSource());
+                System.out.println(aim.getName());
+                Icon icon = aim.getIcon();
+                int index = -1;
+                for (int j : cardsList) {
+                    if (j == Integer.parseInt(aim.getName())) {
+                        index = j;
+                        break;
+                    }
+                }
+                aim.setIcon(null);
+                aim.getParent().repaint();
+                if (index == -1) {
+                    if (cardsList.size() < 6) {
+                        plants.add(aim);
+                        aim.setBounds(Sluts.getCardPos(cardsList.size()));
+                        cardsList.add(Integer.parseInt(aim.getName()));
+                        Sounds.play(SELECT);
+                    } else Sounds.play(INSUFFICIENT);
+                } else {
+                    deck.add(aim);
+                    cardsList.remove((Object)Integer.parseInt(aim.getName()));
+                    aim.setBounds(Sluts.getCardSlut(Integer.parseInt(aim.getName())));
+                    Sounds.play(SELECT);
+                }
+                aim.setIcon(icon);
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        };
+    }
+    private void readyLabel() throws InterruptedException {
+        JLabel start = new JLabel();
+        //noinspection SpellCheckingInspection
+        start.setFont(new Font("Segoe Script", Font.BOLD, 70));
+        start.setForeground(Color.red);
+        start.setHorizontalAlignment(SwingConstants.CENTER);
+        start.setBounds(360, 120, 300, 300);
+        label.add(start);
+        start.setText("Ready?");
+        Thread.sleep(600);
+        start.setText("Set");
+        Thread.sleep(600);
+        start.setText("Plant!");
+        Thread.sleep(800);
+        start.setText("");
+    }
+    /**
+     * This methods place some random number of zombies in the road. Just before the game starts.
+     * @param label the container that we want to place the zombies (default is the background label.)
+     */
+    private void placeRandomZombies(Container label) {
+        new Thread(() -> {//1017, 84
+            Random random = new Random();
+            int count = 5 + random.nextInt(10);
+            IntStream iX = random.ints(count, 1017, 1200);
+            int[] posX = iX.toArray();
+            IntStream iY = random.ints(count, 84, 510);
+            int[] posY = iY.toArray();
+            JLabel[] randomZombie = new JLabel[count];
+            for (int i = 0; i < count; i++) {
+                randomZombie[i] = new JLabel();
+                randomZombie[i].setIcon(Icons.constantZombieIcon);
+                label.add(randomZombie[i]);
+                randomZombie[i].setBounds(posX[i], posY[i], 62, 100);
+            }
+            try {
+                Thread.sleep(3000);
+                for (int i = 0; i < count; i++) {
+                    remove(randomZombie[i]);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }).start();
+    }
+    private void sendZombies() {
+        int zombies;
+        if (round == 1) zombies = 5;
+        else zombies = 12;
+        Random random = new Random();
+        new Thread(() -> {
+            byte count = 1;
+            try {
+                int[] location;
+                threadPool.add(Thread.currentThread());
+                for (int i = 0; i < zombies; i++) {
+                    int type = random.nextInt(7);
+                    Zombie zombie;
+                    int rand = random.nextInt(5);
+                    location = Sluts.getZombieLocation(rand);
+                    switch (type) {
+                        case 0, 4 -> zombie = new Normal(label, rand);
+                        case 1 -> zombie = new ConeHead(label, rand);
+                        case 2 -> zombie = new BucketHead(label, rand);
+                        case 3 -> zombie = new Football(label, rand);
+                        case 5 -> zombie = new Newspaper(label, rand);
+                        case 6 -> zombie = new PoleVaulting(label, rand);
+                        default -> throw new RuntimeException("sendZombies Switch");
+                    }
+                    if (zombie.getClass() == BucketHead.class)
+                        zombie.setBounds(location[0], location[1] + 10, zombie.sizeX, zombie.sizeY);
+                    else
+                        zombie.setBounds(location[0], location[1] - 40, zombie.sizeX, zombie.sizeY);
+                    objects.add(new Coordination(zombie, rand));
+                    walk(zombie);
+                    progress();
+                    if (round == 1) Thread.sleep(30000);
+                    else if (round == 3) {
+                        if (count == 2) {
+                            Thread.sleep(25000);
+                            count--;
+                        }
+                        else count++;
+                    }
+                    else {
+                        if (count == 2) {
+                            Thread.sleep(30000);
+                            count--;
+                        }
+                        else count++;
+                    }
+                }
+                threadPool.remove(Thread.currentThread());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+    private void progress() {
+        gone++;
+    }
+
+    @SuppressWarnings("RedundantCast")
+    private synchronized void walk(Zombie zombie) {
+        int delay;
+        if (difficulty == 1 && zombie.getClass() != Normal.class) delay = walkDelay[difficulty];
+        else if (difficulty == 1) delay = walkDelay[0];
+        else delay = walkDelay[difficulty];
+        Timer t = new Timer(delay, e -> {
+            if (zombie.health > 0) {
+                zombie.setBounds(zombie.getX() - zombie.speed, zombie.getY(), zombie.sizeX, zombie.sizeY);
+                int ySlut = zombie.row;
+                if (zombie.getX() - 205 < 20) {
+                    if (mowerAvailable[ySlut])
+                        runMower(ySlut);
+                    else {
+                        try {
+                            if (Zombie.zombies.contains(zombie) && zombie.getX() - 205 < 5)
+                                lose();
+                        } catch (InterruptedException interruptedException) {
+                            interruptedException.printStackTrace();
+                        }
+                    }
+                }
+                for (Plant plant : Plant.plants) {
+                    if (-plant.getBounds().x + zombie.getBounds().x < 20 && plant.row == zombie.row
+                            && zombie.getBounds().x - plant.getBounds().x > 0) {
+                        eatPlant(zombie, plant);
+                        ((Timer) e.getSource()).stop();
+                        timerPool.remove(((Timer) e.getSource()));
+                    }
+                }
+            }else {
+                ((Timer) e.getSource()).stop();
+                timerPool.remove(((Timer) e.getSource()));
+            }
+        });
+        t.start();
+        timerPool.add(t);
+    }
+    private void eatPlant(Zombie zombie, Plant victim) {
+        Thread t = new Thread( () -> {
+            int i;
+            if (zombie.getClass() == Normal.class) i = 0;
+            else if (zombie.getClass() == ConeHead.class) i = 1;
+            else if (zombie.getClass() == BucketHead.class) i = 2;
+            else if (zombie.getClass() == Football.class) i = 3;
+            else i = -1;
+            int amount = zombie.damage + additionalDamage[i] * difficulty;
+            threadPool.add(Thread.currentThread());
+            do {
+                if (zombie.health > 0)
+                    victim.lossHealth(amount);
+                else return;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (zombie.health > 0 && victim.health > 0 && !paused);
+            if (zombie.health > 0)
+                walk(zombie);
+            threadPool.remove(Thread.currentThread());
+        });
+        t.start();
+    }
+    private void pause() {
+        for (Timer timer: timerPool) timer.stop();
+        muted = true;
+        paused = true;
+    }
+    void resume() {
+        for (Timer timer: timerPool) timer.start();
+        if(!mute) muted = true;
+        blackScreen.setIcon(null);
+        remove(blackScreen);
+        paused = false;
+        pauseButton.addMouseListener(pauseClickListener(pauseButton));
+    }
+    public static void main(String[] args) {
+        if (Levels.load() == null)
+            new Game(new Levels(), false);
+        else {
+            ArrayList<Levels> level= Levels.load();
+            assert level != null;
+            new Game(level.get(0), false);
         }
     }
 
