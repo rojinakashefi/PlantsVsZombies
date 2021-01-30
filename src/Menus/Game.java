@@ -744,18 +744,55 @@ public class Game extends JFrame {
         label.addMouseListener(labelClickListener());
     }
     private void readySetPlant() {
+        Thread n = new Thread(() -> {
+            try {
+                placeRandomZombies(label2);
+                Sounds.backPlay(CHOOSE_DECK);
+                label2.setBounds(-300, 0, 1400, 600);
+                deck = new JLabel();
+                deck.setBounds(380, 98, 325, 180);
+                deck.setIcon(Icons.deckIcon);
+                label2.add(deck);
+                plants.setBounds(330, 0, 450, 88);
+                label2.add(plants);
+                JLabel[] cards = new JLabel[10];
+
+                Sluts.setCardSluts();
+
+                for (int i = 0; i < cards.length; i++) {
+                    cards[i] = Cards.getCard(i, deck);
+                    cards[i].setBounds(Sluts.getCardSlut(i));
+                    cards[i].setName(String.valueOf(i));
+                }
+
+                Thread.sleep(5000);
+
+                label2.remove(plants);
+                label2.remove(deck);
+                label2.repaint();
+
+                //noinspection ForLoopReplaceableByForEach
+                for (int i = 0; i < cards.length; i++) {
+                    cards[i].removeMouseListener(cards[i].getMouseListeners()[0]);
+                    cards[i].addMouseListener(cardsClickListener());
+                }
+                Timer t = new Timer(33, e ->
+                        label2.setBounds(label2.getX() + 10, label2.getY(), 1400, 600));
+                t.start();
+                Thread.sleep(999);
+                t.stop();
+                label2.setBounds(0, 0, 1400, 600);
+                Sounds.mute();
+                Sounds.play(READY);// Play background music
+                remove(label2);
+                readyLabel();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        n.start();
         try {
-            placeRandomZombies(label);
-            new Thread(() -> Sounds.play(STARTING)).start();// Play starting music
-            label.setBounds(-300, 0, 1400, 600);
-            Thread.sleep(5000);
-            Timer t = new Timer(33, e ->
-                    label.setBounds(label.getX() + 10, label.getY(), 1400, 600));
-            t.start();
-            Thread.sleep(999);
-            t.stop();
-            new Thread(() -> Sounds.play(READY)).start();// Play background music
-            readyLabel();
+            n.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
