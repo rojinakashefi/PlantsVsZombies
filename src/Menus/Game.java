@@ -576,38 +576,66 @@ public class Game extends JFrame {
             @Override
             public void mousePressed(MouseEvent e) {
                 boolean available = false;
-                Object source = e.getSource();
-                if (source.toString().contains("cardSun.pvz")) {
+                Icon icon = ((JLabel)e.getSource()).getIcon();
+                if (icon == Icons.sunflowerCard) {
                     if (suns >= 50 && sunAvail) {
                         clicked.setIcon(Icons.sunflowerIcon);
                         available = true;
                     }
                     else Sounds.play(Sounds.INSUFFICIENT);
                 }
-                else if (source.toString().contains("cardPea.pvz")) {
+                else if (icon == Icons.peaShooterCard) {
                     if (suns >= 100 && peaAvail) {
                         clicked.setIcon(Icons.peaIcon);
                         available = true;
                     }
                     else Sounds.play(Sounds.INSUFFICIENT);
                 }
-                else if (source.toString().contains("cardFreeze.pvz")) {
+                else if (icon == Icons.snowPeaCard) {
                     if (suns >= 175 && snowAvail) {
                         clicked.setIcon(Icons.frozenIcon);
                         available = true;
                     }
                     else Sounds.play(Sounds.INSUFFICIENT);
                 }
-                else if (source.toString().contains("cardWallnut.pvz")) {
+                else if (icon == Icons.wallCard) {
                     if (suns >= 50 && nutAvail) {
                         clicked.setIcon(Icons.walnutIcon);
                         available = true;
                     }
                     else Sounds.play(Sounds.INSUFFICIENT);
                 }
-                else if (source.toString().contains("cardCherry.pvz")) {
+                else if (icon == Icons.cherryCard) {
                     if (suns >= 150 && cherAvail) {
                         clicked.setIcon(Icons.cherryIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (icon == Icons.repeaterCard) {
+                    if (suns >= 150 && repAvail) {
+                        clicked.setIcon(Icons.repeaterIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (icon == Icons.threePeaCard) {
+                    if (suns >= 325 && threeAvail) {
+                        clicked.setIcon(Icons.threePeaIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (icon == Icons.gatlingCard) {
+                    if (suns >= 250 && gatAvail) {
+                        clicked.setIcon(Icons.gatlingIcon);
+                        available = true;
+                    }
+                    else Sounds.play(Sounds.INSUFFICIENT);
+                }
+                else if (icon == Icons.potatoCard) {
+                    if (suns >= 25 && potAvail) {
+                        clicked.setIcon(Icons.potatoBIcon);
                         available = true;
                     }
                     else Sounds.play(Sounds.INSUFFICIENT);
