@@ -763,6 +763,7 @@ public class Game extends JFrame {
                     cards[i] = Cards.getCard(i, deck);
                     cards[i].setBounds(Sluts.getCardSlut(i));
                     cards[i].setName(String.valueOf(i));
+                    cards[i].addMouseListener(deckClickListener());
                 }
 
                 Thread.sleep(5000);
