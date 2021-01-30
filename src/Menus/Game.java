@@ -326,7 +326,9 @@ public class Game extends JFrame {
             }
         }).start();
     }
-    //tripleshoot
+    private void tripleShot(Plant shooterPlant) {
+
+    }
     //plantsjob
     private void plantsJob() {
         new Thread(() -> {
