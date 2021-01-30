@@ -800,7 +800,58 @@ public class Game extends JFrame {
     ArrayList<Integer> cardsList = new ArrayList<>();
 
     private MouseListener deckClickListener() {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
 
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                JLabel aim = ((JLabel)e.getSource());
+                System.out.println(aim.getName());
+                Icon icon = aim.getIcon();
+                int index = -1;
+                for (int j : cardsList) {
+                    if (j == Integer.parseInt(aim.getName())) {
+                        index = j;
+                        break;
+                    }
+                }
+                aim.setIcon(null);
+                aim.getParent().repaint();
+                if (index == -1) {
+                    if (cardsList.size() < 6) {
+                        plants.add(aim);
+                        aim.setBounds(Sluts.getCardPos(cardsList.size()));
+                        cardsList.add(Integer.parseInt(aim.getName()));
+                        Sounds.play(SELECT);
+                    } else Sounds.play(INSUFFICIENT);
+                } else {
+                    deck.add(aim);
+                    cardsList.remove((Object)Integer.parseInt(aim.getName()));
+                    aim.setBounds(Sluts.getCardSlut(Integer.parseInt(aim.getName())));
+                    Sounds.play(SELECT);
+                }
+                aim.setIcon(icon);
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        };
     }
     private void readyLabel() throws InterruptedException {
         JLabel start = new JLabel();
