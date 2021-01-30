@@ -797,6 +797,11 @@ public class Game extends JFrame {
             e.printStackTrace();
         }
     }
+    ArrayList<Integer> cardsList = new ArrayList<>();
+
+    private MouseListener deckClickListener() {
+
+    }
     private void readyLabel() throws InterruptedException {
         JLabel start = new JLabel();
         //noinspection SpellCheckingInspection
