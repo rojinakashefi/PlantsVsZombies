@@ -327,7 +327,20 @@ public class Game extends JFrame {
         }).start();
     }
     private void tripleShot(Plant shooterPlant) {
-
+        new Thread(() -> {
+            if (shooterPlant.health > 0) {
+                int[] pos = Sluts.getSlut(shooterPlant.getBounds().x, shooterPlant.getBounds().y);
+                if (pos != null) {
+                    do {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } while (shooterPlant.health > 0 && !paused);
+                } else System.out.println("Pos is null");
+            }
+        }).start();
     }
     //plantsjob
     private void plantsJob() {
