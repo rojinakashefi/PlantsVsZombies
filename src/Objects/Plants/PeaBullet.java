@@ -1,19 +1,26 @@
 package Objects.Plants;
 
 import Menus.Game;
+import Miscs.Icons;
 import Objects.Zombies.Zombie;
 
 import javax.swing.JLabel;
 import javax.swing.Timer;
-import java.awt.Container;
+import java.awt.*;
+
+import static Menus.Game.timerPool;
 
 public class PeaBullet extends JLabel {
+
     public PeaBullet (Container c, Plant origin, boolean isFrozen) throws InterruptedException {
-        //c.add(this);
-        seekForZombies(c, origin, isFrozen);
+        seekForZombies(c, origin, isFrozen, false);
     }
 
-    private void seekForZombies(Container c, Plant origin, boolean isFrozen) throws InterruptedException {
+    public PeaBullet(JLabel label, Plant shooterPlant) throws InterruptedException {
+        seekForZombies(label, shooterPlant, false, true);
+    }
+
+    private void seekForZombies(Container c, Plant origin, boolean isFrozen, boolean isTriple) throws InterruptedException {
         if (origin.health > 0) {
             boolean enemyInSight = false;
             for (int i = 0; i < Game.objects.size(); i++) {
@@ -26,14 +33,47 @@ public class PeaBullet extends JLabel {
                 Thread.sleep(100);
             }
             if (enemyInSight) {
+                if (isTriple) {
+                    JLabel[] obliques = new JLabel[2];
+                    for (int i = 0; i < 2; i++) {
+                        obliques[i] = new JLabel();
+                        obliques[i].setIcon(Icons.peaBulletIcon);
+                        obliques[i].setBounds(origin.getBounds().x + 46, origin.getBounds().y + 16, 28, 28);
+                        c.add(obliques[i]);
+                        int dir = i==0?-2:2;
+                        final JLabel oblique = obliques[i];
+                        Timer t = new Timer(9, e -> {
+                            oblique.setBounds(oblique.getX() + 2, oblique.getY() + dir, 28, 28);
+                            Zombie firstZombie = Game.getFirstZombieByRow(oblique);
+                            if (firstZombie != null) {
+                                if (firstZombie.getBounds().x - oblique.getBounds().x < 20) {
+                                    c.remove(oblique);
+                                    firstZombie.lossHealth(30, false);
+                                    if (firstZombie.health <= 0) return;
+                                    ((Timer) e.getSource()).stop();
+                                }
+                            }
+                        });
+                        t.start();
+                        timerPool.add(t);
+                    }
+                }
                 c.add(this);
-                final PeaBullet This = this;
+                final JLabel This = this;
                 final Timer timer = new Timer(10, e -> {
                     setBounds(getX() + 3, getY(), 28, 28);
-
+                    Zombie firstZombie = Game.getFirstZombieByRow(origin);
+                    if (firstZombie != null) {
+                        if (firstZombie.getBounds().x - This.getBounds().x < 20) {
+                            c.remove(This);
+                            firstZombie.lossHealth(isFrozen ? 35 : 30, isFrozen);
+                            if (firstZombie.health <= 0) return;
+                            ((Timer) e.getSource()).stop();
+                        }
+                    }
                 });
                 timer.start();
-                Game.timerPool.add(timer);
+                timerPool.add(timer);
                 return;
             }
             try {
@@ -41,7 +81,7 @@ public class PeaBullet extends JLabel {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            seekForZombies(c, origin, isFrozen);
+            seekForZombies(c, origin, isFrozen, isTriple);
         }
     }
 }
