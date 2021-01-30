@@ -658,6 +658,7 @@ public class Game extends JFrame {
     }
     private void coolDown(int card, float v) {
         new Thread(() -> {
+            threadPool.add(Thread.currentThread());
             try {
                 switch (card) {
                     case 0 -> {
@@ -690,10 +691,31 @@ public class Game extends JFrame {
                         Thread.sleep((long) (v * 1000));
                         repAvail = true;
                     }
+                    case 6 -> {
+                        threeAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        threeAvail = true;
+                    }
+                    case 7 -> {
+                        potAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        potAvail = true;
+                    }
+                    case 8 -> {
+                        gatAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        gatAvail = true;
+                    }
+                    case 9 -> {
+                        beetAvail = false;
+                        Thread.sleep((long) (v * 1000));
+                        beetAvail = true;
+                    }
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            threadPool.remove(Thread.currentThread());
         }).start();
     }
 
