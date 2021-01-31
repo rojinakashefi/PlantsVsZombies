@@ -43,7 +43,23 @@ public class Server {
     }
 
     public void send(String SenderType, String ReceiverType, String[] Data) {
-
+        if(TESTING) System.out.println("[SERVER] Sending...");
+        try {
+            Thread.sleep(100);
+            PrintWriter out = new PrintWriter(clients.get(ReceiverType).client.getOutputStream());
+            out.println(SenderType);
+            if (TESTING) System.out.print("[SERVER] Data Sent To " + ReceiverType + ": " + SenderType);
+            out.println(Data.length);
+            if (TESTING) System.out.print(" " + Data.length);
+            for (String data : Data) {
+                out.println(data);
+                if (TESTING) System.out.print(" " + data);
+            }
+            if (TESTING) System.out.println();
+            out.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
