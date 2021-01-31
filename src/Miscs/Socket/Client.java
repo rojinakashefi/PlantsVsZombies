@@ -30,6 +30,15 @@ public class Client {
             e.printStackTrace();
         }
     }
-
+    public void close() {
+        try {
+            send("Client");
+            send("Close");
+            send("0");
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
