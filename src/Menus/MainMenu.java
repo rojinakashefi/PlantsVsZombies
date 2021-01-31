@@ -2,7 +2,6 @@ package Menus;
 
 import Main.Main;
 import Miscs.Icons;
-import Miscs.Levels;
 import Miscs.Sounds;
 
 import javax.swing.*;

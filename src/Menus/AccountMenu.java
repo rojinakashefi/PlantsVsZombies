@@ -1,7 +1,6 @@
 package Menus;
 
 import Main.Main;
-import Miscs.Levels;
 import Miscs.Socket.Client;
 
 import javax.swing.*;
