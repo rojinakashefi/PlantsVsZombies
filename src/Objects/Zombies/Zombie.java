@@ -4,7 +4,7 @@ import Menus.Game;
 import Miscs.Sounds;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Container;
 import java.util.ArrayList;
 
 public abstract class Zombie extends JLabel {
@@ -14,7 +14,7 @@ public abstract class Zombie extends JLabel {
     public int health;
     public int speed;
     public int damage;
-    ImageIcon walk, die, burned = new ImageIcon("gfx/burned.pvz");
+    ImageIcon walk, die, burned = new ImageIcon("gfx/burn.pvz");
     public int sizeX = 81;
     public int sizeY = 130;
     public static ArrayList<Zombie> zombies = new ArrayList<>();
@@ -30,26 +30,13 @@ public abstract class Zombie extends JLabel {
         this.row = row;
     }
 
-    private void checkHealth(Zombie subject, Timer timer) {
-        if (health < 0) {
-            timer.stop();
-            setIcon(die);
-            String name = getClass().getName();
-            System.out.println(name);
-        } else {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            checkHealth(subject, timer);
-        }
-    }
     public abstract void lossHealth(int Amount, boolean isFrozen);
     public void kill(boolean burn) {
         health = 0;
         Sounds.play(hitSound);
         this.setIcon(burn?burned:die);
+        if (burn && getClass() == PoleVaulting.class || getClass() == Newspaper.class)
+            setBounds(getX() + 200, getY(),  getIcon().getIconWidth(), getIcon().getIconHeight());
         Game.removeZombie(this);
         Timer t = new Timer(getClass()==Football.class?500:1000, e -> {
             this.setIcon(null);
