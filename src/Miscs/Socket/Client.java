@@ -1,6 +1,7 @@
 package Miscs.Socket;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -18,5 +19,17 @@ public class Client {
             if (TESTING) System.out.println("    [Client] Server is out");
         }
     }
+    public void send(String Data) {
+        PrintWriter out;
+        try {
+            out = new PrintWriter(socket.getOutputStream());
+            out.println(Data);
+            out.flush();
+            if (TESTING) System.out.println("    [CLIENT] Data sent to Server: " + Data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
