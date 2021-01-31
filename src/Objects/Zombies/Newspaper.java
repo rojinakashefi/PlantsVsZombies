@@ -18,7 +18,10 @@ public class Newspaper extends Zombie{
     }
     @Override
     public void lossHealth(int Amount, boolean isFrozen) {
-        if (health - Amount > 165) Sounds.play(Sounds.NEWSPAPER_GRUNT);
+        if (health - Amount > 165) {
+            Sounds.play(Sounds.NEWSPAPER_GRUNT);
+            this.speed = 3;
+        }
         health -= Amount;
         if (health > 0) {
             if(health >= 200) Sounds.play(Sounds.PAPER);
