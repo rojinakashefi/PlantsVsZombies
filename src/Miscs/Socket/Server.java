@@ -13,11 +13,12 @@ import static Main.Main.*;
 
 @SuppressWarnings("FieldMayBeFinal")
 public class Server {
-
+    private static HashMap<String, ClientHandler> clients = new HashMap<>();
     private static ExecutorService ClientPool = Executors.newFixedThreadPool(5);
     private static int pointer = 0;
     static ServerSocket listener;
     int i = 0;
+
 
 
     public Server() {
