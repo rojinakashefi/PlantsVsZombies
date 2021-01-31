@@ -26,7 +26,20 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-
+        if (TESTING) System.out.println("[SERVER] Looking For Data Connection...");
+        if (isServerUp) {
+            try {
+                ServerReceiver();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            run();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
