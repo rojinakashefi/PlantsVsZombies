@@ -20,7 +20,6 @@ public class Cards {
             case GATLING -> tempLabel.setIcon(gatlingCard);
             case THREEPEATER -> tempLabel.setIcon(threePeaCard);
             case REPEATER -> tempLabel.setIcon(repeaterCard);
-            case BEETROOT -> tempLabel.setIcon(beetCard);
             case POTATO -> tempLabel.setIcon(potatoCard);
             default -> throw new RuntimeException("Wrong Input in Cards Class");
         }
