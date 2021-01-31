@@ -1,5 +1,7 @@
 package Menus;
 
+import Miscs.Levels;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -109,6 +111,14 @@ public class AccountMenu extends JFrame implements Runnable  {
                     .createDialog("ERROR!").setVisible(true);
         }
     }
-
+    private void signUp() {
+        int index = findPlayerIndex(NameTxt.getText());
+        if (index == -1) {
+            Levels level = new Levels(0, 0, 0, 0, NameTxt.getText());
+            loadedPlayers.add(level);
+            new MainMenu(level);
+            dispose();
+        }
+    }
 
 }
