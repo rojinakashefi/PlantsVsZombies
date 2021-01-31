@@ -3,6 +3,9 @@ package Menus;
 import javax.swing.*;
 import java.awt.*;
 
+import static Main.Main.findPlayerIndex;
+import static Main.Main.loadedPlayers;
+
 public class AccountMenu extends JFrame implements Runnable  {
     JLabel SecLabel = new JLabel("Enter Game");
     JButton SignInButton = new JButton("Sign In");
@@ -93,5 +96,19 @@ public class AccountMenu extends JFrame implements Runnable  {
         Layout.putConstraint(SpringLayout.EAST, NameLBL, -30, SpringLayout.HORIZONTAL_CENTER, This);
         Layout.putConstraint(SpringLayout.SOUTH, NameLBL, -45, SpringLayout.NORTH, SignInButton);
     }
+    private void signIn() {
+        if (!NameTxt.getText().equals("")) {
+            int index = findPlayerIndex(NameTxt.getText());
+            if (index != -1) {
+                new MainMenu(loadedPlayers.get(index));
+                dispose();
+            } else new JOptionPane("User not found,create user!", JOptionPane.INFORMATION_MESSAGE)
+                    .createDialog("Error").setVisible(true);
+        } else {
+            new JOptionPane("Please Enter a name!", JOptionPane.ERROR_MESSAGE)
+                    .createDialog("ERROR!").setVisible(true);
+        }
+    }
+
 
 }
