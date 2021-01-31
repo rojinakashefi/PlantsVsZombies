@@ -64,6 +64,8 @@ public class Server {
 
 
     public void deleteClient(String Name) {
-
+        pointer--;
+        clients.remove(Name);
+        if (TESTING) System.out.println("[SERVER] Closing Connection...");
     }
 }
