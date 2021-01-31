@@ -35,6 +35,7 @@ public class Icons {
     public static ImageIcon potatoAIcon = new ImageIcon("gfx/potato_1.pvz");
     public static ImageIcon potatoBIcon = new ImageIcon("gfx/potato_2.pvz");
     public static ImageIcon potatoCIcon = new ImageIcon("gfx/potato_3.pvz");
+    public static ImageIcon okCheckMarkIcon = new ImageIcon("gfx/check.pvz");
     public static final ImageIcon snowPeaCard = new ImageIcon("gfx/cardFreeze.pvz");
     public static final ImageIcon peaShooterCard = new ImageIcon("gfx/cardPea.pvz");
     public static final ImageIcon repeaterCard = new ImageIcon("gfx/cardRepeater.pvz");
