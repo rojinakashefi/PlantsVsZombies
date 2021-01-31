@@ -1,6 +1,7 @@
 package Menus;
 
 import Miscs.Levels;
+import Miscs.Socket.Client;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +20,7 @@ public class AccountMenu extends JFrame implements Runnable  {
     JLabel LastLBL = new JLabel("New To Game?");
     SpringLayout Layout = new SpringLayout();
     Container This = this.getContentPane();
+    Client account = new Client("Accounts");
 
     public AccountMenu(){
         Font font = new Font("Times New Roman", Font.PLAIN, 14);
@@ -41,6 +43,7 @@ public class AccountMenu extends JFrame implements Runnable  {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     }
+
     @Override
     public void run() {
 
