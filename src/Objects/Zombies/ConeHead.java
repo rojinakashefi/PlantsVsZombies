@@ -21,7 +21,7 @@ public class ConeHead extends Zombie {
     @Override
     public void lossHealth(int Amount, boolean isFrozen) {
         health -= Amount;
-        if (health > 100) {
+        if (health > 200) {
             Sounds.play(hitSound);
         }
         else {
