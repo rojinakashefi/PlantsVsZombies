@@ -66,5 +66,32 @@ public class AccountMenu extends JFrame implements Runnable  {
         Layout.putConstraint(SpringLayout.WEST, NameTxt, -20, SpringLayout.HORIZONTAL_CENTER, This);
         Layout.putConstraint(SpringLayout.VERTICAL_CENTER, NameTxt, 0, SpringLayout.VERTICAL_CENTER, NameLBL);
     }
+    private void In() {
+        while (this.getHeight() != 280) {
+            this.setSize(this.getWidth(), this.getHeight() - 2);
+            this.setLocation(getX(), getY() + 1);
+        }
+        LastLBL.setText("New To Game?");
+        this.add(NameLBL);
+        this.add(NameTxt);
+        this.add(SignInButton);
+        this.add(ChangeUpButton);
+        this.add(LastLBL);
+        this.remove(ChangeInButton);
+        this.remove(SignUpButton);
+
+        Layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, SecLabel, 0, SpringLayout.HORIZONTAL_CENTER, This);
+        Layout.putConstraint(SpringLayout.NORTH, SecLabel, 10, SpringLayout.SOUTH, This);
+        Layout.putConstraint(SpringLayout.SOUTH, ChangeUpButton, -20, SpringLayout.SOUTH, This);
+        Layout.putConstraint(SpringLayout.WEST, ChangeUpButton, 5, SpringLayout.HORIZONTAL_CENTER, This);
+        Layout.putConstraint(SpringLayout.SOUTH, SignInButton, -50, SpringLayout.NORTH, ChangeUpButton);
+        Layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, SignInButton, 0, SpringLayout.HORIZONTAL_CENTER, This);
+        Layout.putConstraint(SpringLayout.VERTICAL_CENTER, LastLBL, 0, SpringLayout.VERTICAL_CENTER, ChangeUpButton);
+        Layout.putConstraint(SpringLayout.EAST, LastLBL, -5, SpringLayout.HORIZONTAL_CENTER, This);
+        Layout.putConstraint(SpringLayout.WEST, NameTxt, -20, SpringLayout.HORIZONTAL_CENTER, This);
+        Layout.putConstraint(SpringLayout.VERTICAL_CENTER, NameTxt, 0, SpringLayout.VERTICAL_CENTER, NameLBL);
+        Layout.putConstraint(SpringLayout.EAST, NameLBL, -30, SpringLayout.HORIZONTAL_CENTER, This);
+        Layout.putConstraint(SpringLayout.SOUTH, NameLBL, -45, SpringLayout.NORTH, SignInButton);
+    }
 
 }
