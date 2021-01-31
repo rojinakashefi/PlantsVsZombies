@@ -1,6 +1,5 @@
 package Miscs;
 
-import Menus.RankingMenu;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -11,31 +10,28 @@ import java.util.List;
 
 import static Main.Main.*;
 
-public class Player implements Comparable<Player> {
+public class Levels implements Comparable<Levels> {
     public int difficulty;
     public int wins, losses, score;
     public String username;
 
-    public Player() {
-        new Player(0, 0, 0, 0, "newbie");
+    public Levels() {
+        new Levels(1, 0, 0, 0, "newbie");
     }
 
-
-    public Player(int difficulty, int wins, int losses, int score, String username) {
+    public Levels(int difficulty, int wins, int losses, int score, String username) {
         this.wins = wins;
         this.losses = losses;
         this.score = score;
         this.username = username;
         this.difficulty = difficulty;
     }
-
-
-    public static void save(ArrayList<Player> players) {
+    public static void save(ArrayList<Levels> levels) {
         Writer out;
         try {
             out = new FileWriter("save.json", false);
             Gson jsonWriter = new Gson();
-            jsonWriter.toJson(players, out);
+            jsonWriter.toJson(levels, out);
             out.flush();
             out.close();
         } catch (IOException e) {
@@ -43,16 +39,14 @@ public class Player implements Comparable<Player> {
         }
         if (TESTING) System.out.println("File Sent!");
     }
-
-
-    public static ArrayList<Player> load() {
+    public static ArrayList<Levels> load() {
         Reader in;
-        ArrayList<Player> temp = new ArrayList<>();
+        ArrayList<Levels> temp = new ArrayList<>();
         if (seek()) {
             try {
                 in = new FileReader("save.json");
                 Gson jsonReader = new Gson();
-                temp = jsonReader.fromJson(in, new TypeToken<List<Player>>(){}.getType());
+                temp = jsonReader.fromJson(in, new TypeToken<List<Levels>>(){}.getType());
                 in.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -64,14 +58,11 @@ public class Player implements Comparable<Player> {
     }
     static boolean seek() { return new File("save.json").exists(); }
 
-
     @Override
-    public int compareTo(Player compare) {
+    public int compareTo(Levels compare) {
         int compareScore=(compare).score;
         return this.score - compareScore;
     }
-
-
     public void save() {
         loadedPlayers.remove(loadedPlayers.get(findPlayerIndex(this.username)));
         loadedPlayers.add(this);

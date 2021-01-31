@@ -2,7 +2,7 @@ package Objects.Plants;
 
 import Menus.Game;
 import Miscs.Icons;
-import Objects.Zombies.Zombie;
+import Objects.Zombies.*;
 
 import javax.swing.JLabel;
 import javax.swing.Timer;
@@ -20,19 +20,9 @@ public class PeaBullet extends JLabel {
         seekForZombies(label, shooterPlant, false, true);
     }
 
-    private void seekForZombies(Container c, Plant origin, boolean isFrozen, boolean isTriple) throws InterruptedException {
+    private void seekForZombies(Container c, Plant origin, boolean isFrozen, boolean isTriple) {
         if (origin.health > 0) {
-            boolean enemyInSight = false;
-            for (int i = 0; i < Game.objects.size(); i++) {
-                if (Game.objects.get(i).type == 1)
-                    if (Game.objects.get(i).coordination[1] == origin.row)
-                        if (Game.objects.get(i).zombie.getX() > origin.getX()) {
-                            enemyInSight = true;
-                            break;
-                        }
-                Thread.sleep(100);
-            }
-            if (enemyInSight) {
+            if (Game.getFirstZombieByRow(origin) != null) {
                 if (isTriple) {
                     JLabel[] obliques = new JLabel[2];
                     for (int i = 0; i < 2; i++) {
@@ -46,7 +36,12 @@ public class PeaBullet extends JLabel {
                             oblique.setBounds(oblique.getX() + 2, oblique.getY() + dir, 28, 28);
                             Zombie firstZombie = Game.getFirstZombieByRow(oblique);
                             if (firstZombie != null) {
-                                if (firstZombie.getBounds().x - oblique.getBounds().x < 20) {
+                                int zombieX = firstZombie.getBounds().x;
+                                if(firstZombie.getClass() == PoleVaulting.class || firstZombie.getClass() == Newspaper.class)
+                                    zombieX += 200;
+                                else if (firstZombie.getClass() == ConeHead.class || firstZombie.getClass() == BucketHead.class)
+                                    zombieX += 60;
+                                if (zombieX - oblique.getBounds().x < 20) {
                                     c.remove(oblique);
                                     firstZombie.lossHealth(30, false);
                                     if (firstZombie.health <= 0) return;
@@ -60,11 +55,16 @@ public class PeaBullet extends JLabel {
                 }
                 c.add(this);
                 final JLabel This = this;
-                final Timer timer = new Timer(10, e -> {
-                    setBounds(getX() + 3, getY(), 28, 28);
+                final Timer timer = new Timer(5, e -> {
+                    setBounds(getX() + 2, getY(), 28, 28);
                     Zombie firstZombie = Game.getFirstZombieByRow(origin);
                     if (firstZombie != null) {
-                        if (firstZombie.getBounds().x - This.getBounds().x < 20) {
+                        int zombieX = firstZombie.getBounds().x;
+                        if(firstZombie.getClass() == PoleVaulting.class || firstZombie.getClass() == Newspaper.class)
+                            zombieX += 220;
+                        else if (firstZombie.getClass() == ConeHead.class || firstZombie.getClass() == BucketHead.class)
+                            zombieX += 60;
+                        if (zombieX - This.getBounds().x < 20) {
                             c.remove(This);
                             firstZombie.lossHealth(isFrozen ? 35 : 30, isFrozen);
                             if (firstZombie.health <= 0) return;
