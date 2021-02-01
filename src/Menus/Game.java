@@ -128,7 +128,32 @@ import static Miscs.Sounds.*;
 
     }
     private void starter(Player level, boolean mute) {
+        this.setIconImage(new ImageIcon("icon.png").getImage());
+        muted = mute;
+        Game.mute = mute;
+        Sluts.setSluts(); // Defines the checkered ground as sluts and calculates their coordinates
+        objects.clear();  // clears the list of last game spawned objects
+        newLevel = level;
+        difficulty = newLevel.difficulty;
 
+        //Game Page specs
+        setSize(1000, 635);
+        setResizable(false);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.getContentPane().setLayout(null);
+        setLocationRelativeTo(null);
+
+        label = new JLabel();// Setting the background
+
+        pauseButton();
+
+        backgrounds(); // Creates the main and the plants menu background
+
+        mower();
+
+        setVisible(true);
+
+        plants.setIcon(Icons.plantMenuIcon);
     }
     private void mower() {
         for (int i = 0; i < 5; i++) {
