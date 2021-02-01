@@ -1093,8 +1093,11 @@ import static Miscs.Sounds.*;
             else if (zombie.getClass() == ConeHead.class) i = 1;
             else if (zombie.getClass() == BucketHead.class) i = 2;
             else if (zombie.getClass() == Football.class) i = 3;
+            else if (zombie.getClass() == PoleVaulting.class) i = 4;
+            else if (zombie.getClass() == Newspaper.class) i = 5;
             else i = -1;
             int amount = zombie.damage + additionalDamage[i] * difficulty;
+            System.out.println(amount);
             threadPool.add(Thread.currentThread());
             do {
                 if (zombie.health > 0)
@@ -1111,19 +1114,6 @@ import static Miscs.Sounds.*;
             threadPool.remove(Thread.currentThread());
         });
         t.start();
-    }
-    private void pause() {
-        for (Timer timer: timerPool) timer.stop();
-        muted = true;
-        paused = true;
-    }
-    void resume() {
-        for (Timer timer: timerPool) timer.start();
-        if(!mute) muted = true;
-        blackScreen.setIcon(null);
-        remove(blackScreen);
-        paused = false;
-        pauseButton.addMouseListener(pauseClickListener(pauseButton));
     }
     public static void main(String[] args) {
         if (Levels.load() == null)
