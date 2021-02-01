@@ -1,6 +1,7 @@
 package Menus;
 
 import Main.Main;
+import Miscs.Player;
 import Miscs.Socket.Client;
 
 import javax.swing.*;
@@ -89,13 +90,13 @@ public class AccountMenu extends JFrame implements Runnable  {
         account.send("0");
         String[] request = account.receive();
         if (request.length > 1) {
-            for (int i = 1; i < request.length; ) {
+            for (int i = 1; i < request.length;) {
                 String name = request[i++];
                 int score = Integer.parseInt(request[i++]);
                 int wins = Integer.parseInt(request[i++]);
                 int losses = Integer.parseInt(request[i++]);
                 int difficulty = Integer.parseInt(request[i++]);
-                Levels level = new Levels(difficulty, wins, losses, score, name);
+                Player level = new Player(difficulty, wins, losses, score, name);
                 Main.loadedPlayers.add(level);
             }
         }
