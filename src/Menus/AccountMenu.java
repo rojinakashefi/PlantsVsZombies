@@ -1,6 +1,7 @@
 package Menus;
 
 import Main.Main;
+import Miscs.Player;
 import Miscs.Socket.Client;
 
 import javax.swing.*;
@@ -89,13 +90,13 @@ public class AccountMenu extends JFrame implements Runnable  {
         account.send("0");
         String[] request = account.receive();
         if (request.length > 1) {
-            for (int i = 1; i < request.length; ) {
+            for (int i = 1; i < request.length;) {
                 String name = request[i++];
                 int score = Integer.parseInt(request[i++]);
                 int wins = Integer.parseInt(request[i++]);
                 int losses = Integer.parseInt(request[i++]);
                 int difficulty = Integer.parseInt(request[i++]);
-                Levels level = new Levels(difficulty, wins, losses, score, name);
+                Player level = new Player(difficulty, wins, losses, score, name);
                 Main.loadedPlayers.add(level);
             }
         }
@@ -164,17 +165,17 @@ public class AccountMenu extends JFrame implements Runnable  {
             if (index != -1) {
                 new MainMenu(loadedPlayers.get(index));
                 dispose();
-            } else new JOptionPane("User not found,create user!", JOptionPane.INFORMATION_MESSAGE)
-                    .createDialog("Error").setVisible(true);
+            } else new JOptionPane("User Not Found!", JOptionPane.INFORMATION_MESSAGE)
+                    .createDialog("").setVisible(true);
         } else {
-            new JOptionPane("Please Enter a name!", JOptionPane.ERROR_MESSAGE)
-                    .createDialog("ERROR!").setVisible(true);
+            new JOptionPane("Enter a name!", JOptionPane.ERROR_MESSAGE)
+                    .createDialog("Error!").setVisible(true);
         }
     }
     private void signUp() {
         int index = findPlayerIndex(NameTxt.getText());
         if (index == -1) {
-            Levels level = new Levels(0, 0, 0, 0, NameTxt.getText());
+            Player level = new Player(0,0,0,0, NameTxt.getText());
             loadedPlayers.add(level);
             new MainMenu(level);
             dispose();

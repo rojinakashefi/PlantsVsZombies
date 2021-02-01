@@ -20,6 +20,7 @@ import java.util.stream.IntStream;
 import static Main.Main.TESTING;
 import static Miscs.Cards.*;
 import static Miscs.Icons.mowerIcon;
+import static Miscs.Icons.okCheckMarkIcon;
 import static Miscs.Sounds.*;
 
 
@@ -48,43 +49,46 @@ import static Miscs.Sounds.*;
  *
  */
 
-public class Game extends JFrame {
-    private final int[] skyTimer = {25, 30};
-    private final int[] sunflowerTimer = {20, 25};
-    private final int[] walkDelay = {130, 115};
-    private final int[] additionalDamage = {0, 10, 10, 15, 5};
-    int difficulty, gap = 5, suns = 2500; //TODO
-    boolean[] mowerAvailable = new boolean[5];
-    JLabel[] mowers = new JLabel[5];
-    boolean sunAvail = true, peaAvail = true,
-            nutAvail = true, snowAvail = true,
-            cherAvail = true, repAvail = true,
-            threeAvail = true, potAvail = true,
-            gatAvail = true, beetAvail = true;
-    float[] coolDownN = {7.5f, 7.5f, 7.5f, 30f, 30f, 15f, 30f, 15f, 30f, 25f};
-    float[] coolDownH = {7.5f, 7.5f, 30f, 30f, 45f, 25f, 30f, 25f, 45f, 30f};
-    boolean won = false,lost = false, containsIcon = false;
-    JLabel clicked = null;
-    JLabel label, label2;
-    JLabel pauseButton;
-    JLabel plants;
-    JLabel keptSun;
-    JLabel blackScreen;
-    JLabel deck;
-    public static ArrayList<Coordination> objects = new ArrayList<>();
-    public Levels newLevel;
-    public static boolean mute;
-    public static ArrayList<Timer> timerPool = new ArrayList<>();
-    public static ArrayList<Thread> threadPool = new ArrayList<>();
-    private boolean paused = false;
-    int gone = 0, round = 0;
 
-    public Game(Levels level, boolean mute) {
+    public class Game extends JFrame {
+        private final int[] skyTimer = {25, 30};
+        private final int[] sunflowerTimer = {20, 25};
+        private final int[] walkDelay = {115, 130};
+        private final int[] additionalDamage = {0, 5, 5, 5, 5};
+        int difficulty, gap = 5, suns = 500;
+        long gameTime = 0;
+        boolean[] mowerAvailable = new boolean[5];
+        JLabel[] mowers = new JLabel[5];
+        boolean sunAvail = true, peaAvail = true,
+                nutAvail = true, snowAvail = true,
+                cherAvail = true, repAvail = true,
+                threeAvail = true, potAvail = true,
+                gatAvail = true, beetAvail = true;
+        float[] coolDownN = {7.5f, 7.5f, 7.5f, 30f, 30f, 15f, 30f, 15f, 30f, 25f};
+        float[] coolDownH = {7.5f, 7.5f, 30f, 30f, 45f, 25f, 30f, 25f, 45f, 30f};
+        boolean won = false,lost = false, containsIcon = false;
+        JLabel clicked = null;
+        JLabel label, label2;
+        JLabel pauseButton;
+        JLabel plants;
+        JLabel keptSun;
+        JLabel blackScreen;
+        JLabel deck;
+        public static ArrayList<Coordination> objects = new ArrayList<>();
+        public Player newLevel;
+        public static boolean mute;
+        public static ArrayList<Timer> timerPool = new ArrayList<>();
+        public static ArrayList<Thread> threadPool = new ArrayList<>();
+        private boolean paused = false;
+        int gone = 0, round = 0;
+
+
+        public Game(Levels level, boolean mute) {
         muted = mute;
         Game.mute = mute;
         Sluts.setSluts(); // Defines the checkered ground as sluts and calculates their coordinates
         objects.clear();  // clears the list of last game spawned objects
-        newLevel = level;
+
         difficulty = newLevel.difficulty;
 
         //Game Page specs
@@ -123,6 +127,63 @@ public class Game extends JFrame {
 
         waves();
 
+    }
+    private void starter(Player level, boolean mute) {
+        this.setIconImage(new ImageIcon("icon.png").getImage());
+        muted = mute;
+        Game.mute = mute;
+        Sluts.setSluts(); // Defines the checkered ground as sluts and calculates their coordinates
+        objects.clear();  // clears the list of last game spawned objects
+        newLevel = level;
+        difficulty = newLevel.difficulty;
+
+        //Game Page specs
+        setSize(1000, 635);
+        setResizable(false);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.getContentPane().setLayout(null);
+        setLocationRelativeTo(null);
+
+        label = new JLabel();// Setting the background
+
+        pauseButton();
+
+        backgrounds(); // Creates the main and the plants menu background
+
+        mower();
+
+        setVisible(true);
+
+        plants.setIcon(Icons.plantMenuIcon);
+    }
+    private void gameTimer() {
+        new Thread( () -> {
+            long startTime = System.currentTimeMillis() / 1000 - gameTime;
+            do {
+                if (paused) return;
+                gameTime = (System.currentTimeMillis() / 1000) - startTime;
+                System.out.println(gameTime);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (gameTime == gap) {
+                    waves(1);
+                }
+                else if (gameTime == gap + 150) {
+                    waves(2);
+                }
+                else if (gameTime == gap + 330) {
+                    waves(3);
+                }
+            } while (gameTime != gap + 480);
+            try {
+                win();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private void mower() {
@@ -229,46 +290,22 @@ public class Game extends JFrame {
                         first = Zombie.zombies.get(i);
                 }
             }
-            if(first.getX() < plant.getX()) first = null;
+            int zombieX = first.getBounds().x;
+            if(first.getClass() == PoleVaulting.class || first.getClass() == Newspaper.class)
+                zombieX += 200;
+            else if (first.getClass() == ConeHead.class || first.getClass() == BucketHead.class)
+                zombieX += 60;
+            if(zombieX < plant.getX()) first = null;
             return first;
         }
         return null;
+
     }
-    public static void removePlant (Plant plant) {
-        Plant.plants.remove(plant);
-        for(int i = 0; i < objects.size(); i++) {
-            if(objects.get(i).plant == plant) {
-                objects.remove(i);
-                break;
-            }
+    private void waves(int roundNumber) {
+        if (roundNumber != round) {
+            round = roundNumber;
+            sendZombies();
         }
-    }
-    private void waves() {
-        new Thread(() -> {
-            Sounds.backPlay(IN_GAME); // Play before-game background music
-            try {
-                Thread.sleep(gap * 1000L - 500);
-                Sounds.backPlay(ZOMBIES_COMING); // Play The Zombies are coming sound effect
-                Thread.sleep(500);
-                while (paused) Thread.sleep(1000);
-                ++round;
-                sendZombies(); // Send Zombies to the field. wave 1
-                Thread.sleep(150000);
-                while (paused) Thread.sleep(1000);
-                ++round;
-                sendZombies(); // Send Zombies to the field. wave 2
-                Thread.sleep(180000);
-                while (paused) Thread.sleep(1000);
-                ++round;
-                sendZombies(); // Send Zombies to the field. wave 3
-                Thread.sleep(150000);
-                //noinspection StatementWithEmptyBody
-                while (!Zombie.zombies.isEmpty()) ;
-                win();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
     }
     private void win() throws InterruptedException {
         if (!lost || !won) {
@@ -276,22 +313,34 @@ public class Game extends JFrame {
             Sounds.play(WIN);
             pause();
             Thread.sleep(1000);
+            if (difficulty == 1) newLevel.score += 10;
+            else newLevel.score += 3;
+            newLevel.wins++;
             newLevel.save();
+            new JOptionPane("You Lost!").createDialog("");
+            Sounds.mute();
+            dispose();
         }
     }
-    private void lose() throws InterruptedException{
+    private void lose() throws InterruptedException {
         if (!won || !lost) {
             lost = true;
             Sounds.play(LOSE);
             pause();
             Thread.sleep(1000);
+            if (difficulty == 1) newLevel.score -= 3;
+            else newLevel.score -= 1;
+            newLevel.losses++;
             newLevel.save();
+            new JOptionPane("You Lost!").createDialog("");
+            Sounds.mute();
+            dispose();
         }
     }
-    public static void removeZombie(Zombie zombie) {
-        Zombie.zombies.remove(zombie);
+    public static void removePlant (Plant plant) {
+        Plant.plants.remove(plant);
         for(int i = 0; i < objects.size(); i++) {
-            if(objects.get(i).zombie == zombie) {
+            if(objects.get(i).plant == plant) {
                 objects.remove(i);
                 break;
             }
@@ -333,6 +382,9 @@ public class Game extends JFrame {
                 if (pos != null) {
                     do {
                         try {
+                            PeaBullet pea = new PeaBullet(label, shooterPlant);
+                            pea.setIcon(Icons.peaBulletIcon);
+                            pea.setBounds(shooterPlant.getBounds().x + 46, shooterPlant.getBounds().y + 16, 28, 28);
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -345,7 +397,8 @@ public class Game extends JFrame {
 
     private void plantsJob() {
         new Thread(() -> {
-
+            label.add(plants);
+            plants.setBounds(200, 0,450, 88);
             keptSun = new JLabel();
             JLabel score = new JLabel();
             score.setIcon(Icons.scoreBoxIcon);
@@ -361,8 +414,6 @@ public class Game extends JFrame {
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, keptSun, 0, SpringLayout.HORIZONTAL_CENTER, score);
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, keptSun, 0, SpringLayout.VERTICAL_CENTER, score);
 
-            label.add(plants);
-            plants.setBounds(200, 0,450, 88);
             label.repaint();
 
         }).start();
@@ -421,7 +472,6 @@ public class Game extends JFrame {
                         label.removeMouseMotionListener(motionListener());
                         containsIcon = false;
                         if (TESTING) System.out.println("Clicked Slut " + Arrays.toString(position));
-                        //if (TESTING) System.out.println("Cursor Icon: " + clicked.getIcon().toString());
                         Plant tmp;
                         int i;
                         switch (clicked.getIcon().toString()) {
@@ -476,11 +526,16 @@ public class Game extends JFrame {
                         else if (tmp.getClass() == SunFlower.class) produceSun(tmp);
                         else if (tmp.getClass() == Cherry.class) explode(tmp);
                         else if (tmp.getClass() == Potato.class) mineSet(tmp);
-                       // else if (tmp.getClass() == Threepeater.class) tripleShot(tmp);
+                        else if (tmp.getClass() == Threepeater.class) tripleShot(tmp);
                     }
                 }
             }
 
+            /**
+             * @param x the horizontal location of the slut
+             * @param y the vertical location of the slut
+             * @return checks if the slut is empty or not
+             */
             private boolean isEmptySlut(int x, int y) {
                 boolean isEmpty = true;
                 for (Coordination object : objects) {
@@ -501,7 +556,7 @@ public class Game extends JFrame {
         };
     }
 
-    private void mineSet(Plant tmp) {
+    private synchronized void mineSet(Plant tmp) {
         new Thread(() -> {
             try {
                 Thread.sleep(5000);
@@ -511,17 +566,28 @@ public class Game extends JFrame {
             tmp.setIcon(Icons.potatoBIcon);
             while (tmp.health > 0) {
                 Zombie aim = getFirstZombieByRow(tmp);
-                if (aim != null)
-                    if (aim.getX() - tmp.getX() < 20) {
+                if (aim != null) {
+                    int size = 0;
+                    if (aim.getClass() == PoleVaulting.class)
+                        size = 200;
+                    else if ( aim.getClass() == BucketHead.class
+                            || aim.getClass() == ConeHead.class
+                            || aim.getClass() == Newspaper.class)
+                        size = 80;
+                    if (aim.getX() + size - tmp.getX() < 20 && aim.row == tmp.row) {
                         play(CHERRY_EXPLOSION);
                         tmp.setIcon(Icons.potatoCIcon);
+                        removePlant(tmp);
                         aim.kill(true);
                         new Timer(1000, e -> {
                             label.remove(tmp);
                             label.repaint();
-                            ((Timer)e.getSource()).setRepeats(false);
+                            ((Timer) e.getSource()).setRepeats(false);
                         }).start();
+                        tmp.health = 0;
+                        break;
                     }
+                }
             }
         }).start();
     }
@@ -719,6 +785,7 @@ public class Game extends JFrame {
         }).start();
     }
 
+
     private MouseMotionListener motionListener() {
         return new MouseMotionAdapter() {
             public void mouseMoved(MouseEvent me)
@@ -745,51 +812,88 @@ public class Game extends JFrame {
     }
     private void readySetPlant() {
         Thread n = new Thread(() -> {
-            try {
-                placeRandomZombies(label2);
-                Sounds.backPlay(CHOOSE_DECK);
-                label2.setBounds(-300, 0, 1400, 600);
-                deck = new JLabel();
-                deck.setBounds(380, 98, 325, 180);
-                deck.setIcon(Icons.deckIcon);
-                label2.add(deck);
-                plants.setBounds(330, 0, 450, 88);
-                label2.add(plants);
-                JLabel[] cards = new JLabel[10];
+            placeRandomZombies(label2);
+            Sounds.backPlay(CHOOSE_DECK);
+            label2.setBounds(-300, 0, 1400, 600);
+            deck = new JLabel();
+            deck.setBounds(380, 98, 325, 180);
+            deck.setIcon(Icons.deckIcon);
+            label2.add(deck);
+            plants.setBounds(330, 0, 450, 88);
+            label2.add(plants);
+            JLabel okButton = new JLabel();
+            okButton.setIcon(okCheckMarkIcon);
+            okButton.setBounds(630, 300, 75, 75);
+            label2.add(okButton);
+            JLabel[] cards = new JLabel[9];
 
-                Sluts.setCardSluts();
+            Sluts.setCardSluts();
 
-                for (int i = 0; i < cards.length; i++) {
-                    cards[i] = Cards.getCard(i, deck);
-                    cards[i].setBounds(Sluts.getCardSlut(i));
-                    cards[i].setName(String.valueOf(i));
-                    cards[i].addMouseListener(deckClickListener());
-                }
-
-                Thread.sleep(5000);
-
-                label2.remove(plants);
-                label2.remove(deck);
-                label2.repaint();
-
-                //noinspection ForLoopReplaceableByForEach
-                for (int i = 0; i < cards.length; i++) {
-                    cards[i].removeMouseListener(cards[i].getMouseListeners()[0]);
-                    cards[i].addMouseListener(cardsClickListener());
-                }
-                Timer t = new Timer(33, e ->
-                        label2.setBounds(label2.getX() + 10, label2.getY(), 1400, 600));
-                t.start();
-                Thread.sleep(999);
-                t.stop();
-                label2.setBounds(0, 0, 1400, 600);
-                Sounds.mute();
-                Sounds.play(READY);// Play background music
-                remove(label2);
-                readyLabel();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            for (int i = 0; i < cards.length; i++) {
+                cards[i] = Cards.getCard(i, deck);
+                cards[i].setBounds(Sluts.getCardSlut(i));
+                cards[i].setName(String.valueOf(i));
+                cards[i].addMouseListener(deckClickListener());
             }
+            okButton.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {}
+                @Override
+                public void mousePressed(MouseEvent e) {}
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    new Thread(() -> {
+                        label2.remove(plants);
+                        label2.remove(deck);
+                        label2.remove(okButton);
+                        label2.repaint();
+                        try {
+                            //noinspection ForLoopReplaceableByForEach
+                            for (int i = 0; i < cards.length; i++) {
+                                cards[i].removeMouseListener(cards[i].getMouseListeners()[0]);
+                                cards[i].addMouseListener(cardsClickListener());
+                            }
+                            Timer t = new Timer(33, ee ->
+                                    label2.setBounds(label2.getX() + 10, label2.getY(), 1400, 600));
+                            t.start();
+                            Thread.sleep(999);
+                            t.stop();
+                            label2.setBounds(0, 0, 1400, 600);
+                            Sounds.mute();
+                            Sounds.play(READY);// Play background music
+                            remove(label2);
+                            readyLabel();
+
+                            plantsJob();
+
+                            label.repaint();
+
+                            new Thread(() -> {
+                                threadPool.add(Thread.currentThread());
+                                try {
+                                    while (!won || !lost) {
+                                        Thread.sleep(skyTimer[difficulty] * 1000L);
+                                        sunLanding(null);
+                                        if (paused) break;
+                                    }
+                                } catch (InterruptedException ex) {
+                                    ex.printStackTrace();
+                                }
+                                threadPool.remove(Thread.currentThread());
+                            }).start();
+
+                            gameTimer();
+
+                        } catch (InterruptedException interruptedException) {
+                            interruptedException.printStackTrace();
+                        }
+                    }).start();
+                }
+                @Override
+                public void mouseEntered(MouseEvent e) {}
+                @Override
+                public void mouseExited(MouseEvent e) {}
+            });
         });
         n.start();
         try {
@@ -803,14 +907,11 @@ public class Game extends JFrame {
     private MouseListener deckClickListener() {
         return new MouseListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-
-            }
-
+            public void mouseClicked(MouseEvent e) {}
             @Override
             public void mousePressed(MouseEvent e) {
                 JLabel aim = ((JLabel)e.getSource());
-                System.out.println(aim.getName());
+                if (TESTING) System.out.println("Clicked On Seed Number " + aim.getName());
                 Icon icon = aim.getIcon();
                 int index = -1;
                 for (int j : cardsList) {
@@ -835,23 +936,13 @@ public class Game extends JFrame {
                     Sounds.play(SELECT);
                 }
                 aim.setIcon(icon);
-
             }
-
             @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
+            public void mouseReleased(MouseEvent e) {}
             @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
+            public void mouseEntered(MouseEvent e) {}
             @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
+            public void mouseExited(MouseEvent e) {}
         };
     }
     private void readyLabel() throws InterruptedException {
@@ -1002,8 +1093,11 @@ public class Game extends JFrame {
             else if (zombie.getClass() == ConeHead.class) i = 1;
             else if (zombie.getClass() == BucketHead.class) i = 2;
             else if (zombie.getClass() == Football.class) i = 3;
+            else if (zombie.getClass() == PoleVaulting.class) i = 4;
+            else if (zombie.getClass() == Newspaper.class) i = 5;
             else i = -1;
             int amount = zombie.damage + additionalDamage[i] * difficulty;
+            System.out.println(amount);
             threadPool.add(Thread.currentThread());
             do {
                 if (zombie.health > 0)
@@ -1021,19 +1115,6 @@ public class Game extends JFrame {
         });
         t.start();
     }
-    private void pause() {
-        for (Timer timer: timerPool) timer.stop();
-        muted = true;
-        paused = true;
-    }
-    void resume() {
-        for (Timer timer: timerPool) timer.start();
-        if(!mute) muted = true;
-        blackScreen.setIcon(null);
-        remove(blackScreen);
-        paused = false;
-        pauseButton.addMouseListener(pauseClickListener(pauseButton));
-    }
     public static void main(String[] args) {
         if (Levels.load() == null)
             new Game(new Levels(), false);
@@ -1043,5 +1124,6 @@ public class Game extends JFrame {
             new Game(level.get(0), false);
         }
     }
+
 
 }
