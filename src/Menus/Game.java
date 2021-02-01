@@ -396,7 +396,8 @@ import static Miscs.Sounds.*;
 
     private void plantsJob() {
         new Thread(() -> {
-
+            label.add(plants);
+            plants.setBounds(200, 0,450, 88);
             keptSun = new JLabel();
             JLabel score = new JLabel();
             score.setIcon(Icons.scoreBoxIcon);
@@ -412,8 +413,6 @@ import static Miscs.Sounds.*;
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, keptSun, 0, SpringLayout.HORIZONTAL_CENTER, score);
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, keptSun, 0, SpringLayout.VERTICAL_CENTER, score);
 
-            label.add(plants);
-            plants.setBounds(200, 0,450, 88);
             label.repaint();
 
         }).start();
