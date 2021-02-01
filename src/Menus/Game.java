@@ -89,7 +89,15 @@ import static Miscs.Sounds.*;
             PeaShooter s = new PeaShooter(label, new int[]{0, 0});
             System.out.println(s.getClass().getName());
         }
-
+    public static void removeZombie(Zombie zombie) {
+        Zombie.zombies.remove(zombie);
+        for(int i = 0; i < objects.size(); i++) {
+            if(objects.get(i).zombie == zombie) {
+                objects.remove(i);
+                break;
+            }
+        }
+    }
     private void starter(Player level, boolean mute) {
         this.setIconImage(new ImageIcon("icon.png").getImage());
         muted = mute;
