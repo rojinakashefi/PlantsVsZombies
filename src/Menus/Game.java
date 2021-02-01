@@ -312,7 +312,13 @@ import static Miscs.Sounds.*;
             Sounds.play(WIN);
             pause();
             Thread.sleep(1000);
+            if (difficulty == 1) newLevel.score += 10;
+            else newLevel.score += 3;
+            newLevel.wins++;
             newLevel.save();
+            new JOptionPane("You Lost!").createDialog("");
+            Sounds.mute();
+            dispose();
         }
     }
     private void lose() throws InterruptedException{
