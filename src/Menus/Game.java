@@ -188,9 +188,12 @@ public class Game extends JFrame {
             }
         }
         starter(player, mute);
+
     }
 
+    private void setRound() {
 
+    }
     public static void removeZombie(Zombie zombie) {
         Zombie.zombies.remove(zombie);
         for (int i = 0; i < objects.size(); i++) {
