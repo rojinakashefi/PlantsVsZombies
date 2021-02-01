@@ -156,7 +156,33 @@ import static Miscs.Sounds.*;
         plants.setIcon(Icons.plantMenuIcon);
     }
     private void gameTimer() {
-
+        new Thread( () -> {
+            long startTime = System.currentTimeMillis() / 1000 - gameTime;
+            do {
+                if (paused) return;
+                gameTime = (System.currentTimeMillis() / 1000) - startTime;
+                System.out.println(gameTime);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (gameTime == gap) {
+                    waves(1);
+                }
+                else if (gameTime == gap + 150) {
+                    waves(2);
+                }
+                else if (gameTime == gap + 330) {
+                    waves(3);
+                }
+            } while (gameTime != gap + 480);
+            try {
+                win();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private void mower() {
