@@ -20,6 +20,7 @@ import java.util.stream.IntStream;
 import static Main.Main.TESTING;
 import static Miscs.Cards.*;
 import static Miscs.Icons.mowerIcon;
+import static Miscs.Icons.okCheckMarkIcon;
 import static Miscs.Sounds.*;
 
 
@@ -811,51 +812,88 @@ import static Miscs.Sounds.*;
     }
     private void readySetPlant() {
         Thread n = new Thread(() -> {
-            try {
-                placeRandomZombies(label2);
-                Sounds.backPlay(CHOOSE_DECK);
-                label2.setBounds(-300, 0, 1400, 600);
-                deck = new JLabel();
-                deck.setBounds(380, 98, 325, 180);
-                deck.setIcon(Icons.deckIcon);
-                label2.add(deck);
-                plants.setBounds(330, 0, 450, 88);
-                label2.add(plants);
-                JLabel[] cards = new JLabel[10];
+            placeRandomZombies(label2);
+            Sounds.backPlay(CHOOSE_DECK);
+            label2.setBounds(-300, 0, 1400, 600);
+            deck = new JLabel();
+            deck.setBounds(380, 98, 325, 180);
+            deck.setIcon(Icons.deckIcon);
+            label2.add(deck);
+            plants.setBounds(330, 0, 450, 88);
+            label2.add(plants);
+            JLabel okButton = new JLabel();
+            okButton.setIcon(okCheckMarkIcon);
+            okButton.setBounds(630, 300, 75, 75);
+            label2.add(okButton);
+            JLabel[] cards = new JLabel[9];
 
-                Sluts.setCardSluts();
+            Sluts.setCardSluts();
 
-                for (int i = 0; i < cards.length; i++) {
-                    cards[i] = Cards.getCard(i, deck);
-                    cards[i].setBounds(Sluts.getCardSlut(i));
-                    cards[i].setName(String.valueOf(i));
-                    cards[i].addMouseListener(deckClickListener());
-                }
-
-                Thread.sleep(5000);
-
-                label2.remove(plants);
-                label2.remove(deck);
-                label2.repaint();
-
-                //noinspection ForLoopReplaceableByForEach
-                for (int i = 0; i < cards.length; i++) {
-                    cards[i].removeMouseListener(cards[i].getMouseListeners()[0]);
-                    cards[i].addMouseListener(cardsClickListener());
-                }
-                Timer t = new Timer(33, e ->
-                        label2.setBounds(label2.getX() + 10, label2.getY(), 1400, 600));
-                t.start();
-                Thread.sleep(999);
-                t.stop();
-                label2.setBounds(0, 0, 1400, 600);
-                Sounds.mute();
-                Sounds.play(READY);// Play background music
-                remove(label2);
-                readyLabel();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            for (int i = 0; i < cards.length; i++) {
+                cards[i] = Cards.getCard(i, deck);
+                cards[i].setBounds(Sluts.getCardSlut(i));
+                cards[i].setName(String.valueOf(i));
+                cards[i].addMouseListener(deckClickListener());
             }
+            okButton.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {}
+                @Override
+                public void mousePressed(MouseEvent e) {}
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    new Thread(() -> {
+                        label2.remove(plants);
+                        label2.remove(deck);
+                        label2.remove(okButton);
+                        label2.repaint();
+                        try {
+                            //noinspection ForLoopReplaceableByForEach
+                            for (int i = 0; i < cards.length; i++) {
+                                cards[i].removeMouseListener(cards[i].getMouseListeners()[0]);
+                                cards[i].addMouseListener(cardsClickListener());
+                            }
+                            Timer t = new Timer(33, ee ->
+                                    label2.setBounds(label2.getX() + 10, label2.getY(), 1400, 600));
+                            t.start();
+                            Thread.sleep(999);
+                            t.stop();
+                            label2.setBounds(0, 0, 1400, 600);
+                            Sounds.mute();
+                            Sounds.play(READY);// Play background music
+                            remove(label2);
+                            readyLabel();
+
+                            plantsJob();
+
+                            label.repaint();
+
+                            new Thread(() -> {
+                                threadPool.add(Thread.currentThread());
+                                try {
+                                    while (!won || !lost) {
+                                        Thread.sleep(skyTimer[difficulty] * 1000L);
+                                        sunLanding(null);
+                                        if (paused) break;
+                                    }
+                                } catch (InterruptedException ex) {
+                                    ex.printStackTrace();
+                                }
+                                threadPool.remove(Thread.currentThread());
+                            }).start();
+
+                            gameTimer();
+
+                        } catch (InterruptedException interruptedException) {
+                            interruptedException.printStackTrace();
+                        }
+                    }).start();
+                }
+                @Override
+                public void mouseEntered(MouseEvent e) {}
+                @Override
+                public void mouseExited(MouseEvent e) {}
+            });
         });
         n.start();
         try {
