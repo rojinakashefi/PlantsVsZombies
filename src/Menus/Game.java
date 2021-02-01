@@ -289,19 +289,16 @@ import static Miscs.Sounds.*;
                         first = Zombie.zombies.get(i);
                 }
             }
-            if(first.getX() < plant.getX()) first = null;
+            int zombieX = first.getBounds().x;
+            if(first.getClass() == PoleVaulting.class || first.getClass() == Newspaper.class)
+                zombieX += 200;
+            else if (first.getClass() == ConeHead.class || first.getClass() == BucketHead.class)
+                zombieX += 60;
+            if(zombieX < plant.getX()) first = null;
             return first;
         }
         return null;
-    }
-    public static void removePlant (Plant plant) {
-        Plant.plants.remove(plant);
-        for(int i = 0; i < objects.size(); i++) {
-            if(objects.get(i).plant == plant) {
-                objects.remove(i);
-                break;
-            }
-        }
+
     }
     private void waves(int roundNumber) {
         if (roundNumber != round) {
