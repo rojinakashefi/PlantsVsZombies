@@ -48,20 +48,19 @@ public class MainMenu extends JFrame {
         }));
     }
     private void background() {
-        SpringLayout layout = new SpringLayout();
-
         back = new JLabel();
         back.setIcon(Icons.firstIcon);
         back.setBounds(0, 0, 860, 460);
         this.add(back);
-
         newButton = new JLabel();
         newButton.setIcon(Icons.buttonIcon);
+        SpringLayout layout = new SpringLayout();
         JLabel n = new JLabel();
         newButton.setLayout(layout);
         n.setText("New Game");
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, n, 0, SpringLayout.HORIZONTAL_CENTER, newButton);
         layout.putConstraint(SpringLayout.VERTICAL_CENTER, n, 0, SpringLayout.VERTICAL_CENTER, newButton);
+
         back.add(newButton);
         newButton.add(n);
         newButton.setBounds(360, 340, 100, 45);
@@ -72,7 +71,7 @@ public class MainMenu extends JFrame {
             public void mousePressed(MouseEvent e) {
                 newButton.setIcon(new ImageIcon("gfx/buttonHover.pvz"));
                 mute();
-                new Thread(() -> new Game(levels, muted)).start();
+                new Thread(() -> new Game(player, muted)).start();
                 dispose();
             }
             @Override
@@ -84,10 +83,8 @@ public class MainMenu extends JFrame {
             @Override
             public void mouseExited(MouseEvent e) {}
         });
-
-
         loadButton = new JLabel();
-        boolean loaded = Levels.load() != null;
+        boolean loaded = Player.load() != null;
         if (loaded)
             loadButton.setIcon(Icons.buttonIcon);
         else
@@ -108,14 +105,21 @@ public class MainMenu extends JFrame {
             public void mousePressed(MouseEvent e) {
                 if (loaded) {
                     loadButton.setIcon(new ImageIcon("gfx/buttonHover.pvz"));
-                    mute();
-                    new Thread(() -> new Game(new Levels(), muted)).start();
-                    dispose();
+                    m.setText("Loading...");
+                    repaint();
                 }
             }
             @Override
             public void mouseReleased(MouseEvent e) {
                 if(loaded) loadButton.setIcon(Icons.buttonIcon);
+                mute();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
+                new Thread(() -> new Game(player, muted)).start();
+                dispose();
             }
             @Override
             public void mouseEntered(MouseEvent e) {}
