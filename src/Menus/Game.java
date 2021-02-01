@@ -155,6 +155,10 @@ import static Miscs.Sounds.*;
 
         plants.setIcon(Icons.plantMenuIcon);
     }
+    private void gameTimer() {
+
+    }
+
     private void mower() {
         for (int i = 0; i < 5; i++) {
             final int[] ii = {i};
