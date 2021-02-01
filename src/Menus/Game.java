@@ -907,14 +907,11 @@ import static Miscs.Sounds.*;
     private MouseListener deckClickListener() {
         return new MouseListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-
-            }
-
+            public void mouseClicked(MouseEvent e) {}
             @Override
             public void mousePressed(MouseEvent e) {
                 JLabel aim = ((JLabel)e.getSource());
-                System.out.println(aim.getName());
+                if (TESTING) System.out.println("Clicked On Seed Number " + aim.getName());
                 Icon icon = aim.getIcon();
                 int index = -1;
                 for (int j : cardsList) {
@@ -939,23 +936,13 @@ import static Miscs.Sounds.*;
                     Sounds.play(SELECT);
                 }
                 aim.setIcon(icon);
-
             }
-
             @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
+            public void mouseReleased(MouseEvent e) {}
             @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
+            public void mouseEntered(MouseEvent e) {}
             @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
+            public void mouseExited(MouseEvent e) {}
         };
     }
     private void readyLabel() throws InterruptedException {
