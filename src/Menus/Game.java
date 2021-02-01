@@ -48,43 +48,46 @@ import static Miscs.Sounds.*;
  *
  */
 
-public class Game extends JFrame {
-    private final int[] skyTimer = {25, 30};
-    private final int[] sunflowerTimer = {20, 25};
-    private final int[] walkDelay = {130, 115};
-    private final int[] additionalDamage = {0, 10, 10, 15, 5};
-    int difficulty, gap = 5, suns = 2500; //TODO
-    boolean[] mowerAvailable = new boolean[5];
-    JLabel[] mowers = new JLabel[5];
-    boolean sunAvail = true, peaAvail = true,
-            nutAvail = true, snowAvail = true,
-            cherAvail = true, repAvail = true,
-            threeAvail = true, potAvail = true,
-            gatAvail = true, beetAvail = true;
-    float[] coolDownN = {7.5f, 7.5f, 7.5f, 30f, 30f, 15f, 30f, 15f, 30f, 25f};
-    float[] coolDownH = {7.5f, 7.5f, 30f, 30f, 45f, 25f, 30f, 25f, 45f, 30f};
-    boolean won = false,lost = false, containsIcon = false;
-    JLabel clicked = null;
-    JLabel label, label2;
-    JLabel pauseButton;
-    JLabel plants;
-    JLabel keptSun;
-    JLabel blackScreen;
-    JLabel deck;
-    public static ArrayList<Coordination> objects = new ArrayList<>();
-    public Levels newLevel;
-    public static boolean mute;
-    public static ArrayList<Timer> timerPool = new ArrayList<>();
-    public static ArrayList<Thread> threadPool = new ArrayList<>();
-    private boolean paused = false;
-    int gone = 0, round = 0;
 
-    public Game(Levels level, boolean mute) {
+    public class Game extends JFrame {
+        private final int[] skyTimer = {25, 30};
+        private final int[] sunflowerTimer = {20, 25};
+        private final int[] walkDelay = {115, 130};
+        private final int[] additionalDamage = {0, 5, 5, 5, 5};
+        int difficulty, gap = 5, suns = 500;
+        long gameTime = 0;
+        boolean[] mowerAvailable = new boolean[5];
+        JLabel[] mowers = new JLabel[5];
+        boolean sunAvail = true, peaAvail = true,
+                nutAvail = true, snowAvail = true,
+                cherAvail = true, repAvail = true,
+                threeAvail = true, potAvail = true,
+                gatAvail = true, beetAvail = true;
+        float[] coolDownN = {7.5f, 7.5f, 7.5f, 30f, 30f, 15f, 30f, 15f, 30f, 25f};
+        float[] coolDownH = {7.5f, 7.5f, 30f, 30f, 45f, 25f, 30f, 25f, 45f, 30f};
+        boolean won = false,lost = false, containsIcon = false;
+        JLabel clicked = null;
+        JLabel label, label2;
+        JLabel pauseButton;
+        JLabel plants;
+        JLabel keptSun;
+        JLabel blackScreen;
+        JLabel deck;
+        public static ArrayList<Coordination> objects = new ArrayList<>();
+        public Player newLevel;
+        public static boolean mute;
+        public static ArrayList<Timer> timerPool = new ArrayList<>();
+        public static ArrayList<Thread> threadPool = new ArrayList<>();
+        private boolean paused = false;
+        int gone = 0, round = 0;
+
+
+        public Game(Levels level, boolean mute) {
         muted = mute;
         Game.mute = mute;
         Sluts.setSluts(); // Defines the checkered ground as sluts and calculates their coordinates
         objects.clear();  // clears the list of last game spawned objects
-        newLevel = level;
+
         difficulty = newLevel.difficulty;
 
         //Game Page specs
@@ -124,7 +127,9 @@ public class Game extends JFrame {
         waves();
 
     }
+    private void starter(Player level, boolean mute) {
 
+    }
     private void mower() {
         for (int i = 0; i < 5; i++) {
             final int[] ii = {i};
@@ -1043,5 +1048,6 @@ public class Game extends JFrame {
             new Game(level.get(0), false);
         }
     }
+
 
 }
