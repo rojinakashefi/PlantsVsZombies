@@ -175,7 +175,7 @@ public class AccountMenu extends JFrame implements Runnable  {
     private void signUp() {
         int index = findPlayerIndex(NameTxt.getText());
         if (index == -1) {
-            Levels level = new Levels(0, 0, 0, 0, NameTxt.getText());
+            Player level = new Player(0,0,0,0, NameTxt.getText());
             loadedPlayers.add(level);
             new MainMenu(level);
             dispose();
