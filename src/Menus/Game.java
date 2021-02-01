@@ -1272,7 +1272,15 @@ public class Game extends JFrame {
         muted = true;
         paused = true;
     }
+    public GameSave save() {
+        ArrayList<gameObjects> objects = new ArrayList<>();
+        ArrayList<Integer> cards = new ArrayList<>();
+        for (int i = 0; i < Game.objects.size(); i++) {
 
+        }
+        GameSave gg = null;
+        return gg;
+    }
     public static void main(String[] args) {
         if (Player.load() == null)
             new Game(new Player(), false);
