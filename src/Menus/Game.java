@@ -188,7 +188,36 @@ public class Game extends JFrame {
             }
         }
         starter(player, mute);
+        loading(saved.cards);
 
+    }
+
+    private void loading(ArrayList<Integer> cardsNumber) {
+        JLabel[] cards = new JLabel[6];
+
+        Sluts.setCardSluts();
+
+        for (int i = 0; i < cards.length; i++) {
+            cards[i] = Cards.getCard(cardsNumber.get(i), plants);
+            cards[i].setBounds(Sluts.getCardSlut(i));
+            cards[i].setName(String.valueOf(i));
+            cards[i].addMouseListener(cardsClickListener());
+        }
+        new Thread(() -> {
+            threadPool.add(Thread.currentThread());
+            try {
+                while (!won || !lost) {
+                    Thread.sleep(skyTimer[difficulty] * 1000L);
+                    sunLanding(null);
+                    if (paused) break;
+                }
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            threadPool.remove(Thread.currentThread());
+        }).start();
+
+        gameTimer();
     }
 
     private void setRound() {
