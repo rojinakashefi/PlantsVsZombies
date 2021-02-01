@@ -81,15 +81,15 @@ import static Miscs.Sounds.*;
         public static ArrayList<Thread> threadPool = new ArrayList<>();
         private boolean paused = false;
         int gone = 0, round = 0;
-
         public Game(Player player, boolean mute) {
-        starter(player, mute);
-        //In this Section the first animation of the game executed
-        readySetPlant();
+            starter(player, mute);
+            //In this Section the first animation of the game executed
+            readySetPlant();
 
-        PeaShooter s = new PeaShooter(label, new int[]{0,0});
-        System.out.println(s.getClass().getName());
-    }
+            PeaShooter s = new PeaShooter(label, new int[]{0, 0});
+            System.out.println(s.getClass().getName());
+        }
+
     private void starter(Player level, boolean mute) {
         this.setIconImage(new ImageIcon("icon.png").getImage());
         muted = mute;
@@ -1077,13 +1077,18 @@ import static Miscs.Sounds.*;
         });
         t.start();
     }
+    private void pause() {
+        for (Timer timer: timerPool) timer.stop();
+        muted = true;
+        paused = true;
+    }
     public static void main(String[] args) {
-        if (Levels.load() == null)
-            new Game(new Levels(), false);
+        if (Player.load() == null)
+            new Game(new Player(), false);
         else {
-            ArrayList<Levels> level= Levels.load();
-            assert level != null;
-            new Game(level.get(0), false);
+            ArrayList<Player> player= Player.load();
+            assert player != null;
+            new Game(player.get(0), false);
         }
     }
 
