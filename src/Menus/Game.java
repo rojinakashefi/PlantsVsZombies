@@ -324,10 +324,10 @@ import static Miscs.Sounds.*;
             newLevel.save();
         }
     }
-    public static void removeZombie(Zombie zombie) {
-        Zombie.zombies.remove(zombie);
+    public static void removePlant (Plant plant) {
+        Plant.plants.remove(plant);
         for(int i = 0; i < objects.size(); i++) {
-            if(objects.get(i).zombie == zombie) {
+            if(objects.get(i).plant == plant) {
                 objects.remove(i);
                 break;
             }
