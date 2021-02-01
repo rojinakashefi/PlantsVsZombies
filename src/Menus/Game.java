@@ -555,7 +555,7 @@ import static Miscs.Sounds.*;
         };
     }
 
-    private void mineSet(Plant tmp) {
+    private synchronized void mineSet(Plant tmp) {
         new Thread(() -> {
             try {
                 Thread.sleep(5000);
@@ -565,17 +565,28 @@ import static Miscs.Sounds.*;
             tmp.setIcon(Icons.potatoBIcon);
             while (tmp.health > 0) {
                 Zombie aim = getFirstZombieByRow(tmp);
-                if (aim != null)
-                    if (aim.getX() - tmp.getX() < 20) {
+                if (aim != null) {
+                    int size = 0;
+                    if (aim.getClass() == PoleVaulting.class)
+                        size = 200;
+                    else if ( aim.getClass() == BucketHead.class
+                            || aim.getClass() == ConeHead.class
+                            || aim.getClass() == Newspaper.class)
+                        size = 80;
+                    if (aim.getX() + size - tmp.getX() < 20 && aim.row == tmp.row) {
                         play(CHERRY_EXPLOSION);
                         tmp.setIcon(Icons.potatoCIcon);
+                        removePlant(tmp);
                         aim.kill(true);
                         new Timer(1000, e -> {
                             label.remove(tmp);
                             label.repaint();
-                            ((Timer)e.getSource()).setRepeats(false);
+                            ((Timer) e.getSource()).setRepeats(false);
                         }).start();
+                        tmp.health = 0;
+                        break;
                     }
+                }
             }
         }).start();
     }
