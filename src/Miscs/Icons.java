@@ -1,3 +1,5 @@
+package Miscs;
+
 import javax.swing.*;
 
 public class Icons {
