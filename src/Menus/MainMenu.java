@@ -2,6 +2,7 @@ package Menus;
 
 import Main.Main;
 import Miscs.Icons;
+import Miscs.Player;
 import Miscs.Sounds;
 
 import javax.swing.*;
@@ -9,6 +10,7 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import static Main.Main.TESTING;
 import static Miscs.Sounds.*;
 
 /**
@@ -22,12 +24,11 @@ import static Miscs.Sounds.*;
  */
 
 public class MainMenu extends JFrame {
-    public Levels levels;
+    public Player player;
     JLabel back, newButton, loadButton, settingsButton, rankingButton;
-    public MainMenu(Levels levels) {
+    public MainMenu(Player player) {
+        this.player = player;
 
-        setVisible(true);
-        this.levels = levels;
         background();
 
         //Game Page specs
@@ -37,11 +38,15 @@ public class MainMenu extends JFrame {
         this.getContentPane().setLayout(null);
         setLocationRelativeTo(null);
         this.setIconImage(new ImageIcon("icon.png").getImage());
+
         Sounds.backPlay(MAIN_MENU);
+        setVisible(true);
 
-        Runtime.getRuntime().addShutdownHook(new Thread( () -> Levels.save(Main.loadedPlayers)));
+        Runtime.getRuntime().addShutdownHook(new Thread( () -> {
+            Player.save(Main.loadedPlayers);
+            if (TESTING) System.out.println("Saving Files Before Exit");
+        }));
     }
-
     private void background() {
         SpringLayout layout = new SpringLayout();
 
