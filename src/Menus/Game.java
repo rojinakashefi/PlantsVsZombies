@@ -381,6 +381,9 @@ import static Miscs.Sounds.*;
                 if (pos != null) {
                     do {
                         try {
+                            PeaBullet pea = new PeaBullet(label, shooterPlant);
+                            pea.setIcon(Icons.peaBulletIcon);
+                            pea.setBounds(shooterPlant.getBounds().x + 46, shooterPlant.getBounds().y + 16, 28, 28);
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
