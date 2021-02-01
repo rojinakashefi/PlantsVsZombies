@@ -165,11 +165,11 @@ public class AccountMenu extends JFrame implements Runnable  {
             if (index != -1) {
                 new MainMenu(loadedPlayers.get(index));
                 dispose();
-            } else new JOptionPane("User not found,create user!", JOptionPane.INFORMATION_MESSAGE)
-                    .createDialog("Error").setVisible(true);
+            } else new JOptionPane("User Not Found!", JOptionPane.INFORMATION_MESSAGE)
+                    .createDialog("").setVisible(true);
         } else {
-            new JOptionPane("Please Enter a name!", JOptionPane.ERROR_MESSAGE)
-                    .createDialog("ERROR!").setVisible(true);
+            new JOptionPane("Enter a name!", JOptionPane.ERROR_MESSAGE)
+                    .createDialog("Error!").setVisible(true);
         }
     }
     private void signUp() {
