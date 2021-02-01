@@ -321,13 +321,19 @@ import static Miscs.Sounds.*;
             dispose();
         }
     }
-    private void lose() throws InterruptedException{
+    private void lose() throws InterruptedException {
         if (!won || !lost) {
             lost = true;
             Sounds.play(LOSE);
             pause();
             Thread.sleep(1000);
+            if (difficulty == 1) newLevel.score -= 3;
+            else newLevel.score -= 1;
+            newLevel.losses++;
             newLevel.save();
+            new JOptionPane("You Lost!").createDialog("");
+            Sounds.mute();
+            dispose();
         }
     }
     public static void removePlant (Plant plant) {
