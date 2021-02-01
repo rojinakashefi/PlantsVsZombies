@@ -15,8 +15,8 @@ public class SettingMenu extends JFrame {
     JLabel closeButton = new JLabel();
     JLabel modeHButton = new JLabel();
     JLabel modeNButton = new JLabel();
-    JLabel nameLBL = new JLabel("UserName :");
-    JTextField nameTXT;
+    JLabel nameLBL = new JLabel("Mode :");
+    JLabel mode;
     MainMenu menu;
     public SettingMenu(MainMenu main) {
         menu = main;
