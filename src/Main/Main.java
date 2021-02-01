@@ -2,6 +2,7 @@ package Main;
 
 import Menus.AccountMenu;
 import Menus.Game;
+import Miscs.GameSave;
 import Miscs.Player;
 import Miscs.Socket.Server;
 
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 
 public class Main {
     public static ArrayList<Player> loadedPlayers = new ArrayList<>();
+    public static ArrayList<GameSave> saves = new ArrayList<>();
     public static final boolean TESTING = true;
     public static final int port = 25252;
     public static final String host = "127.0.0.1";
