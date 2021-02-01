@@ -82,51 +82,13 @@ import static Miscs.Sounds.*;
         private boolean paused = false;
         int gone = 0, round = 0;
 
-
-        public Game(Levels level, boolean mute) {
-        muted = mute;
-        Game.mute = mute;
-        Sluts.setSluts(); // Defines the checkered ground as sluts and calculates their coordinates
-        objects.clear();  // clears the list of last game spawned objects
-
-        difficulty = newLevel.difficulty;
-
-        //Game Page specs
-        setSize(1000, 635);
-        setResizable(false);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.getContentPane().setLayout(null);
-        setLocationRelativeTo(null);
-
-        label = new JLabel();// Setting the background
-
-        backgrounds(); // Creates the main and the plants menu background
-
-        mower();
-
-        setVisible(true);
+        public Game(Player player, boolean mute) {
+        starter(player, mute);
         //In this Section the first animation of the game executed
         readySetPlant();
 
-        plants.setIcon(Icons.plantMenuIcon);
-        plantsJob();
-
-        new Thread(() -> {
-            threadPool.add(Thread.currentThread());
-            try {
-                while (!won || !lost) {
-                    Thread.sleep(20000);
-                    sunLanding(null);
-                    if (paused) break;
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            threadPool.remove(Thread.currentThread());
-        }).start();
-
-        waves();
-
+        PeaShooter s = new PeaShooter(label, new int[]{0,0});
+        System.out.println(s.getClass().getName());
     }
     private void starter(Player level, boolean mute) {
         this.setIconImage(new ImageIcon("icon.png").getImage());
