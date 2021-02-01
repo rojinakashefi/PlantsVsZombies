@@ -471,7 +471,6 @@ import static Miscs.Sounds.*;
                         label.removeMouseMotionListener(motionListener());
                         containsIcon = false;
                         if (TESTING) System.out.println("Clicked Slut " + Arrays.toString(position));
-                        //if (TESTING) System.out.println("Cursor Icon: " + clicked.getIcon().toString());
                         Plant tmp;
                         int i;
                         switch (clicked.getIcon().toString()) {
@@ -526,11 +525,16 @@ import static Miscs.Sounds.*;
                         else if (tmp.getClass() == SunFlower.class) produceSun(tmp);
                         else if (tmp.getClass() == Cherry.class) explode(tmp);
                         else if (tmp.getClass() == Potato.class) mineSet(tmp);
-                       // else if (tmp.getClass() == Threepeater.class) tripleShot(tmp);
+                        else if (tmp.getClass() == Threepeater.class) tripleShot(tmp);
                     }
                 }
             }
 
+            /**
+             * @param x the horizontal location of the slut
+             * @param y the vertical location of the slut
+             * @return checks if the slut is empty or not
+             */
             private boolean isEmptySlut(int x, int y) {
                 boolean isEmpty = true;
                 for (Coordination object : objects) {
