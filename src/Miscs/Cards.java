@@ -7,7 +7,7 @@ import static Miscs.Icons.*;
 
 public class Cards {
     public static final int SNOW_PEA = 0, PEA_SHOOTER = 1, SUNFLOWER = 2, WALL_NUT = 3, CHERRY = 4, REPEATER = 5
-            , THREEPEATER = 6, GATLING = 7, POTATO = 8, BEETROOT = 9;
+            , THREEPEATER = 6, GATLING = 7, POTATO = 8;
 
     public static JLabel getCard(int number, Container c) {
         JLabel tempLabel = new JLabel();

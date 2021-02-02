@@ -26,7 +26,8 @@ public class Sluts {
     public static int[] getSlut(int posX, int posY) {
         for (int i = 0; i < X; i++)
             for (int j = 0; j < Y; j++) {
-                if (posX >= sluts[i][j][0] && posX < sluts[i][j][0] + 80 && posY >= sluts[i][j][1] && posY < sluts[i][j][1] + 100) {
+                if (posX >= sluts[i][j][0] && posX < sluts[i + 1][j][0]
+                        && posY >= sluts[i][j][1] && posY < sluts[i][j + 1][1]) {
                     return new int[]{i, j};
                 }
             }

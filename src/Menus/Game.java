@@ -12,13 +12,11 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Random;
 import java.util.stream.IntStream;
 
 
 import static Main.Main.TESTING;
-import static Miscs.Cards.*;
 import static Miscs.Icons.mowerIcon;
 import static Miscs.Icons.okCheckMarkIcon;
 import static Miscs.Sounds.*;
@@ -428,7 +426,6 @@ public class Game extends JFrame {
         if (!lost || !won) {
             won = true;
             Sounds.play(WIN);
-            pause();
             Thread.sleep(1000);
             if (difficulty == 1) newLevel.score += 10;
             else newLevel.score += 3;
@@ -574,7 +571,14 @@ public class Game extends JFrame {
             }
         };
     }
-
+    void resume() {
+        for (Timer timer: timerPool) timer.start();
+        blackScreen.setIcon(null);
+        remove(blackScreen);
+        paused = false;
+        gameTimer();
+        pauseButton.addMouseListener(pauseClickListener(pauseButton));
+    }
     private void pauseMenu() {
         blackScreen = new JLabel();
         blackScreen.setIcon(Icons.blackScreen);
@@ -1273,7 +1277,7 @@ public class Game extends JFrame {
         paused = true;
     }
     public GameSave save() {
-        ArrayList<gameObjects> objects = new ArrayList<>();
+        ArrayList<GameObjects> objects = new ArrayList<>();
         ArrayList<Integer> cards = new ArrayList<>();
         for (int i = 0; i < Game.objects.size(); i++) {
 
