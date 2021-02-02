@@ -572,7 +572,12 @@ public class Game extends JFrame {
         };
     }
     void resume() {
-
+        for (Timer timer: timerPool) timer.start();
+        blackScreen.setIcon(null);
+        remove(blackScreen);
+        paused = false;
+        gameTimer();
+        pauseButton.addMouseListener(pauseClickListener(pauseButton));
     }
     private void pauseMenu() {
         blackScreen = new JLabel();
