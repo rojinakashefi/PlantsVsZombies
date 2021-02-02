@@ -73,7 +73,6 @@ public class Player implements Comparable<Player> {
                 e.printStackTrace();
             }
             if (TESTING) System.out.println("File Loaded!");
-            System.out.println(Arrays.toString(temp.toArray()));
             return temp;
         } else return null;
     }
