@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
+
 public class Sounds {
 
     public static ArrayList<SoundPlayer> backgroundMusic = new ArrayList<>();
@@ -27,6 +28,7 @@ public class Sounds {
             }
         }
     }
+
 
     public static void backPlay(int number) {
         if (!muted)
@@ -77,6 +79,7 @@ public class Sounds {
                 }
             }).start();
     }
+
 
     public static void play(int number) {
         if (!muted)

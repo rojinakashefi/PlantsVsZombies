@@ -1,30 +1,33 @@
 package Menus;
 
-import Miscs.Levels;
+import Main.Main;
+import Miscs.Icons;
+import Miscs.Player;
 import Miscs.Sounds;
 
 import javax.swing.*;
-import java.awt.*;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import static Main.Main.TESTING;
 import static Miscs.Sounds.*;
 
 /**
  * This class shows the main menu of the game
  *
+ * <p>
  * DONE: Background Sound Effect
- *       Main Frame
- *
- * TODO: Many... :)
+ *       Main.Main Frame
+ * </p>
  *
  */
+
 public class MainMenu extends JFrame {
-    public int mode = 0;
-    public String username = "newbie";
-    JLabel back, newButton, loadButton, soundButton, exitButton;
-    public MainMenu() {
-        setVisible(true);
+    public Player player;
+    JLabel back, newButton, loadButton, settingsButton, rankingButton;
+    public MainMenu(Player player) {
+        this.player = player;
 
         background();
 
@@ -34,16 +37,23 @@ public class MainMenu extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.getContentPane().setLayout(null);
         setLocationRelativeTo(null);
+        this.setIconImage(new ImageIcon("icon.png").getImage());
 
         Sounds.backPlay(MAIN_MENU);
+        setVisible(true);
+
+        Runtime.getRuntime().addShutdownHook(new Thread( () -> {
+            Player.save(Main.loadedPlayers);
+            if (TESTING) System.out.println("Saving Files Before Exit");
+        }));
     }
     private void background() {
         back = new JLabel();
-        back.setIcon(new ImageIcon("gfx/first.pvz"));
+        back.setIcon(Icons.firstIcon);
         back.setBounds(0, 0, 860, 460);
         this.add(back);
         newButton = new JLabel();
-        newButton.setIcon(new ImageIcon("gfx/button.pvz"));
+        newButton.setIcon(Icons.buttonIcon);
         SpringLayout layout = new SpringLayout();
         JLabel n = new JLabel();
         newButton.setLayout(layout);
@@ -61,12 +71,12 @@ public class MainMenu extends JFrame {
             public void mousePressed(MouseEvent e) {
                 newButton.setIcon(new ImageIcon("gfx/buttonHover.pvz"));
                 mute();
-                new Thread(() -> new Game(new Levels(), muted)).start();
+                new Thread(() -> new Game(player, muted)).start();
                 dispose();
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                newButton.setIcon(new ImageIcon("gfx/button.pvz"));
+                newButton.setIcon(Icons.buttonIcon);
             }
             @Override
             public void mouseEntered(MouseEvent e) {}
@@ -74,12 +84,11 @@ public class MainMenu extends JFrame {
             public void mouseExited(MouseEvent e) {}
         });
         loadButton = new JLabel();
-        boolean loaded = Levels.load() != null;
+        boolean loaded = Player.load() != null;
         if (loaded)
-            loadButton.setIcon(new ImageIcon("gfx/button.pvz"));
+            loadButton.setIcon(Icons.buttonIcon);
         else
             loadButton.setIcon(new ImageIcon("gfx/buttonOff.pvz"));
-        loadButton.setText("Load Game");
         loadButton.setBounds(360, 390, 100, 45);
         JLabel m = new JLabel();
         loadButton.setLayout(layout);
@@ -96,68 +105,81 @@ public class MainMenu extends JFrame {
             public void mousePressed(MouseEvent e) {
                 if (loaded) {
                     loadButton.setIcon(new ImageIcon("gfx/buttonHover.pvz"));
-                    mute();
-                    new Thread(() -> new Game(new Levels(), muted)).start();
-                    dispose();
+                    m.setText("Loading...");
+                    repaint();
                 }
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                if(loaded) loadButton.setIcon(new ImageIcon("gfx/button.pvz"));
-            }
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-            @Override
-            public void mouseExited(MouseEvent e) {}
-        });
-        soundButton = new JLabel();
-        soundButton.setIcon(new ImageIcon("gfx/buttons/sound.pvz"));
-        soundButton.setBounds(745, 370, 100, 85);
-        soundButton.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {}
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (!muted) soundButton.setIcon(new ImageIcon("gfx/buttons/soundHover.pvz"));
-            }
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (!muted) {
-                    soundButton.setIcon(new ImageIcon("gfx/buttons/soundOff.pvz"));
-                    mute();
-                    muted = true;
-                } else {
-                    muted = false;
-                    backPlay(MAIN_MENU);
-                    soundButton.setIcon(new ImageIcon("gfx/buttons/sound.pvz"));
+                if(loaded) loadButton.setIcon(Icons.buttonIcon);
+                mute();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
                 }
+                new Thread(() -> new Game(player, muted)).start();
+                dispose();
             }
             @Override
             public void mouseEntered(MouseEvent e) {}
             @Override
             public void mouseExited(MouseEvent e) {}
         });
-        back.add(soundButton);
-        exitButton = new JLabel();
-        exitButton.setIcon(new ImageIcon("gfx/buttons/exit.pvz"));
-        exitButton.setBounds(745, 5, 100, 85);
-        exitButton.addMouseListener(new MouseListener() {
+        settingsButton = new JLabel();
+        settingsButton.setIcon(Icons.buttonIcon);
+        settingsButton.setBounds(743, 415, 100, 45);
+        settingsButton.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {}
             @Override
-            public void mousePressed(MouseEvent e) {
-                exitButton.setIcon(new ImageIcon("gfx/buttons/exitHover.pvz"));
-            }
+            public void mousePressed(MouseEvent e) {}
             @Override
             public void mouseReleased(MouseEvent e) {
-                exitButton.setIcon(new ImageIcon("gfx/buttons/exit.pvz"));
-                System.exit(0);
+                showSettings();
             }
             @Override
             public void mouseEntered(MouseEvent e) {}
             @Override
             public void mouseExited(MouseEvent e) {}
         });
-        back.add(exitButton);
+        JLabel z = new JLabel();
+        settingsButton.setLayout(layout);
+        z.setText("Settings");
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, z, 0, SpringLayout.HORIZONTAL_CENTER, settingsButton);
+        layout.putConstraint(SpringLayout.VERTICAL_CENTER, z, 0, SpringLayout.VERTICAL_CENTER, settingsButton);
+
+        back.add(settingsButton);
+        settingsButton.add(z);
+
+        rankingButton = new JLabel();
+        rankingButton.setIcon(Icons.buttonIcon);
+        rankingButton.setBounds(1, 415, 100, 45);
+        rankingButton.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {}
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                new Thread(RankingMenu::new).start();
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        });
+        JLabel w = new JLabel();
+        rankingButton.setLayout(layout);
+        w.setText("Ranking");
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, w, 0, SpringLayout.HORIZONTAL_CENTER, rankingButton);
+        layout.putConstraint(SpringLayout.VERTICAL_CENTER, w, 0, SpringLayout.VERTICAL_CENTER, rankingButton);
+
+        back.add(rankingButton);
+        rankingButton.add(w);
+    }
+
+    private void showSettings() {
+        new SettingMenu(this);
     }
 }

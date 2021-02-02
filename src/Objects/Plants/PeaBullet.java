@@ -2,7 +2,8 @@ package Objects.Plants;
 
 import Menus.Game;
 import Miscs.Icons;
-import Objects.Zombies.Zombie;
+import Miscs.Sluts;
+import Objects.Zombies.*;
 
 import javax.swing.JLabel;
 import javax.swing.Timer;
@@ -46,7 +47,15 @@ public class PeaBullet extends JLabel {
                             oblique.setBounds(oblique.getX() + 2, oblique.getY() + dir, 28, 28);
                             Zombie firstZombie = Game.getFirstZombieByRow(oblique);
                             if (firstZombie != null) {
-                                if (firstZombie.getBounds().x - oblique.getBounds().x < 20) {
+                                int zombieX = firstZombie.getBounds().x;
+                                if(firstZombie.getClass() == PoleVaulting.class)
+                                    zombieX += 200;
+                                else if (firstZombie.getClass() == ConeHead.class
+                                        || firstZombie.getClass() == BucketHead.class
+                                        || firstZombie.getClass() == Newspaper.class)
+                                    zombieX += 60;
+                                if (zombieX - oblique.getBounds().x < 20
+                                        && firstZombie.row == Sluts.getYSlut(oblique.getBounds())) {
                                     c.remove(oblique);
                                     firstZombie.lossHealth(30, false);
                                     if (firstZombie.health <= 0) return;
@@ -60,11 +69,18 @@ public class PeaBullet extends JLabel {
                 }
                 c.add(this);
                 final JLabel This = this;
-                final Timer timer = new Timer(10, e -> {
-                    setBounds(getX() + 3, getY(), 28, 28);
+                final Timer timer = new Timer(5, e -> {
+                    setBounds(getX() + 2, getY(), 28, 28);
                     Zombie firstZombie = Game.getFirstZombieByRow(origin);
                     if (firstZombie != null) {
-                        if (firstZombie.getBounds().x - This.getBounds().x < 20) {
+                        int zombieX = firstZombie.getBounds().x;
+                        if(firstZombie.getClass() == PoleVaulting.class)
+                            zombieX += 220;
+                        else if (firstZombie.getClass() == ConeHead.class
+                                || firstZombie.getClass() == BucketHead.class
+                                || firstZombie.getClass() == Newspaper.class)
+                            zombieX += 60;
+                        if (zombieX - This.getBounds().x < 20) {
                             c.remove(This);
                             firstZombie.lossHealth(isFrozen ? 35 : 30, isFrozen);
                             if (firstZombie.health <= 0) return;

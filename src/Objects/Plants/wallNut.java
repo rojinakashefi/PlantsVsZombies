@@ -22,6 +22,7 @@ public class wallNut extends Plant {
         if (health <= 70 && health > 0)
         {
             ready = new ImageIcon("gfx/nut_2.pvz");
+            c.repaint();
         }
         if(health <= 0) {
             this.setIcon(die);
