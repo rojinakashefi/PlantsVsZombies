@@ -245,16 +245,22 @@ public class Game extends JFrame {
     private void loading(ArrayList<Integer> cardsNumber) {
         JLabel[] cards = new JLabel[6];
 
+        Sounds.backPlay(IN_GAME);
+
         Sluts.setCardSluts();
+        plantsJob();
 
         for (int i = 0; i < cards.length; i++) {
             cards[i] = Cards.getCard(cardsNumber.get(i), plants);
-            cards[i].setBounds(Sluts.getCardSlut(i));
+            cards[i].setBounds(Sluts.getCardPos(i));
             cards[i].setName(String.valueOf(i));
             cards[i].addMouseListener(cardsClickListener());
+            plants.add(cards[i]);
         }
+
+        cardsList = cardsNumber;
+
         new Thread(() -> {
-            threadPool.add(Thread.currentThread());
             try {
                 while (!won || !lost) {
                     Thread.sleep(skyTimer[difficulty] * 1000L);
@@ -264,7 +270,6 @@ public class Game extends JFrame {
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
-            threadPool.remove(Thread.currentThread());
         }).start();
 
         gameTimer();
@@ -483,7 +488,7 @@ public class Game extends JFrame {
             else newLevel.score += 3;
             newLevel.wins++;
             newLevel.save();
-            new JOptionPane("You Lost!").createDialog("");
+            new JOptionPane("You won!").createDialog("");
             Sounds.mute();
             dispose();
         }
