@@ -87,109 +87,161 @@ public class Game extends JFrame {
         PeaShooter s = new PeaShooter(label, new int[]{0, 0});
         System.out.println(s.getClass().getName());
     }
-
     public Game(GameSave saved, Player player, boolean mute) {
         gameTime = saved.gameTime;
-        setRound();
+        starter(player, mute);
         for (int i = 0; i < saved.objects.size(); i++) {
             switch (saved.objects.get(i).objectName) {
                 case "Cherry" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     Cherry temp = new Cherry(label, pos);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y,
+                            temp.getIcon().getIconWidth(), temp.getIcon().getIconHeight());
                     explode(temp);
                     objects.add(new Coordination(temp, pos[0], pos[1]));
                 }
                 case "GatlingPea" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     GatlingPea temp = new GatlingPea(label, pos);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y,
+                            temp.getIcon().getIconWidth(), temp.getIcon().getIconHeight());
                     shoot(temp, false);
                     objects.add(new Coordination(temp, pos[0], pos[1]));
                 }
                 case "PeaShooter" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     PeaShooter temp = new PeaShooter(label, pos);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y,
+                            temp.getIcon().getIconWidth(), temp.getIcon().getIconHeight());
                     shoot(temp, false);
                     objects.add(new Coordination(temp, pos[0], pos[1]));
                 }
                 case "Potato" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     Potato temp = new Potato(label, pos);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y,
+                            temp.getIcon().getIconWidth(), temp.getIcon().getIconHeight());
                     mineSet(temp);
                     objects.add(new Coordination(temp, pos[0], pos[1]));
                 }
                 case "Repeater" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     Repeater temp = new Repeater(label, pos);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y,
+                            temp.getIcon().getIconWidth(), temp.getIcon().getIconHeight());
                     shoot(temp, false);
                     objects.add(new Coordination(temp, pos[0], pos[1]));
                 }
                 case "SnowPea" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     SnowPea temp = new SnowPea(label, pos);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y,
+                            temp.getIcon().getIconWidth(), temp.getIcon().getIconHeight());
                     shoot(temp, true);
                     objects.add(new Coordination(temp, pos[0], pos[1]));
                 }
                 case "SunFlower" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     SunFlower temp = new SunFlower(label, pos);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y,
+                            temp.getIcon().getIconWidth(), temp.getIcon().getIconHeight());
                     produceSun(temp);
                     objects.add(new Coordination(temp, pos[0], pos[1]));
                 }
                 case "Threepeater" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     Threepeater temp = new Threepeater(label, pos);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y,
+                            temp.getIcon().getIconWidth(), temp.getIcon().getIconHeight());
                     tripleShot(temp);
                     objects.add(new Coordination(temp, pos[0], pos[1]));
                 }
                 case "wallNut" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     wallNut temp = new wallNut(label, pos);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y,
+                            temp.getIcon().getIconWidth(), temp.getIcon().getIconHeight());
                     objects.add(new Coordination(temp, pos[0], pos[1]));
                 }
                 case "BucketHead" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     BucketHead temp = new BucketHead(label, pos[1]);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y - 40, temp.sizeX, temp.sizeY);
                     walk(temp);
                     objects.add(new Coordination(temp, pos[1]));
                 }
                 case "ConeHead" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     ConeHead temp = new ConeHead(label, pos[1]);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y - 40, temp.sizeX, temp.sizeY);
                     walk(temp);
                     objects.add(new Coordination(temp, pos[1]));
                 }
                 case "Football" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     Football temp = new Football(label, pos[1]);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y - 40, temp.sizeX, temp.sizeY);
                     walk(temp);
                     objects.add(new Coordination(temp, pos[1]));
                 }
                 case "Newspaper" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     Newspaper temp = new Newspaper(label, pos[1]);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y - 110, temp.sizeX, temp.sizeY);
                     walk(temp);
                     objects.add(new Coordination(temp, pos[1]));
                 }
                 case "Normal" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     Normal temp = new Normal(label, pos[1]);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y - 40, temp.sizeX, temp.sizeY);
                     walk(temp);
                     objects.add(new Coordination(temp, pos[1]));
                 }
                 case "PoleVaulting" -> {
                     int[] pos = Sluts.getSlut(saved.objects.get(i).position);
                     PoleVaulting temp = new PoleVaulting(label, pos[1]);
+                    temp.health = saved.objects.get(i).health;
+                    temp.setBounds(saved.objects.get(i).position.x,
+                            saved.objects.get(i).position.y - 110, temp.sizeX, temp.sizeY);
                     walk(temp);
                     objects.add(new Coordination(temp, pos[1]));
                 }
                 default -> throw new RuntimeException("Loading Switch Exception");
             }
         }
-        starter(player, mute);
+        suns = saved.suns;
         loading(saved.cards);
-
+        setVisible(true);
     }
-
     private void loading(ArrayList<Integer> cardsNumber) {
         JLabel[] cards = new JLabel[6];
 
