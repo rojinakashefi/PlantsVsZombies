@@ -1259,22 +1259,28 @@ public class Game extends JFrame {
         gone++;
     }
 
-    @SuppressWarnings("RedundantCast")
     private synchronized void walk(Zombie zombie) {
-        int delay;
-        if (difficulty == 1 && zombie.getClass() != Normal.class) delay = walkDelay[difficulty];
-        else if (difficulty == 1) delay = walkDelay[0];
-        else delay = walkDelay[difficulty];
+        int delay = walkDelay[difficulty];
+        if (zombie.getClass() == BucketHead.class
+                || zombie.getClass() == ConeHead.class) {
+            delay -= 10;
+        }
         Timer t = new Timer(delay, e -> {
             if (zombie.health > 0) {
                 zombie.setBounds(zombie.getX() - zombie.speed, zombie.getY(), zombie.sizeX, zombie.sizeY);
-                int ySlut = zombie.row;
-                if (zombie.getX() - 205 < 20) {
-                    if (mowerAvailable[ySlut])
-                        runMower(ySlut);
+                int distance = 205;
+                if (zombie.getClass() == PoleVaulting.class)
+                    distance = 0;
+                else if (zombie.getClass() == ConeHead.class
+                        || zombie.getClass() == BucketHead.class
+                        || zombie.getClass() == Newspaper.class)
+                    distance = 120;
+                if (zombie.getX() - distance < 20) {
+                    if (mowerAvailable[zombie.row])
+                        runMower(zombie.row);
                     else {
                         try {
-                            if (Zombie.zombies.contains(zombie) && zombie.getX() - 205 < 5)
+                            if (Zombie.zombies.contains(zombie) && zombie.getX() - distance < 5)
                                 lose();
                         } catch (InterruptedException interruptedException) {
                             interruptedException.printStackTrace();
@@ -1282,14 +1288,62 @@ public class Game extends JFrame {
                     }
                 }
                 for (Plant plant : Plant.plants) {
-                    if (-plant.getBounds().x + zombie.getBounds().x < 20 && plant.row == zombie.row
-                            && zombie.getBounds().x - plant.getBounds().x > 0) {
-                        eatPlant(zombie, plant);
-                        ((Timer) e.getSource()).stop();
-                        timerPool.remove(((Timer) e.getSource()));
+                    if (plant.row == zombie.row) {
+                        int dis = 0;
+                        if (zombie.getClass() == PoleVaulting.class)
+                            dis = 200;
+                        else if  ( zombie.getClass() == BucketHead.class
+                                || zombie.getClass() == ConeHead.class)
+                            if (zombie.getIcon() != Icons.normalZombie)
+                                dis = 60;
+                        if (zombie.getClass() == Newspaper.class) dis = 60;
+                        if (zombie.getClass() == PoleVaulting.class) {
+                            if (!((PoleVaulting) zombie).isJumping) {
+                                if (zombie.getX() + dis - plant.getX() < 140 && zombie.getX() + dis - plant.getX() > 0)
+                                    if (!((PoleVaulting) zombie).jumped) {
+                                        new Thread(() -> {
+                                            try {
+                                                ((PoleVaulting) zombie).jumped = true;
+                                                ((PoleVaulting) zombie).isJumping = true;
+                                                Sounds.play(VAULT);
+                                                zombie.setIcon(((PoleVaulting) zombie).jump1);
+                                                zombie.speed = 6;
+                                                Thread.sleep(1250);
+                                                zombie.setIcon(((PoleVaulting) zombie).jump2);
+                                                zombie.setBounds(zombie.getX() - 140, zombie.getY(),
+                                                        zombie.getIcon().getIconWidth(),
+                                                        zombie.getIcon().getIconHeight());
+                                                zombie.speed = 10;
+                                                Thread.sleep(300);
+                                                zombie.speed = 0;
+                                                Thread.sleep(500);
+                                                zombie.setIcon(((PoleVaulting) zombie).noPole);
+                                                zombie.speed = 2;
+                                                ((PoleVaulting) zombie).isJumping = false;
+                                            } catch (InterruptedException interruptedException) {
+                                                interruptedException.printStackTrace();
+                                            }
+                                        }).start();
+                                    }
+                                if (((PoleVaulting) zombie).jumped) {
+                                    if (zombie.getX() + dis - plant.getX() > 0)
+                                        if (zombie.getX() + dis - plant.getX() < 40) {
+                                            eatPlant(zombie, plant);
+                                            ((Timer) e.getSource()).stop();
+                                            timerPool.remove(((Timer) e.getSource()));
+                                        }
+                                }
+                            }
+                        } else {
+                            if (zombie.getX() + dis - plant.getX() < 20 && zombie.getX() + dis - plant.getX() > 0) {
+                                eatPlant(zombie, plant);
+                                ((Timer) e.getSource()).stop();
+                                timerPool.remove(((Timer) e.getSource()));
+                            }
+                        }
                     }
                 }
-            } else {
+            }else {
                 ((Timer) e.getSource()).stop();
                 timerPool.remove(((Timer) e.getSource()));
             }
@@ -1297,6 +1351,7 @@ public class Game extends JFrame {
         t.start();
         timerPool.add(t);
     }
+
 
     private void eatPlant(Zombie zombie, Plant victim) {
         Thread t = new Thread(() -> {
