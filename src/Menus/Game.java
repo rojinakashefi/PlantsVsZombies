@@ -12,13 +12,11 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Random;
 import java.util.stream.IntStream;
 
 
 import static Main.Main.TESTING;
-import static Miscs.Cards.*;
 import static Miscs.Icons.mowerIcon;
 import static Miscs.Icons.okCheckMarkIcon;
 import static Miscs.Sounds.*;
@@ -1273,7 +1271,7 @@ public class Game extends JFrame {
         paused = true;
     }
     public GameSave save() {
-        ArrayList<gameObjects> objects = new ArrayList<>();
+        ArrayList<GameObjects> objects = new ArrayList<>();
         ArrayList<Integer> cards = new ArrayList<>();
         for (int i = 0; i < Game.objects.size(); i++) {
 
