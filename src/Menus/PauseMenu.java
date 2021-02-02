@@ -5,10 +5,7 @@ import Miscs.Sounds;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 
 public class PauseMenu extends JFrame {
     SpringLayout layout = new SpringLayout();
@@ -18,7 +15,12 @@ public class PauseMenu extends JFrame {
     JLabel quitButton = new JLabel();
     JLabel saveButton = new JLabel();
     Game mainGame;
-    public PauseMenu(Game game){
+
+    /**
+     * shows the pauseMenu of the given game
+     * @param game the parent container of the menu
+     */
+    public PauseMenu(Game game) {
         mainGame = game;
         quitButton.setIcon(Icons.quitGameIcon);
         closeButton.setIcon(Icons.closeDialogIcon);
@@ -30,13 +32,20 @@ public class PauseMenu extends JFrame {
         muteCheckBox.setSelected(!Game.mute);
 
         muteCheckBox.addChangeListener(e -> {
-            Game.mute = !muteCheckBox.isSelected();
-            if (!muteCheckBox.isSelected()) Sounds.mute();
-            else {
+            if(muteCheckBox.isSelected() && Game.mute) {
+                Game.mute = false;
                 Sounds.muted = false;
                 Sounds.backPlay(Sounds.IN_GAME);
+            } else if (!muteCheckBox.isSelected() && !Game.mute) {
+                Game.mute = true;
+                Sounds.muted = true;
+                Sounds.mute();
             }
         });
+        pane.add(muteCheckBox);
+        pane.add(saveButton);
+        pane.add(closeButton);
+        pane.add(quitButton);
         layout.putConstraint(SpringLayout.WEST, muteCheckBox, 35, SpringLayout.WEST, pane);
         layout.putConstraint(SpringLayout.NORTH, muteCheckBox, 110, SpringLayout.NORTH, pane);
 
@@ -86,6 +95,7 @@ public class PauseMenu extends JFrame {
             }
         });
     }
+
     private void addClickListeners() {
         saveButton.addMouseListener(new MouseListener() {
             @Override
@@ -98,9 +108,7 @@ public class PauseMenu extends JFrame {
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                mainGame.newLevel.save();
-                dispose();
-                mainGame.dispose();
+                new SavingMenu(mainGame, PauseMenu.this);
             }
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -122,7 +130,9 @@ public class PauseMenu extends JFrame {
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                System.exit(0);
+                dispose();
+                mainGame.dispose();
+                new MainMenu(mainGame.newLevel);
             }
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -158,4 +168,3 @@ public class PauseMenu extends JFrame {
         });
     }
 }
-
