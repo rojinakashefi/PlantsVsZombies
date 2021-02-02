@@ -1390,13 +1390,32 @@ public class Game extends JFrame {
     }
     public GameSave save() {
         ArrayList<GameObjects> objects = new ArrayList<>();
-        ArrayList<Integer> cards = new ArrayList<>();
         for (int i = 0; i < Game.objects.size(); i++) {
-
+            String name;
+            Point position;
+            int health;
+            if (Game.objects.get(i).type == 0) {
+                name = Game.objects.get(i).plant.getClass().getName();
+                name = name.substring(name.lastIndexOf("."));
+                position = new Point(Game.objects.get(i).zombie.getBounds().x, Game.objects.get(i).zombie.getBounds().y);
+                health = Game.objects.get(i).plant.health;
+            } else {
+                name = Game.objects.get(i).zombie.getClass().getName();
+                name = name.substring(name.lastIndexOf("."));
+                position = new Point(Game.objects.get(i).zombie.getBounds().x, Game.objects.get(i).zombie.getBounds().y);
+                health = Game.objects.get(i).zombie.health;
+                if (Game.objects.get(i).zombie.getClass() == Newspaper.class
+                        || Game.objects.get(i).zombie.getClass() == PoleVaulting.class)
+                    position.y += 110;
+                else
+                    position.y += 40;
+            }
+            GameObjects temp = new GameObjects(name, position, health);
+            objects.add(temp);
         }
-        GameSave gg = null;
-        return gg;
+        return new GameSave(objects, gameTime, cardsList, suns);
     }
+}
     public static void main(String[] args) {
         if (Player.load() == null)
             new Game(new Player(), false);
