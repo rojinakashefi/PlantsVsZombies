@@ -1,5 +1,6 @@
 package Objects.Zombies;
 
+import Miscs.Icons;
 import Miscs.Sounds;
 
 import javax.swing.*;
@@ -9,9 +10,11 @@ public class PoleVaulting extends Zombie {
     public ImageIcon noPole = new ImageIcon("gfx/noPole.pvz");
     public ImageIcon jump1 = new ImageIcon("gfx/jump1.pvz");
     public ImageIcon jump2 = new ImageIcon("gfx/jump2.pvz");
+    public boolean jumped = false;
+    public boolean isJumping = false;
     public PoleVaulting(Container c, int row) {
-        super(c, 340, 6, 20, row);
-        walk = new ImageIcon("gfx/pole.pvz");
+        super(c, 340, 6, 10, row);
+        walk = Icons.poleVaultIcon;
         die = new ImageIcon("gfx/diePole.pvz");
         sizeX = 348;
         sizeY = 212;
