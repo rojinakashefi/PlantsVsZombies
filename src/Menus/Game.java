@@ -426,7 +426,6 @@ public class Game extends JFrame {
         if (!lost || !won) {
             won = true;
             Sounds.play(WIN);
-            pause();
             Thread.sleep(1000);
             if (difficulty == 1) newLevel.score += 10;
             else newLevel.score += 3;
@@ -572,7 +571,9 @@ public class Game extends JFrame {
             }
         };
     }
+    void resume() {
 
+    }
     private void pauseMenu() {
         blackScreen = new JLabel();
         blackScreen.setIcon(Icons.blackScreen);
