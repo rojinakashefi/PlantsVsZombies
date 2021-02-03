@@ -1,16 +1,15 @@
 package Menus;
 
 import Main.Main;
-import Miscs.Icons;
-import Miscs.Player;
-import Miscs.Sounds;
+import Miscs.*;
+import Miscs.Socket.Client;
 
 import javax.swing.*;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import static Main.Main.TESTING;
+import static Main.Main.*;
 import static Miscs.Sounds.*;
 
 /**
@@ -26,6 +25,7 @@ import static Miscs.Sounds.*;
 public class MainMenu extends JFrame {
     public Player player;
     JLabel back, newButton, loadButton, settingsButton, rankingButton;
+    Client main;
     public MainMenu(Player player) {
         this.player = player;
 
@@ -42,10 +42,58 @@ public class MainMenu extends JFrame {
         Sounds.backPlay(MAIN_MENU);
         setVisible(true);
 
-        Runtime.getRuntime().addShutdownHook(new Thread( () -> {
-            Player.save(Main.loadedPlayers);
-            if (TESTING) System.out.println("Saving Files Before Exit");
-        }));
+        if (!addedShotDownHook) {
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                main.send("Main");
+                main.send("Scoreboard");
+                if (loadedPlayers != null) {
+                    int saveCount = loadedPlayers.size() * 5 + 3;
+                    if (!saves.isEmpty()) {
+                        int cardsCount = 0, objectsCount = 0;
+                        for (GameSave save: saves) {
+                            cardsCount += save.cards.size();
+                            objectsCount += save.objects.size() * 4;
+                        }
+                        saveCount += (saves.size() * 4 + (cardsCount + objectsCount));
+                    }
+                    main.send(String.valueOf(saveCount));
+                    main.send(String.valueOf(loadedPlayers.size()));
+                    for (Player value : loadedPlayers) {
+                        main.send(value.username);
+                        main.send(String.valueOf(value.score));
+                        main.send(String.valueOf(value.wins));
+                        main.send(String.valueOf(value.losses));
+                        main.send(String.valueOf(value.difficulty));
+                    }
+                }
+                if (!saves.isEmpty()) {
+                    main.send(String.valueOf(saves.size()));
+                    for (GameSave save : saves) {
+                        main.send(String.valueOf(save.cards.size()));
+                        for (Integer card : save.cards) {
+                            main.send(String.valueOf(card));
+                        }
+                        main.send(String.valueOf(save.objects.size()));
+                        for (GameObjects object : save.objects) {
+                            main.send(object.objectName);
+                            main.send(String.valueOf(object.health));
+                            main.send(String.valueOf(object.position.x));
+                            main.send(String.valueOf(object.position.y));
+                        }
+                        main.send(String.valueOf(save.gameTime));
+                        main.send(String.valueOf(save.suns));
+                    }
+                } else main.send("0");
+                main.send(player.username);
+                if (TESTING) System.out.println("Saving Files Before Exit");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }));
+            addedShotDownHook = true;
+        }
     }
     private void background() {
         back = new JLabel();
