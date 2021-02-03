@@ -15,6 +15,7 @@ public class Main {
     public static final int port = 25252;
     public static final String host = "127.0.0.1";
     public static boolean  isServerUp = false;
+    public static boolean addedShotDownHook = false;
     public static void main(String[] args) {
         new Thread(Server::new).start();
         isServerUp = true;
