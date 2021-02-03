@@ -152,6 +152,7 @@ public class MainMenu extends JFrame {
                 mute();
                 new Thread(() -> new Game(player, muted)).start();
                 dispose();
+                //main.close();
             }
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -163,7 +164,7 @@ public class MainMenu extends JFrame {
             public void mouseExited(MouseEvent e) {}
         });
         loadButton = new JLabel();
-        boolean loaded = Player.load() != null;
+        boolean loaded = !saves.isEmpty();
         if (loaded)
             loadButton.setIcon(Icons.buttonIcon);
         else
@@ -190,15 +191,10 @@ public class MainMenu extends JFrame {
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                if(loaded) loadButton.setIcon(Icons.buttonIcon);
-                mute();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException interruptedException) {
-                    interruptedException.printStackTrace();
+                if(loaded) {
+                    loadButton.setIcon(Icons.buttonIcon);
+                    new Thread(()->new SavingMenu(MainMenu.this)).start();
                 }
-                new Thread(() -> new Game(player, muted)).start();
-                dispose();
             }
             @Override
             public void mouseEntered(MouseEvent e) {}
