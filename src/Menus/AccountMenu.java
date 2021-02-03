@@ -184,6 +184,9 @@ public class AccountMenu extends JFrame implements Runnable  {
             loadedPlayers.add(level);
             new MainMenu(level);
             dispose();
+        } else {
+            new JOptionPane("Username is already in use!", JOptionPane.INFORMATION_MESSAGE)
+                    .createDialog("").setVisible(true);
         }
     }
 
