@@ -1,12 +1,12 @@
 package Menus;
 
+import Main.Main;
 import Miscs.Icons;
 import Miscs.Sounds;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 public class SettingMenu extends JFrame {
     SpringLayout layout = new SpringLayout();
@@ -15,9 +15,16 @@ public class SettingMenu extends JFrame {
     JLabel closeButton = new JLabel();
     JLabel modeHButton = new JLabel();
     JLabel modeNButton = new JLabel();
-    JLabel nameLBL = new JLabel("Mode :");
+    JLabel modeLBL = new JLabel("Mode :");
+    JLabel nameLBL = new JLabel("Username :");
+    JTextField nameTXT = new JTextField(15);
     JLabel mode;
     MainMenu menu;
+
+    /**
+     * shows setting menu for the main menu
+     * @param main gets the mainMenu object to modify its settings
+     */
     public SettingMenu(MainMenu main) {
         menu = main;
 
@@ -33,18 +40,20 @@ public class SettingMenu extends JFrame {
             mode.setText("Hard");
         }
         pane.setLayout(layout);
+        nameTXT.setText(main.player.username);
         JLabel pauseFrame = new JLabel();
         pauseFrame.setIcon(Icons.settingsIcon);
-        muteCheckBox.setSelected(!Game.mute);
+        muteCheckBox.setSelected(!Sounds.muted);
 
         muteCheckBox.addChangeListener(e -> {
-            Game.mute = !muteCheckBox.isSelected();
+            Sounds.muted = !muteCheckBox.isSelected();
             if (!muteCheckBox.isSelected()) {
                 Sounds.mute();
                 Sounds.muted = true;
             }
             else {
                 Sounds.muted = false;
+                Sounds.mute();
                 Sounds.backPlay(Sounds.MAIN_MENU);
             }
         });
@@ -53,14 +62,20 @@ public class SettingMenu extends JFrame {
         pane.add(closeButton);
         pane.add(modeHButton);
         pane.add(mode);
+        pane.add(modeLBL);
         pane.add(nameLBL);
+        pane.add(nameTXT);
         pane.add(pauseFrame);
         layout.putConstraint(SpringLayout.WEST, muteCheckBox, 35, SpringLayout.WEST, pane);
         layout.putConstraint(SpringLayout.NORTH, muteCheckBox, 110, SpringLayout.NORTH, pane);
-        layout.putConstraint(SpringLayout.WEST, nameLBL, 35, SpringLayout.WEST, pane);
-        layout.putConstraint(SpringLayout.NORTH, nameLBL, 150, SpringLayout.NORTH, pane);
+        layout.putConstraint(SpringLayout.WEST, modeLBL, 35, SpringLayout.WEST, pane);
+        layout.putConstraint(SpringLayout.NORTH, modeLBL, 150, SpringLayout.NORTH, pane);
         layout.putConstraint(SpringLayout.WEST, mode, 105, SpringLayout.WEST, pane);
         layout.putConstraint(SpringLayout.NORTH, mode, 148, SpringLayout.NORTH, pane);
+        layout.putConstraint(SpringLayout.WEST, nameLBL, 35, SpringLayout.WEST, pane);
+        layout.putConstraint(SpringLayout.NORTH, nameLBL, 180, SpringLayout.NORTH, pane);
+        layout.putConstraint(SpringLayout.WEST, nameTXT, 105, SpringLayout.WEST, pane);
+        layout.putConstraint(SpringLayout.NORTH, nameTXT, 178, SpringLayout.NORTH, pane);
 
         layout.putConstraint(SpringLayout.WEST, closeButton, 481, SpringLayout.WEST, pane);
         layout.putConstraint(SpringLayout.NORTH, closeButton, 13, SpringLayout.NORTH, pane);
@@ -140,7 +155,17 @@ public class SettingMenu extends JFrame {
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                dispose();
+                if (!menu.player.username.equals(nameTXT.getText())) {
+                    int index = Main.findPlayerIndex(menu.player.username);
+                    if (Main.findPlayerIndex(nameTXT.getText()) == -1) {
+                        menu.player.username = nameTXT.getText();
+                        Main.loadedPlayers.set(index, menu.player);
+                        dispose();
+                    } else {
+                        new JOptionPane("Username is already in use!", JOptionPane.INFORMATION_MESSAGE)
+                                .createDialog("").setVisible(true);
+                    }
+                } else dispose();
             }
             @Override
             public void mouseEntered(MouseEvent e) {
