@@ -63,7 +63,7 @@ public class Player implements Comparable<Player> {
     public static ArrayList<Player> load() {
         Reader in;
         ArrayList<Player> temp = new ArrayList<>();
-        if (seek()) {
+        if (seek("save")) {
             try {
                 in = new FileReader("save.json");
                 Gson jsonReader = new Gson();
@@ -76,7 +76,7 @@ public class Player implements Comparable<Player> {
             return temp;
         } else return null;
     }
-    static boolean seek() { return new File("save.json").exists(); }
+    static boolean seek(String name) { return new File(name + ".json").exists(); }
 
     /**
      * This method is not used directly on this project
