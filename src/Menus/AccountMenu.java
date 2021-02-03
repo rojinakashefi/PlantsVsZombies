@@ -1,18 +1,19 @@
 package Menus;
-
-
 import Main.Main;
 import Miscs.Player;
 import Miscs.Socket.Client;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
 import static Main.Main.*;
 
-
+/**
+ * AccountMenu as first Menu appears when we login in game
+ * Contains Gui and logic For signin/signup/createaccount/haveaccount
+ * @author RojinaKashefi && HeliaHashemipour
+ * @version 1.0
+ */
 public class AccountMenu extends JFrame implements Runnable {
     JLabel SecLabel = new JLabel("Enter Game");
     JButton SignInButton = new JButton("Sign In");
@@ -24,9 +25,12 @@ public class AccountMenu extends JFrame implements Runnable {
     JLabel LastLBL = new JLabel("New To Game?");
     SpringLayout Layout = new SpringLayout();
     Container This = this.getContentPane();
-
     Client account = new Client("Accounts");
 
+    /**
+     * Constructor starts from receiving data of players
+     * Setting font of buttons
+     */
     public AccountMenu() {
         new Thread(this::receive).start();
         Font font = new Font("Times New Roman", Font.PLAIN, 14);
@@ -37,18 +41,19 @@ public class AccountMenu extends JFrame implements Runnable {
         NameLBL.setFont(font);
         ChangeUpButton.setFont(font);
         ChangeInButton.setFont(font);
-
+        //checking look and feel
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         this.setSize(420, 280);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
+        //adding window listener for accountmenu window
+        //using adapter class
+        //implementing account.close
         addWindowListener(new WindowListener() {
             @Override
             public void windowOpened(WindowEvent e) {}
@@ -80,9 +85,9 @@ public class AccountMenu extends JFrame implements Runnable {
             }
         });
     }
-
     /**
-     * Receives players data from server
+     * Receives players data (name,score,wins,losses,difficulty)from server
+     * adding the player to loadedPlayers
      */
     private void receive() {
         try {
@@ -107,6 +112,9 @@ public class AccountMenu extends JFrame implements Runnable {
         }
     }
 
+    /**
+     * Adding signuphere button gui which contains haveAccount,Signup,SigninHere
+     */
     private void Up() {
         while (this.getHeight() != 300) {
             this.setSize(this.getWidth(), this.getHeight() + 2);
@@ -136,12 +144,14 @@ public class AccountMenu extends JFrame implements Runnable {
     }
 
     /**
-     * sign in as an existing player
+     * Signing in logic after clicking sign in button
+     * @author RojinaKashefi && HeliaHashemipour
      */
     private void signIn() {
         if (!NameTxt.getText().equals("")) {
             int index = findPlayerIndex(NameTxt.getText());
             if (index != -1) {
+                //after siging in mainmenu opens
                 new MainMenu(loadedPlayers.get(index));
                 dispose();
             } else new JOptionPane("User Not Found!", JOptionPane.INFORMATION_MESSAGE)
@@ -153,13 +163,14 @@ public class AccountMenu extends JFrame implements Runnable {
     }
 
     /**
-     * sign up as a new player
+     * signing up logic as a new player after clicking sign up button
      */
     private void signUp() {
         int index = findPlayerIndex(NameTxt.getText());
         if (index == -1) {
             Player level = new Player(0,0,0,0, NameTxt.getText());
             loadedPlayers.add(level);
+            //after signing up,mainmenu will open
             new MainMenu(level);
             dispose();
         } else {
@@ -169,7 +180,8 @@ public class AccountMenu extends JFrame implements Runnable {
     }
 
     /**
-     * shows sign in panel
+     * Sign in panel(first panel when we open account menu)
+     * contains signinbutton,donthaveaccount,signuphere button
      */
     private void In() {
         while (this.getHeight() != 280) {
@@ -207,16 +219,12 @@ public class AccountMenu extends JFrame implements Runnable {
      */
     @Override
     public void run() {
-
         this.setLayout(Layout);
-
+        //first gui which we see
         In();
-
         this.setVisible(true);
-
         System.out.println("Account Page");
         if (TESTING) System.out.println("Active Threads InPage: " + Thread.activeCount());
-
         SignInButton.addActionListener(e -> signIn());
         ChangeUpButton.addActionListener(e -> Up());
         ChangeInButton.addActionListener(e -> In());

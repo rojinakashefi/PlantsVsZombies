@@ -24,8 +24,7 @@ public class ConeHead extends Zombie {
 
     /**
      * LossHealth method
-     *
-     * @param Amount   as amount it will decrease from health of zombies
+     * @param Amount as amount it will decrease from health of zombies
      * @param isFrozen is frozen if pea is frozen
      */
     @Override
@@ -33,7 +32,8 @@ public class ConeHead extends Zombie {
         health -= Amount;
         if (health > 200) {
             Sounds.play(hitSound);
-        } else {
+        }
+        else {
             if (health <= 0) {
                 kill(false);
             } else {
@@ -42,6 +42,11 @@ public class ConeHead extends Zombie {
                 this.sizeY = 131;
                 Sounds.play(Sounds.NONE);
             }
+        }
+        if (isFrozen && !frozen) {
+            Sounds.play(Sounds.FREEZE);
+            speed /= 2;
+            frozen = true;
         }
     }
 }

@@ -23,8 +23,7 @@ public class Football extends Zombie {
 
     /**
      * LossHealth Method
-     *
-     * @param Amount   as amount it will decrease from health of zombies
+     * @param Amount as amount it will decrease from health of zombies
      * @param isFrozen is frozen if pea is frozen
      */
     @Override
@@ -32,8 +31,14 @@ public class Football extends Zombie {
         health -= Amount;
         if (health > 0) {
             Sounds.play(hitSound);
-        } else {
+        }
+        else {
             kill(false);
+        }
+        if (isFrozen && !frozen) {
+            speed /= 2;
+            frozen = true;
+            Sounds.play(Sounds.FREEZE);
         }
     }
 }
