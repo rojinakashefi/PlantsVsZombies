@@ -85,6 +85,11 @@ public class AccountMenu extends JFrame implements Runnable  {
 
     }
     private void receive() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         account.send("Accounts");
         account.send("Scoreboard");
         account.send("0");
