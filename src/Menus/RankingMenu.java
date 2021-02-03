@@ -1,11 +1,13 @@
 package Menus;
-
-
 import Main.Main;
-
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Ranking menu gui form
+ * It contains a table of username score wins and losses
+ * @author RojinaKashefi && HeliaHashemipour
+ */
 public class RankingMenu extends JFrame {
 
     public RankingMenu() {
@@ -18,7 +20,6 @@ public class RankingMenu extends JFrame {
             String[] columns = new String[] {
                     "Row", "Name", "Score", "Wins", "Losses"
             };
-
             Object[][] data = new Object[Main.loadedPlayers.size()][5];
             for (int i = 0; i < data.length; i++) {
                 data[i][0] = i + 1;
@@ -27,12 +28,8 @@ public class RankingMenu extends JFrame {
                 data[i][3] = Main.loadedPlayers.get(i).wins;
                 data[i][4] = Main.loadedPlayers.get(i).losses;
             }
-
             JTable table = new JTable(data, columns);
-
             this.add(new JScrollPane(table));
-
-
         } else {
             JLabel label = new JLabel("No Data Available");
             this.add(label);
