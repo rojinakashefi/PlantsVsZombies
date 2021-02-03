@@ -1,11 +1,14 @@
 package Objects.Zombies;
-
 import Miscs.Icons;
 import Miscs.Sounds;
-
 import javax.swing.ImageIcon;
 import java.awt.Container;
 
+/**
+ * ConeHeadClass
+ * it consists of 560 health and speed of 2 and damage of 10
+ * @author RojinaKashefi && HeliaHashemipour
+ */
 public class ConeHead extends Zombie {
     ImageIcon normWalk = new ImageIcon("gfx/normal.pvz");
 
@@ -19,13 +22,18 @@ public class ConeHead extends Zombie {
         hitSound = Sounds.PLASTIC;
     }
 
+    /**
+     * LossHealth method
+     *
+     * @param Amount   as amount it will decrease from health of zombies
+     * @param isFrozen is frozen if pea is frozen
+     */
     @Override
     public void lossHealth(int Amount, boolean isFrozen) {
         health -= Amount;
         if (health > 200) {
             Sounds.play(hitSound);
-        }
-        else {
+        } else {
             if (health <= 0) {
                 kill(false);
             } else {
@@ -34,11 +42,6 @@ public class ConeHead extends Zombie {
                 this.sizeY = 131;
                 Sounds.play(Sounds.NONE);
             }
-        }
-        if (isFrozen && !frozen) {
-            Sounds.play(Sounds.FREEZE);
-            speed /= 2;
-            frozen = true;
         }
     }
 }
