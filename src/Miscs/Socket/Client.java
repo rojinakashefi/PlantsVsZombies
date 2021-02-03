@@ -1,13 +1,16 @@
 package Miscs.Socket;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-
 import static Main.Main.*;
+
+/**
+ * This package is for Client works.
+ * It consist of sending to server and rrecieving data from server
+ */
 public class Client {
     public static ArrayList<String> Names = new ArrayList<>();
     Socket socket;
@@ -34,6 +37,7 @@ public class Client {
         PrintWriter out;
         try {
             out = new PrintWriter(socket.getOutputStream());
+            //using out it write or send data in socket
             out.println(Data);
             out.flush();
             if (TESTING) System.out.println("    [CLIENT] Data sent to Server: " + Data);
@@ -71,6 +75,8 @@ public class Client {
 
     /**
      * closes the connection with the server
+     * The first one is Client
+     * The second one is Server
      */
     public void close() {
         try {
