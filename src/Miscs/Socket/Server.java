@@ -8,9 +8,13 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import static Main.Main.*;
 
+/**
+ * This class is a server which all the clients are connected to it .
+ * it contains sending and deletingclient method
+ * @author RojinaKashefi && HeliaHashemipour
+ */
 @SuppressWarnings("FieldMayBeFinal")
 public class Server {
     private static HashMap<String, ClientHandler> clients = new HashMap<>();
@@ -20,7 +24,9 @@ public class Server {
     int i = 0;
 
     /**
-     *
+     *This thread creates a welcoming socket and connection socket
+     * and pass a client to it client handler
+     * and then make a hashmap for each client and its own clientHandler
      */
     public Server() {
         Thread server_activation = new Thread(() -> {
