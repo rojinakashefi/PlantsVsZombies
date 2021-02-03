@@ -3,10 +3,19 @@ package Miscs;
 import java.awt.Rectangle;
 import java.awt.Point;
 
+
+/**
+ * Sets the position of the sluts in the checkered ground of the game
+ */
+
+
 public class Sluts {
     static final int FIRST_X = 260, FIRST_Y = 80, X = 10, Y = 5;
     static int[][][] sluts = new int[X][Y][2];
 
+    /**
+     *
+     */
     public static void setSluts() {
         for (int i = 0; i < X; i++)
             for (int j = 0; j < Y; j++) {
@@ -15,6 +24,12 @@ public class Sluts {
             }
     }
 
+    /**
+     * gets the plant slut by the given location
+     * @param X Horizontal slut of the plant
+     * @param Y Vertical slut of the plant
+     * @return the location
+     */
     public static int[] getPlantLocation(int X, int Y) {
         return sluts[X][Y];
     }
@@ -26,8 +41,8 @@ public class Sluts {
     public static int[] getSlut(int posX, int posY) {
         for (int i = 0; i < X; i++)
             for (int j = 0; j < Y; j++) {
-                if (posX >= sluts[i][j][0] && posX < sluts[i + 1][j][0]
-                        && posY >= sluts[i][j][1] && posY < sluts[i][j + 1][1]) {
+                if (posX >= sluts[i][j][0] && posX < sluts[i][j][0] + 80
+                        && posY >= sluts[i][j][1] && posY < sluts[i][j][1] + 100) {
                     return new int[]{i, j};
                 }
             }

@@ -21,74 +21,132 @@ import static Miscs.Icons.mowerIcon;
 import static Miscs.Icons.okCheckMarkIcon;
 import static Miscs.Sounds.*;
 
-
 /**
  * This class shows the In game structure:
- * <p>
- * DONE: Background Sound Effect,
- * Main Frame,
- * Peashooter Spawn,
- * Zombies Spawn,
- * first animation,
- * leveling system,
- * sluts,
- * sounds,
- * more mobs
- * plant menu
- * <p>
- * TODO: landing shots,
- * kill mobs,
- * shoot, grunt, walk, land, mower, win, lose, click, dig sfx,
- * load and save,
- * options,
- * main menu,
- * mower,
- * and...
+ *
+ * DONE: Starter
+ *       PauseButton
+ *       PauseClickListener
+ *       PauseMenu
+ *       Pause
+ *       Backgrounds
+ *       LabelClickListener
+ *       isEmptySlut
+ *       Shoot
+ *       ProduceSun
+ *       Explode
+ *       MineSet
+ *       TripleShot
+ *       GetFirstZombieByRow
+ *       ProduceSun
+ *       SunLanding
+ *       SunClickedListener
+ *       AddSun
+ *       ReadySetPlant
+ *       PlaceRandomZombies
+ *       DeckClickListener
+ *       CardClickListener
+ *       ReadyLabel
+ *       PlantsJob
+ *       SkyTimer
+ *       GameTimer
+ *       Cooldown
+ *       Waves
+ *       SendZombies
+ *       Walk
+ *       RunMower
+ *       EatPlant
+ *       Lose
+ *       Win
+ *       Resume
+ *       Save
+ *
+ * @// STOPSHIP: 3/30/2021 Project Finished
+ * @author RojinaKashefi && HeliaHashemipour
  */
 
-
+@SuppressWarnings({"BusyWait", "RedundantCast"})
 public class Game extends JFrame {
+    //2 times of when sun comes from sky(based on difficulty)
     private final int[] skyTimer = {25, 30};
+    //2 times of when sunflowers creates suns(based on difficulty)
     private final int[] sunflowerTimer = {20, 25};
+    //the delay of zombies based on thier walk delay
     private final int[] walkDelay = {115, 130};
-    private final int[] additionalDamage = {0, 5, 5, 5, 5};
-    int difficulty, gap = 5, suns = 500;
+    //the damage of zombies changes +5 from normal to difficult
+    private final int[] additionalDamage = {0, 5, 5, 5, 5, 5};
+    //the gap for first game play
+    int difficulty, gap = 50, suns = 50;
+    //setting game time
     long gameTime = 0;
     boolean[] mowerAvailable = new boolean[5];
     JLabel[] mowers = new JLabel[5];
+    //used for checking if cards are available or not
     boolean sunAvail = true, peaAvail = true,
             nutAvail = true, snowAvail = true,
             cherAvail = true, repAvail = true,
             threeAvail = true, potAvail = true,
             gatAvail = true, beetAvail = true;
+    //the lock time of cards based on normal or hard
     float[] coolDownN = {7.5f, 7.5f, 7.5f, 30f, 30f, 15f, 30f, 15f, 30f, 25f};
     float[] coolDownH = {7.5f, 7.5f, 30f, 30f, 45f, 25f, 30f, 25f, 45f, 30f};
     boolean won = false, lost = false, containsIcon = false;
-    JLabel clicked = null;
+    JLabel clicked;
     JLabel label, label2;
     JLabel pauseButton;
     JLabel plants;
     JLabel keptSun;
     JLabel blackScreen;
     JLabel deck;
+    //hold the coordination of all objects in game
     public static ArrayList<Coordination> objects = new ArrayList<>();
     public Player newLevel;
     public static boolean mute;
     public static ArrayList<Timer> timerPool = new ArrayList<>();
-    public static ArrayList<Thread> threadPool = new ArrayList<>();
     private boolean paused = false;
-    int gone = 0, round = 0;
+    int round = 0;
 
+    /**
+     * First Constructor
+     *
+     * @param player for getting the player properties for saving it after the game
+     * @param mute   sets the mute option of the game whether its true or false.
+     */
     public Game(Player player, boolean mute) {
-        starter(player, mute);
         //In this Section the first animation of the game executed
+        label2 = new JLabel();// Setting the background
+        label2.setIcon(Icons.background);
+        add(label2);
+        label = new JLabel();// Setting the background
+        label.setIcon(Icons.background);
+        label.setBounds(0, 0, 1400, 600);
+        plants = new JLabel();
+        add(label);
+        clicked = new JLabel();
+        label.add(clicked);
+        label.addMouseListener(labelClickListener());
+        starter(player, mute);
         readySetPlant();
-
-        PeaShooter s = new PeaShooter(label, new int[]{0, 0});
-        System.out.println(s.getClass().getName());
+        setVisible(true);
     }
+
+    /**
+     * second Constructor
+     *
+     * @param saved  as game which has been saved and we are loading
+     * @param player as player which is playing game
+     * @param mute   as game is mute or not
+     */
     public Game(GameSave saved, Player player, boolean mute) {
         gameTime = saved.gameTime;
+        label = new JLabel();// Setting the background
+        label.setIcon(Icons.background);
+        label.setBounds(0, 0, 1400, 600);
+        plants = new JLabel();
+        add(label);
+        clicked = new JLabel();
+        label.add(clicked);
+        label.addMouseListener(labelClickListener());
         starter(player, mute);
         for (int i = 0; i < saved.objects.size(); i++) {
             switch (saved.objects.get(i).objectName) {
@@ -235,106 +293,93 @@ public class Game extends JFrame {
                     walk(temp);
                     objects.add(new Coordination(temp, pos[1]));
                 }
-                default -> throw new RuntimeException("Loading Switch Exception");
+                default -> throw new RuntimeException("Loading Switch Exception: " + saved.objects.get(i).objectName);
             }
         }
         suns = saved.suns;
         loading(saved.cards);
         setVisible(true);
     }
-    private void loading(ArrayList<Integer> cardsNumber) {
-        JLabel[] cards = new JLabel[6];
 
-        Sounds.backPlay(IN_GAME);
-
-        Sluts.setCardSluts();
-        plantsJob();
-
-        for (int i = 0; i < cards.length; i++) {
-            cards[i] = Cards.getCard(cardsNumber.get(i), plants);
-            cards[i].setBounds(Sluts.getCardPos(i));
-            cards[i].setName(String.valueOf(i));
-            cards[i].addMouseListener(cardsClickListener());
-            plants.add(cards[i]);
-        }
-
-        cardsList = cardsNumber;
-
-        new Thread(() -> {
-            try {
-                while (!won || !lost) {
-                    Thread.sleep(skyTimer[difficulty] * 1000L);
-                    sunLanding(null);
-                    if (paused) break;
-                }
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        }).start();
-
-        gameTimer();
-    }
-
-    private void setRound() {
-
-    }
-    public static void removeZombie(Zombie zombie) {
-        Zombie.zombies.remove(zombie);
-        for (int i = 0; i < objects.size(); i++) {
-            if (objects.get(i).zombie == zombie) {
-                objects.remove(i);
-                break;
-            }
-        }
-    }
-
+    /**
+     * The method which starts game
+     *
+     * @param level as player which is playing game
+     * @param mute  as if the game is muted or not
+     */
     private void starter(Player level, boolean mute) {
+        //setting icon of game
         this.setIconImage(new ImageIcon("icon.png").getImage());
         muted = mute;
         Game.mute = mute;
+        //setting sluts of game
         Sluts.setSluts(); // Defines the checkered ground as sluts and calculates their coordinates
         objects.clear();  // clears the list of last game spawned objects
         newLevel = level;
         difficulty = newLevel.difficulty;
-
+        sky = skyTimer[difficulty];
         //Game Page specs
         setSize(1000, 635);
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.getContentPane().setLayout(null);
         setLocationRelativeTo(null);
-
-        label = new JLabel();// Setting the background
-
         pauseButton();
-
-        backgrounds(); // Creates the main and the plants menu background
-
         mower();
-
-        setVisible(true);
-
         plants.setIcon(Icons.plantMenuIcon);
     }
 
+    int sky = 0, round1 = 30, round2 = 30, round3 = 25, zombieTime = 0;
+    int duration1 = 180, duration2 = 180;
+
+    /**
+     * Setting gameTime of game for sending different waves of games
+     * Used System.CurrentTimeMillis
+     */
     private void gameTimer() {
         new Thread(() -> {
             long startTime = System.currentTimeMillis() / 1000 - gameTime;
             do {
                 if (paused) return;
                 gameTime = (System.currentTimeMillis() / 1000) - startTime;
-                System.out.println(gameTime);
+                if (TESTING) System.out.println("Game Time: " + gameTime);
+                if (gameTime == sky) {
+                    sky += sky;
+                    sunLanding(null);
+                }
+                if (gameTime < gap + duration1 && gameTime >= gap) round = 1;
+                else if (gameTime < gap + duration1 + duration2 && gameTime >= gap + duration1) round = 2;
+                else if (gameTime < 480 && gameTime >= gap + duration1 + duration2) round = 3;
+                if (gameTime == gap) Sounds.backPlay(ZOMBIES_COMING);
+                //if round 1 starts we sendZombie(2.5 min (each 30 seconds 1 zombie))(5 zombies at this round)
+                if (round == 1) {
+                    if (gameTime - gap == zombieTime) {
+                        zombieTime += round1;
+                        sendZombie();
+                    }
+                }
+                //if round 2 starts we sendZombie(3 min(each 30 seconds 2 zombies))(12 zombies at this round)
+                else if (round == 2) {
+                    if (gameTime - gap == zombieTime) {
+                        zombieTime += round2;
+                        sendZombie();
+                        sendZombie();
+                    }
+                }
+                //if round 3 starts we sendZombies(2.5 min(each 25 seconds 2 zombies))(12 zombies in this round)
+                else if (round == 3) {
+                    if (gameTime - gap == zombieTime) {
+                        zombieTime += round3;
+                        sendZombie();
+                        sendZombie();
+                    }
+                }
+                if (TESTING) System.out.println("Round: " + round);
+
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
-                if (gameTime == gap) {
-                    waves(1);
-                } else if (gameTime == gap + 150) {
-                    waves(2);
-                } else if (gameTime == gap + 330) {
-                    waves(3);
                 }
             } while (gameTime != gap + 480);
             try {
@@ -345,6 +390,10 @@ public class Game extends JFrame {
         }).start();
     }
 
+    /**
+     * places the mowers in their their positions
+     * in thread we can use only final fields outside which send addresses not thier information
+     */
     private void mower() {
         for (int i = 0; i < 5; i++) {
             final int[] ii = {i};
@@ -360,6 +409,11 @@ public class Game extends JFrame {
         }
     }
 
+    /**
+     * This method is called by zombies walk method. when they reach to mowers. they turn this method on.
+     *
+     * @param ySlut gets the Y coordination of the zombie.
+     */
     private void runMower(int ySlut) {
         mowerAvailable[ySlut] = false;
         Sounds.backPlay(MOWER);
@@ -382,6 +436,12 @@ public class Game extends JFrame {
         timer.start();
     }
 
+    /**
+     * Plays the sun point falling, from the sky
+     *
+     * @param pos if it is null it sends the point from the sky, but if it is not, places the point
+     *            just by the origin sunflower.
+     */
     private void sunLanding(int[] pos) {
         SunPoint sun = new SunPoint(label);
 
@@ -405,6 +465,7 @@ public class Game extends JFrame {
             i[0]++;
             if (i[0] == 400 || sun.getIcon() == null) {
                 ((Timer) e.getSource()).stop();
+                //remove sun after 5 sec
                 new Timer(5000, ee -> {
                     sun.setIcon(null);
                     remove(sun);
@@ -418,6 +479,10 @@ public class Game extends JFrame {
         timerPool.add(t);
     }
 
+    /**
+     * @param sun gets the sun point that clicked on
+     * @return returns the listener answer
+     */
     private MouseListener sunClickListener(SunPoint sun) {
         return new MouseListener() {
             @Override
@@ -428,7 +493,7 @@ public class Game extends JFrame {
             public void mousePressed(MouseEvent e) {
                 remove(sun);
                 sun.setIcon(null);
-                sun.removeMouseListener(this);
+                sun.removeMouseListener(sun.getMouseListeners()[0]);
                 addSun(sun.points);
             }
 
@@ -446,54 +511,91 @@ public class Game extends JFrame {
         };
     }
 
+    /**
+     * @param points adds sun point to the keptSun label.
+     */
     private void addSun(int points) {
         suns += points;
         keptSun.setText(suns + "");
     }
 
+    /**
+     * @param plant gets the plant or its subclasses for using in getFirstZombie in Row
+     *              This method is Synchronized because it is called by different plants
+     * @return returns the zombie that has the same row number as the plant
+     */
     public synchronized static Zombie getFirstZombieByRow(JLabel plant) {
         if (Zombie.zombies.size() != 0) {
-            Zombie first = Zombie.zombies.get(0);
-            for (int i = 1; i < Zombie.zombies.size(); i++) {
-                if (Zombie.zombies.get(i).row == Sluts.getYSlut(plant.getBounds())) {
-                    if (first.getBounds().x >= Zombie.zombies.get(i).getBounds().x)
-                        first = Zombie.zombies.get(i);
+            Zombie first = null;
+            for (int i = 0; i < Game.objects.size(); i++) {
+                if (Game.objects.get(i).type == 1) {
+                    if (Game.objects.get(i).zombie.row == Sluts.getYSlut(plant.getBounds())) {
+                        first = Game.objects.get(i).zombie;
+                        int firstPosX = first.getBounds().x;
+                        if ((first.getClass() == Newspaper.class
+                                || first.getClass() == ConeHead.class
+                                || first.getClass() == BucketHead.class) && first.getIcon() != Icons.normalZombie)
+                            firstPosX += 40;
+                        //for poleVaulting we have different sizes
+                        if (objects.get(i).zombie.getClass() == PoleVaulting.class) firstPosX += 110;
+                        int zombieX = objects.get(i).zombie.getBounds().x;
+                        if ((objects.get(i).zombie.getClass() == Newspaper.class
+                                || objects.get(i).zombie.getClass() == ConeHead.class
+                                || objects.get(i).zombie.getClass() == BucketHead.class) && objects.get(i).zombie.getIcon() != Icons.normalZombie)
+                            zombieX += 40;
+                        if (first.getClass() == PoleVaulting.class) zombieX += 110;
+                        //find the minm X in Zombies X list
+                        if (firstPosX > zombieX) {
+                            first = objects.get(i).zombie;
+                        }
+                    }
                 }
             }
-            int zombieX = first.getBounds().x;
-            if (first.getClass() == PoleVaulting.class || first.getClass() == Newspaper.class)
-                zombieX += 200;
-            else if (first.getClass() == ConeHead.class || first.getClass() == BucketHead.class)
-                zombieX += 60;
-            if (zombieX < plant.getX()) first = null;
             return first;
         }
         return null;
-
     }
 
-    private void waves(int roundNumber) {
-        if (roundNumber != round) {
-            round = roundNumber;
-            sendZombies();
+    /**
+     * @param plant removes the plant from objects list
+     */
+    public static void removePlant(Plant plant) {
+        Plant.plants.remove(plant);
+        for (int i = 0; i < objects.size(); i++) {
+            if (objects.get(i).plant == plant) {
+                objects.remove(i);
+                break;
+            }
         }
     }
 
+    /**
+     * Called only once, at the end the waves method. That finishes the game by a win message
+     *
+     * @throws InterruptedException because of the use of sleep method.
+     */
     private void win() throws InterruptedException {
         if (!lost || !won) {
             won = true;
             Sounds.play(WIN);
+            pause();
             Thread.sleep(1000);
             if (difficulty == 1) newLevel.score += 10;
             else newLevel.score += 3;
             newLevel.wins++;
             newLevel.save();
-            new JOptionPane("You won!").createDialog("");
+            new JOptionPane("You Won!").createDialog("");
             Sounds.mute();
+            new MainMenu(newLevel);
             dispose();
         }
     }
 
+    /**
+     * when a zombie reaches the end line, if there is no mower, the game finishes
+     *
+     * @throws InterruptedException because of the use of sleep method.
+     */
     private void lose() throws InterruptedException {
         if (!won || !lost) {
             lost = true;
@@ -506,20 +608,32 @@ public class Game extends JFrame {
             newLevel.save();
             new JOptionPane("You Lost!").createDialog("");
             Sounds.mute();
+            new MainMenu(newLevel);
             dispose();
         }
     }
 
-    public static void removePlant(Plant plant) {
-        Plant.plants.remove(plant);
+    /**
+     * Removes the given zombie form all objects we have in game
+     *
+     * @param zombie gets the zombie to remove it
+     */
+    public static void removeZombie(Zombie zombie) {
+        Zombie.zombies.remove(zombie);
         for (int i = 0; i < objects.size(); i++) {
-            if (objects.get(i).plant == plant) {
+            if (objects.get(i).zombie == zombie) {
                 objects.remove(i);
                 break;
             }
         }
     }
 
+    /**
+     * shoots the peaBullet from the shooter
+     *
+     * @param shooterPlant the host plant(GatlingPea,PeaShooter,ThreePeater,Repeater)
+     * @param isFrozen     whether the host plant shoots snowPea or not
+     */
     private void shoot(Plant shooterPlant, boolean isFrozen) {
         new Thread(() -> {
             if (shooterPlant.health > 0) {
@@ -529,11 +643,17 @@ public class Game extends JFrame {
                 if (pos != null) {
                     do {
                         try {
+                            //in peabullet constructor seekZombie method is called
+                            //2 diff constructor for peabullet class
                             PeaBullet pea = new PeaBullet(label, shooterPlant, isFrozen);
                             if (isFrozen) pea.setIcon(Icons.snowBulletIcon);
                             else pea.setIcon(Icons.peaBulletIcon);
                             pea.setBounds(shooterPlant.getBounds().x + 46, shooterPlant.getBounds().y + 16, 28, 28);
                             long sleep;
+                            //choosing speed of plants shooting
+                            //if 1->1 second
+                            //if 2->0.5 second
+                            //if 3->0.33 second
                             switch (shooterPlant.speed) {
                                 case 1 -> sleep = 1000L;
                                 case 2 -> sleep = 500L;
@@ -550,6 +670,11 @@ public class Game extends JFrame {
         }).start();
     }
 
+    /**
+     * shoots three peas from the origin
+     *
+     * @param shooterPlant gets the origin plant
+     */
     private void tripleShot(Plant shooterPlant) {
         new Thread(() -> {
             if (shooterPlant.health > 0) {
@@ -557,6 +682,7 @@ public class Game extends JFrame {
                 if (pos != null) {
                     do {
                         try {
+                            //shooting position handels in PeaBuller
                             PeaBullet pea = new PeaBullet(label, shooterPlant);
                             pea.setIcon(Icons.peaBulletIcon);
                             pea.setBounds(shooterPlant.getBounds().x + 46, shooterPlant.getBounds().y + 16, 28, 28);
@@ -570,6 +696,9 @@ public class Game extends JFrame {
         }).start();
     }
 
+    /**
+     * adds plant menu to the background and how many keptsuns we have
+     */
     private void plantsJob() {
         new Thread(() -> {
             label.add(plants);
@@ -582,18 +711,19 @@ public class Game extends JFrame {
             plants.add(score);
             score.add(keptSun);
             score.setBounds(11, 60, 56, 25);
-
             SpringLayout layout = new SpringLayout();
             score.setLayout(layout);
             keptSun.setText(suns + "");
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, keptSun, 0, SpringLayout.HORIZONTAL_CENTER, score);
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, keptSun, 0, SpringLayout.VERTICAL_CENTER, score);
-
             label.repaint();
 
         }).start();
     }
 
+    /**
+     * adds pause button(gui) to the background
+     */
     private void pauseButton() {
         pauseButton = new JLabel();
         label.add(pauseButton);
@@ -602,6 +732,12 @@ public class Game extends JFrame {
         pauseButton.addMouseListener(pauseClickListener(pauseButton));
     }
 
+    /**
+     * What happens when we clickPauseListener
+     *
+     * @param pauseButton gets the pause button of the game page
+     * @return mouse click listener
+     */
     private MouseListener pauseClickListener(JLabel pauseButton) {
         return new MouseListener() {
             @Override
@@ -614,7 +750,7 @@ public class Game extends JFrame {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                //pauseMenu();
+                pauseMenu();
                 pause();
                 pauseButton.removeMouseListener(pauseButton.getMouseListeners()[0]);
             }
@@ -628,14 +764,11 @@ public class Game extends JFrame {
             }
         };
     }
-    void resume() {
-        for (Timer timer: timerPool) timer.start();
-        blackScreen.setIcon(null);
-        remove(blackScreen);
-        paused = false;
-        gameTimer();
-        pauseButton.addMouseListener(pauseClickListener(pauseButton));
-    }
+
+    /**
+     * adds pause menu to the game page when called
+     * adding a black background to background
+     */
     private void pauseMenu() {
         blackScreen = new JLabel();
         blackScreen.setIcon(Icons.blackScreen);
@@ -650,7 +783,12 @@ public class Game extends JFrame {
         new PauseMenu(this);
     }
 
-    //2methodscommented
+
+    /**
+     * We use this click listener for drag and drop of plants in game
+     *
+     * @return label click listener. label is the background picture of the game
+     */
     private MouseListener labelClickListener() {
         return new MouseListener() {
             @Override
@@ -756,6 +894,11 @@ public class Game extends JFrame {
         };
     }
 
+    /**
+     * called when the potato mine is used
+     *
+     * @param tmp the class of the potato mine
+     */
     private synchronized void mineSet(Plant tmp) {
         new Thread(() -> {
             try {
@@ -765,7 +908,11 @@ public class Game extends JFrame {
             }
             tmp.setIcon(Icons.potatoBIcon);
             while (tmp.health > 0) {
-                Zombie aim = getFirstZombieByRow(tmp);
+                Zombie aim = null;
+                for (Coordination object : objects) {
+                    if (object.zombie.row == tmp.row)
+                        aim = object.zombie;
+                }
                 if (aim != null) {
                     int size = 0;
                     if (aim.getClass() == PoleVaulting.class)
@@ -775,7 +922,7 @@ public class Game extends JFrame {
                             || aim.getClass() == Newspaper.class)
                         size = 80;
                     if (aim.getX() + size - tmp.getX() < 20 && aim.row == tmp.row) {
-                        play(CHERRY_EXPLOSION);
+                        play(POTATO_EXPLOSION);
                         tmp.setIcon(Icons.potatoCIcon);
                         removePlant(tmp);
                         aim.kill(true);
@@ -792,6 +939,11 @@ public class Game extends JFrame {
         }).start();
     }
 
+    /**
+     * creates an explosion when the cherry planted
+     *
+     * @param tmp the class of the cherry
+     */
     private void explode(Plant tmp) {
         Timer t = new Timer(2000, e -> {
             Sounds.play(CHERRY_EXPLOSION);
@@ -807,6 +959,7 @@ public class Game extends JFrame {
                             -tmp.getY() + objects.get(i).zombie.getY() < 100 &&
                                     -tmp.getY() + objects.get(i).zombie.getY() > 0) {
                         objects.get(i).zombie.kill(true);
+                        removePlant(tmp);
                     }
             }
             tmp.setIcon(null);
@@ -818,9 +971,13 @@ public class Game extends JFrame {
         timerPool.add(t);
     }
 
+    /**
+     * starts to produce sun point when the sunflower planted
+     *
+     * @param tmp the class of the sunflower
+     */
     private void produceSun(Plant tmp) {
         new Thread(() -> {
-            threadPool.add(Thread.currentThread());
             while (!won || !lost) {
                 try {
                     Thread.sleep(sunflowerTimer[difficulty] * 1000L);
@@ -835,6 +992,12 @@ public class Game extends JFrame {
         }).start();
     }
 
+    /**
+     * the mouse listener of the cards in the plant menu
+     * checking if cards available to use or it we have enough suns
+     *
+     * @return mouse click listener
+     */
     private MouseListener cardsClickListener() {
         return new MouseListener() {
             @Override
@@ -913,9 +1076,15 @@ public class Game extends JFrame {
         };
     }
 
+    /**
+     * sets a cooldown for the seeds to limit their usage
+     *
+     * @param card the aimed seed card
+     * @param v    time to disable that card
+     *             (This method could have been done in a "for loop". but there was no time to change that)
+     */
     private void coolDown(int card, float v) {
         new Thread(() -> {
-            threadPool.add(Thread.currentThread());
             try {
                 switch (card) {
                     case 0 -> {
@@ -972,11 +1141,12 @@ public class Game extends JFrame {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            threadPool.remove(Thread.currentThread());
         }).start();
     }
 
-
+    /**
+     * @return returns mouse motion when the mouse cursor moves
+     */
     private MouseMotionListener motionListener() {
         return new MouseMotionAdapter() {
             public void mouseMoved(MouseEvent me) {
@@ -988,22 +1158,51 @@ public class Game extends JFrame {
         };
     }
 
-    private void backgrounds() {
-        label2 = new JLabel();// Setting the background
-        label2.setIcon(Icons.background);
-        label.setIcon(Icons.background);
-        label.setBounds(0, 0, 1400, 600);
-        plants = new JLabel();
-        add(label2);
-        add(label);
+    /**
+     * sets the main background elements of the game after loading game
+     */
 
-        clicked = new JLabel();
-        label.add(clicked);
-        label.addMouseListener(labelClickListener());
+    private void loading(ArrayList<Integer> cardsNumber) {
+        JLabel[] cards = new JLabel[6];
+        Sounds.backPlay(IN_GAME);
+        Sluts.setCardSluts();
+        plantsJob();
+        if (!cardsNumber.isEmpty())
+            for (int i = 0; i < cardsNumber.size(); i++) {
+                cards[i] = Cards.getCard(cardsNumber.get(i), plants);
+                cards[i].setBounds(Sluts.getCardPos(i));
+                cards[i].setName(String.valueOf(i));
+                cards[i].addMouseListener(cardsClickListener());
+                plants.add(cards[i]);
+            }
+        cardsList = cardsNumber;
+        //for checking which round we are in after loading game
+        while (zombieTime < gameTime - gap) {
+            if (gameTime < gap + duration1 && gameTime >= gap) round = 1;
+            else if (gameTime < gap + duration1 + duration2 && gameTime >= gap + duration1) round = 2;
+            else if (gameTime < 480 && gameTime >= gap + duration1 + duration2) round = 3;
+            if (round == 1) zombieTime += round1;
+            else if (round == 2) zombieTime += round2;
+            else if (round == 3) {
+                zombieTime += duration1 + duration2;
+                while (zombieTime < gameTime - gap) {
+                    zombieTime += round3;
+                }
+            }
+        }
+        while (sky < gameTime) {
+            sky += sky;
+        }
+        System.out.println(zombieTime);
+        gameTimer();
     }
 
+    /**
+     * shows the game until the ready set plant method starts
+     */
     private void readySetPlant() {
         Thread n = new Thread(() -> {
+            //the random zombies in right side of game
             placeRandomZombies(label2);
             Sounds.backPlay(CHOOSE_DECK);
             label2.setBounds(-300, 0, 1400, 600);
@@ -1017,10 +1216,9 @@ public class Game extends JFrame {
             okButton.setIcon(okCheckMarkIcon);
             okButton.setBounds(630, 300, 75, 75);
             label2.add(okButton);
+            //the deck we want to have is contains of 9 cards
             JLabel[] cards = new JLabel[9];
-
             Sluts.setCardSluts();
-
             for (int i = 0; i < cards.length; i++) {
                 cards[i] = Cards.getCard(i, deck);
                 cards[i].setBounds(Sluts.getCardSlut(i));
@@ -1059,25 +1257,9 @@ public class Game extends JFrame {
                             Sounds.play(READY);// Play background music
                             remove(label2);
                             readyLabel();
-
+                            Sounds.backPlay(IN_GAME);
                             plantsJob();
-
                             label.repaint();
-
-                            new Thread(() -> {
-                                threadPool.add(Thread.currentThread());
-                                try {
-                                    while (!won || !lost) {
-                                        Thread.sleep(skyTimer[difficulty] * 1000L);
-                                        sunLanding(null);
-                                        if (paused) break;
-                                    }
-                                } catch (InterruptedException ex) {
-                                    ex.printStackTrace();
-                                }
-                                threadPool.remove(Thread.currentThread());
-                            }).start();
-
                             gameTimer();
 
                         } catch (InterruptedException interruptedException) {
@@ -1105,6 +1287,11 @@ public class Game extends JFrame {
 
     ArrayList<Integer> cardsList = new ArrayList<>();
 
+    /**
+     * add mouse listener when someone clicks on the cards in the deck
+     *
+     * @return deck mouse click listener
+     */
     private MouseListener deckClickListener() {
         return new MouseListener() {
             @Override
@@ -1126,6 +1313,7 @@ public class Game extends JFrame {
                 aim.setIcon(null);
                 aim.getParent().repaint();
                 if (index == -1) {
+                    //check the lenght of cards we have selected
                     if (cardsList.size() < 6) {
                         plants.add(aim);
                         aim.setBounds(Sluts.getCardPos(cardsList.size()));
@@ -1155,6 +1343,11 @@ public class Game extends JFrame {
         };
     }
 
+    /**
+     * shows ready set plant label on the background just before the first round starts
+     *
+     * @throws InterruptedException called when sleep method called
+     */
     private void readyLabel() throws InterruptedException {
         JLabel start = new JLabel();
         //noinspection SpellCheckingInspection
@@ -1180,6 +1373,7 @@ public class Game extends JFrame {
     private void placeRandomZombies(Container label) {
         new Thread(() -> {//1017, 84
             Random random = new Random();
+            //the zombies are random
             int count = 5 + random.nextInt(10);
             IntStream iX = random.ints(count, 1017, 1200);
             int[] posX = iX.toArray();
@@ -1204,61 +1398,42 @@ public class Game extends JFrame {
         }).start();
     }
 
-    private void sendZombies() {
-        int zombies;
-        if (round == 1) zombies = 5;
-        else zombies = 12;
+    /**
+     * send zombies to the field using random number between 7
+     */
+    private void sendZombie() {
         Random random = new Random();
         new Thread(() -> {
-            byte count = 1;
-            try {
-                int[] location;
-                threadPool.add(Thread.currentThread());
-                for (int i = 0; i < zombies; i++) {
-                    int type = random.nextInt(7);
-                    Zombie zombie;
-                    int rand = random.nextInt(5);
-                    location = Sluts.getZombieLocation(rand);
-                    switch (type) {
-                        case 0, 4 -> zombie = new Normal(label, rand);
-                        case 1 -> zombie = new ConeHead(label, rand);
-                        case 2 -> zombie = new BucketHead(label, rand);
-                        case 3 -> zombie = new Football(label, rand);
-                        case 5 -> zombie = new Newspaper(label, rand);
-                        case 6 -> zombie = new PoleVaulting(label, rand);
-                        default -> throw new RuntimeException("sendZombies Switch");
-                    }
-                    if (zombie.getClass() == BucketHead.class)
-                        zombie.setBounds(location[0], location[1] + 10, zombie.sizeX, zombie.sizeY);
-                    else
-                        zombie.setBounds(location[0], location[1] - 40, zombie.sizeX, zombie.sizeY);
-                    objects.add(new Coordination(zombie, rand));
-                    walk(zombie);
-                    progress();
-                    if (round == 1) Thread.sleep(30000);
-                    else if (round == 3) {
-                        if (count == 2) {
-                            Thread.sleep(25000);
-                            count--;
-                        } else count++;
-                    } else {
-                        if (count == 2) {
-                            Thread.sleep(30000);
-                            count--;
-                        } else count++;
-                    }
-                }
-                threadPool.remove(Thread.currentThread());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            int[] location;
+            int type = random.nextInt(7);
+            Zombie zombie;
+            int rand = random.nextInt(5);
+            location = Sluts.getZombieLocation(rand);
+            switch (type) {
+                case 0, 4 -> zombie = new Normal(label, rand);
+                case 1 -> zombie = new ConeHead(label, rand);
+                case 2 -> zombie = new BucketHead(label, rand);
+                case 3 -> zombie = new Football(label, rand);
+                case 5 -> zombie = new Newspaper(label, rand);
+                case 6 -> zombie = new PoleVaulting(label, rand);
+                default -> throw new RuntimeException("sendZombies Switch");
             }
+            if (zombie.getClass() == Newspaper.class || zombie.getClass() == PoleVaulting.class)
+                zombie.setBounds(location[0], location[1] - 110, zombie.sizeX, zombie.sizeY);
+            else
+                zombie.setBounds(location[0], location[1] - 40, zombie.sizeX, zombie.sizeY);
+            objects.add(new Coordination(zombie, rand));
+            walk(zombie);
         }).start();
     }
 
-    private void progress() {
-        gone++;
-    }
-
+    /**
+     * adds walking animation to the zombies
+     * also checks whether the zombie reaches the end or the plant to execute the next method
+     *
+     * @param zombie the class of the subject zombie
+     */
+    @SuppressWarnings("RedundantCast")
     private synchronized void walk(Zombie zombie) {
         int delay = walkDelay[difficulty];
         if (zombie.getClass() == BucketHead.class
@@ -1268,14 +1443,15 @@ public class Game extends JFrame {
         Timer t = new Timer(delay, e -> {
             if (zombie.health > 0) {
                 zombie.setBounds(zombie.getX() - zombie.speed, zombie.getY(), zombie.sizeX, zombie.sizeY);
-                int distance = 205;
+                int distance = 190;
                 if (zombie.getClass() == PoleVaulting.class)
                     distance = 0;
                 else if (zombie.getClass() == ConeHead.class
                         || zombie.getClass() == BucketHead.class
                         || zombie.getClass() == Newspaper.class)
-                    distance = 120;
-                if (zombie.getX() - distance < 20) {
+                    distance = 90;
+                //mower starts working
+                if (zombie.getX() - distance < 40) {
                     if (mowerAvailable[zombie.row])
                         runMower(zombie.row);
                     else {
@@ -1287,19 +1463,22 @@ public class Game extends JFrame {
                         }
                     }
                 }
+                //for poleVaulting zombie which jumpes
                 for (Plant plant : Plant.plants) {
                     if (plant.row == zombie.row) {
                         int dis = 0;
                         if (zombie.getClass() == PoleVaulting.class)
                             dis = 200;
-                        else if  ( zombie.getClass() == BucketHead.class
+                        else if (zombie.getClass() == BucketHead.class
                                 || zombie.getClass() == ConeHead.class)
                             if (zombie.getIcon() != Icons.normalZombie)
                                 dis = 60;
                         if (zombie.getClass() == Newspaper.class) dis = 60;
                         if (zombie.getClass() == PoleVaulting.class) {
+                            //if it isnt jumping
                             if (!((PoleVaulting) zombie).isJumping) {
                                 if (zombie.getX() + dis - plant.getX() < 140 && zombie.getX() + dis - plant.getX() > 0)
+                                    //if is hasnt jumped yet
                                     if (!((PoleVaulting) zombie).jumped) {
                                         new Thread(() -> {
                                             try {
@@ -1324,7 +1503,9 @@ public class Game extends JFrame {
                                                 interruptedException.printStackTrace();
                                             }
                                         }).start();
+
                                     }
+                                //if it has jumped it only eats
                                 if (((PoleVaulting) zombie).jumped) {
                                     if (zombie.getX() + dis - plant.getX() > 0)
                                         if (zombie.getX() + dis - plant.getX() < 40) {
@@ -1343,7 +1524,7 @@ public class Game extends JFrame {
                         }
                     }
                 }
-            }else {
+            } else {
                 ((Timer) e.getSource()).stop();
                 timerPool.remove(((Timer) e.getSource()));
             }
@@ -1352,9 +1533,15 @@ public class Game extends JFrame {
         timerPool.add(t);
     }
 
-
+    /**
+     * called by walk method when the zombie reaches the plant
+     *
+     * @param zombie the subject
+     * @param victim the object
+     */
     private void eatPlant(Zombie zombie, Plant victim) {
         Thread t = new Thread(() -> {
+            //uses for damage type
             int i;
             if (zombie.getClass() == Normal.class) i = 0;
             else if (zombie.getClass() == ConeHead.class) i = 1;
@@ -1365,7 +1552,6 @@ public class Game extends JFrame {
             else i = -1;
             int amount = zombie.damage + additionalDamage[i] * difficulty;
             System.out.println(amount);
-            threadPool.add(Thread.currentThread());
             do {
                 if (zombie.health > 0)
                     victim.lossHealth(amount);
@@ -1378,16 +1564,36 @@ public class Game extends JFrame {
             } while (zombie.health > 0 && victim.health > 0 && !paused);
             if (zombie.health > 0)
                 walk(zombie);
-            threadPool.remove(Thread.currentThread());
         });
         t.start();
     }
 
+    /**
+     * pauses the game
+     * stops all of the timers
+     */
     private void pause() {
         for (Timer timer : timerPool) timer.stop();
-        muted = true;
+        muted = false;
         paused = true;
     }
+
+    /**
+     * resumes the game and all of its timers
+     */
+    void resume() {
+        for (Timer timer : timerPool) timer.start();
+        blackScreen.setIcon(null);
+        remove(blackScreen);
+        paused = false;
+        gameTimer();
+        pauseButton.addMouseListener(pauseClickListener(pauseButton));
+    }
+
+    /**
+     * saves all of game instructions in shape of objects of GameSave
+     * @return a game we have saved the locations and health and name of player
+     */
     public GameSave save() {
         ArrayList<GameObjects> objects = new ArrayList<>();
         for (int i = 0; i < Game.objects.size(); i++) {
@@ -1396,12 +1602,12 @@ public class Game extends JFrame {
             int health;
             if (Game.objects.get(i).type == 0) {
                 name = Game.objects.get(i).plant.getClass().getName();
-                name = name.substring(name.lastIndexOf("."));
-                position = new Point(Game.objects.get(i).zombie.getBounds().x, Game.objects.get(i).zombie.getBounds().y);
+                name = name.substring(name.lastIndexOf(".") + 1);
+                position = new Point(Game.objects.get(i).plant.getBounds().x, Game.objects.get(i).plant.getBounds().y);
                 health = Game.objects.get(i).plant.health;
             } else {
                 name = Game.objects.get(i).zombie.getClass().getName();
-                name = name.substring(name.lastIndexOf("."));
+                name = name.substring(name.lastIndexOf(".") + 1);
                 position = new Point(Game.objects.get(i).zombie.getBounds().x, Game.objects.get(i).zombie.getBounds().y);
                 health = Game.objects.get(i).zombie.health;
                 if (Game.objects.get(i).zombie.getClass() == Newspaper.class
@@ -1415,7 +1621,7 @@ public class Game extends JFrame {
         }
         return new GameSave(objects, gameTime, cardsList, suns);
     }
-}
+
     public static void main(String[] args) {
         if (Player.load() == null)
             new Game(new Player(), false);
@@ -1425,6 +1631,4 @@ public class Game extends JFrame {
             new Game(player.get(0), false);
         }
     }
-
-
 }

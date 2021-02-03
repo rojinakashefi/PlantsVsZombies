@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.Timer;
 import java.awt.*;
 
-import static Menus.Game.timerPool;
+import static Menus.Game.*;
 
 public class PeaBullet extends JLabel {
 
@@ -21,19 +21,9 @@ public class PeaBullet extends JLabel {
         seekForZombies(label, shooterPlant, false, true);
     }
 
-    private void seekForZombies(Container c, Plant origin, boolean isFrozen, boolean isTriple) throws InterruptedException {
+    private void seekForZombies(Container c, Plant origin, boolean isFrozen, boolean isTriple) {
         if (origin.health > 0) {
-            boolean enemyInSight = false;
-            for (int i = 0; i < Game.objects.size(); i++) {
-                if (Game.objects.get(i).type == 1)
-                    if (Game.objects.get(i).coordination[1] == origin.row)
-                        if (Game.objects.get(i).zombie.getX() > origin.getX()) {
-                            enemyInSight = true;
-                            break;
-                        }
-                Thread.sleep(100);
-            }
-            if (enemyInSight) {
+            if (getFirstZombieByRow(origin) != null) {
                 if (isTriple) {
                     JLabel[] obliques = new JLabel[2];
                     for (int i = 0; i < 2; i++) {
@@ -72,7 +62,7 @@ public class PeaBullet extends JLabel {
                 final Timer timer = new Timer(5, e -> {
                     setBounds(getX() + 2, getY(), 28, 28);
                     Zombie firstZombie = Game.getFirstZombieByRow(origin);
-                    if (firstZombie != null) {
+                    if (firstZombie != null && firstZombie.row == Sluts.getYSlut(this.getBounds())) {
                         int zombieX = firstZombie.getBounds().x;
                         if(firstZombie.getClass() == PoleVaulting.class)
                             zombieX += 220;

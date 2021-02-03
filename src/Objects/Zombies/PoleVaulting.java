@@ -1,11 +1,15 @@
 package Objects.Zombies;
-
 import Miscs.Icons;
 import Miscs.Sounds;
-
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * This Is for poleVaulting menu.
+ * it consists of 3 pics
+ * it health is 340 and it damage for eating a plant is 10 it speed is 6
+ * @author RojinaKashefi && HeliaHashemipour
+ */
 public class PoleVaulting extends Zombie {
     public ImageIcon noPole = new ImageIcon("gfx/noPole.pvz");
     public ImageIcon jump1 = new ImageIcon("gfx/jump1.pvz");
@@ -21,6 +25,11 @@ public class PoleVaulting extends Zombie {
         setIcon(walk);
     }
 
+    /**
+     * LossHealth method
+     * @param Amount as amount it will decrease from health of zombies
+     * @param isFrozen is frozen if pea is frozen
+     */
     @Override
     public void lossHealth(int Amount, boolean isFrozen) {
         health -= Amount;

@@ -1,16 +1,18 @@
+
 package Miscs.Socket;
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-
 import static Main.Main.TESTING;
 import static Main.Main.isServerUp;
 
-
+/**
+ * This class handles the work of clients
+ * each client has its own clientHandler which is a thread
+ * @author RojinaKashefi && HeliaHashemipour
+ */
 public class ClientHandler implements Runnable {
     Socket client;
     Server server;
@@ -18,12 +20,22 @@ public class ClientHandler implements Runnable {
     PrintWriter out;
     int num;
 
+    /**
+     * Constructor
+     * read input and making printWriter for writing
+     * @param client as client socket we are doing it tasks
+     */
     public ClientHandler(Socket client) throws IOException {
         this.client = client;
         input = new BufferedReader(new InputStreamReader(client.getInputStream()));
         out = new PrintWriter(client.getOutputStream());
     }
 
+    /**
+     * When client thread starts this method will run
+     * which it continues till the server up is true
+     * serverReceiver is the next step
+     */
     @Override
     public void run() {
         if (TESTING) System.out.println("[SERVER] Looking For Data Connection...");
@@ -43,6 +55,9 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    /**
+     *Receives information of client from server
+     */
     private void ServerReceiver() throws IOException {
         String SenderType;
         SenderType = input.readLine();

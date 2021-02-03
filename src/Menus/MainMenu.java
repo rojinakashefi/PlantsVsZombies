@@ -1,6 +1,5 @@
 package Menus;
 
-import Main.Main;
 import Miscs.*;
 import Miscs.Socket.Client;
 
@@ -30,6 +29,8 @@ public class MainMenu extends JFrame {
     Client main;
     public MainMenu(Player player) {
         this.player = player;
+        main = new Client("Main");
+        if (saves.isEmpty()) communicate(main);
 
         background();
 
@@ -97,6 +98,12 @@ public class MainMenu extends JFrame {
             addedShotDownHook = true;
         }
     }
+
+
+    /**
+     * Communicates with the server
+     * @param main the client of the main menu.
+     */
     private void communicate(Client main) {
         main.send("Main");
         main.send("Scoreboard");
@@ -126,6 +133,9 @@ public class MainMenu extends JFrame {
             }
         }
     }
+    /**
+     * sets the main background
+     */
     private void background() {
         back = new JLabel();
         back.setIcon(Icons.firstIcon);

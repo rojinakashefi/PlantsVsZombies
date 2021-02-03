@@ -1,18 +1,20 @@
 package Menus;
-
 import Main.Main;
 import Miscs.Player;
 import Miscs.Socket.Client;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import static Main.Main.*;
 
-import static Main.Main.findPlayerIndex;
-import static Main.Main.loadedPlayers;
-
-public class AccountMenu extends JFrame implements Runnable  {
+/**
+ * AccountMenu as first Menu appears when we login in game
+ * Contains Gui and logic For signin/signup/createaccount/haveaccount
+ * @author RojinaKashefi && HeliaHashemipour
+ * @version 1.0
+ */
+public class AccountMenu extends JFrame implements Runnable {
     JLabel SecLabel = new JLabel("Enter Game");
     JButton SignInButton = new JButton("Sign In");
     JButton SignUpButton = new JButton("Sign Up");
@@ -25,7 +27,12 @@ public class AccountMenu extends JFrame implements Runnable  {
     Container This = this.getContentPane();
     Client account = new Client("Accounts");
 
-    public AccountMenu(){
+    /**
+     * Constructor starts from receiving data of players
+     * Setting font of buttons
+     */
+    public AccountMenu() {
+        new Thread(this::receive).start();
         Font font = new Font("Times New Roman", Font.PLAIN, 14);
         SignInButton.setFont(font);
         SignUpButton.setFont(font);
@@ -34,32 +41,28 @@ public class AccountMenu extends JFrame implements Runnable  {
         NameLBL.setFont(font);
         ChangeUpButton.setFont(font);
         ChangeInButton.setFont(font);
+        //checking look and feel
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         this.setSize(420, 280);
         this.setResizable(false);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
+        //adding window listener for accountmenu window
+        //using adapter class
+        //implementing account.close
         addWindowListener(new WindowListener() {
             @Override
-            public void windowOpened(WindowEvent e) {
-
-            }
-
+            public void windowOpened(WindowEvent e) {}
             @Override
             public void windowClosing(WindowEvent e) {
                 account.close();
             }
-
             @Override
-            public void windowClosed(WindowEvent e) {
-
-            }
+            public void windowClosed(WindowEvent e) {}
 
             @Override
             public void windowIconified(WindowEvent e) {
@@ -80,10 +83,12 @@ public class AccountMenu extends JFrame implements Runnable  {
             public void windowDeactivated(WindowEvent e) {
 
             }
-
         });
-
     }
+    /**
+     * Receives players data (name,score,wins,losses,difficulty)from server
+     * adding the player to loadedPlayers
+     */
     private void receive() {
         try {
             Thread.sleep(500);
@@ -107,10 +112,9 @@ public class AccountMenu extends JFrame implements Runnable  {
         }
     }
 
-    @Override
-    public void run() {
-
-    }
+    /**
+     * Adding signuphere button gui which contains haveAccount,Signup,SigninHere
+     */
     private void Up() {
         while (this.getHeight() != 300) {
             this.setSize(this.getWidth(), this.getHeight() + 2);
@@ -118,6 +122,7 @@ public class AccountMenu extends JFrame implements Runnable  {
         }
         this.remove(ChangeUpButton);
         this.remove(SignInButton);
+        SecLabel.setText("Sign Up");
         LastLBL.setText("Have Account?");
         NameTxt.setText("");
         this.add(NameTxt);
@@ -137,12 +142,55 @@ public class AccountMenu extends JFrame implements Runnable  {
         Layout.putConstraint(SpringLayout.WEST, NameTxt, -20, SpringLayout.HORIZONTAL_CENTER, This);
         Layout.putConstraint(SpringLayout.VERTICAL_CENTER, NameTxt, 0, SpringLayout.VERTICAL_CENTER, NameLBL);
     }
+
+    /**
+     * Signing in logic after clicking sign in button
+     * @author RojinaKashefi && HeliaHashemipour
+     */
+    private void signIn() {
+        if (!NameTxt.getText().equals("")) {
+            int index = findPlayerIndex(NameTxt.getText());
+            if (index != -1) {
+                //after siging in mainmenu opens
+                new MainMenu(loadedPlayers.get(index));
+                dispose();
+            } else new JOptionPane("User Not Found!", JOptionPane.INFORMATION_MESSAGE)
+                    .createDialog("").setVisible(true);
+        } else {
+            new JOptionPane("Enter a name!", JOptionPane.ERROR_MESSAGE)
+                    .createDialog("Error!").setVisible(true);
+        }
+    }
+
+    /**
+     * signing up logic as a new player after clicking sign up button
+     */
+    private void signUp() {
+        int index = findPlayerIndex(NameTxt.getText());
+        if (index == -1) {
+            Player level = new Player(0,0,0,0, NameTxt.getText());
+            loadedPlayers.add(level);
+            //after signing up,mainmenu will open
+            new MainMenu(level);
+            dispose();
+        } else {
+            new JOptionPane("Username is already in use!", JOptionPane.INFORMATION_MESSAGE)
+                    .createDialog("").setVisible(true);
+        }
+    }
+
+    /**
+     * Sign in panel(first panel when we open account menu)
+     * contains signinbutton,donthaveaccount,signuphere button
+     */
     private void In() {
         while (this.getHeight() != 280) {
             this.setSize(this.getWidth(), this.getHeight() - 2);
             this.setLocation(getX(), getY() + 1);
         }
+        SecLabel.setText("Sign In");
         LastLBL.setText("New To Game?");
+        this.add(SecLabel);
         this.add(NameLBL);
         this.add(NameTxt);
         this.add(SignInButton);
@@ -150,6 +198,7 @@ public class AccountMenu extends JFrame implements Runnable  {
         this.add(LastLBL);
         this.remove(ChangeInButton);
         this.remove(SignUpButton);
+        this.remove(ChangeInButton);
 
         Layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, SecLabel, 0, SpringLayout.HORIZONTAL_CENTER, This);
         Layout.putConstraint(SpringLayout.NORTH, SecLabel, 10, SpringLayout.SOUTH, This);
@@ -164,30 +213,21 @@ public class AccountMenu extends JFrame implements Runnable  {
         Layout.putConstraint(SpringLayout.EAST, NameLBL, -30, SpringLayout.HORIZONTAL_CENTER, This);
         Layout.putConstraint(SpringLayout.SOUTH, NameLBL, -45, SpringLayout.NORTH, SignInButton);
     }
-    private void signIn() {
-        if (!NameTxt.getText().equals("")) {
-            int index = findPlayerIndex(NameTxt.getText());
-            if (index != -1) {
-                new MainMenu(loadedPlayers.get(index));
-                dispose();
-            } else new JOptionPane("User Not Found!", JOptionPane.INFORMATION_MESSAGE)
-                    .createDialog("").setVisible(true);
-        } else {
-            new JOptionPane("Enter a name!", JOptionPane.ERROR_MESSAGE)
-                    .createDialog("Error!").setVisible(true);
-        }
-    }
-    private void signUp() {
-        int index = findPlayerIndex(NameTxt.getText());
-        if (index == -1) {
-            Player level = new Player(0,0,0,0, NameTxt.getText());
-            loadedPlayers.add(level);
-            new MainMenu(level);
-            dispose();
-        } else {
-            new JOptionPane("Username is already in use!", JOptionPane.INFORMATION_MESSAGE)
-                    .createDialog("").setVisible(true);
-        }
-    }
 
+    /**
+     * Runs the new Thread to show the account page
+     */
+    @Override
+    public void run() {
+        this.setLayout(Layout);
+        //first gui which we see
+        In();
+        this.setVisible(true);
+        System.out.println("Account Page");
+        if (TESTING) System.out.println("Active Threads InPage: " + Thread.activeCount());
+        SignInButton.addActionListener(e -> signIn());
+        ChangeUpButton.addActionListener(e -> Up());
+        ChangeInButton.addActionListener(e -> In());
+        SignUpButton.addActionListener(e -> signUp());
+    }
 }
