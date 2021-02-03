@@ -37,21 +37,21 @@ public class GameSave {
         if (TESTING) System.out.println("File Sent!");
     }
     public static ArrayList<GameSave> load(String name) {
-//        Reader in;
-//        ArrayList<GameSave> temp = new ArrayList<>();
-//
-//        if (seek(name)) {
-//            try {
-//                in = new FileReader(name + ".json");
-//                Gson jsonReader = new Gson();
-//                temp = jsonReader.fromJson(in, new TypeToken<List<GameSave>>(){}.getType());
-//                in.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            if (TESTING) System.out.println("File Loaded!");
-//            return temp;
-//        } else return null;
-//    }
+        Reader in;
+        ArrayList<GameSave> temp = new ArrayList<>();
+
+        if (seek(name)) {
+            try {
+                in = new FileReader(name + ".json");
+                Gson jsonReader = new Gson();
+                temp = jsonReader.fromJson(in, new TypeToken<List<GameSave>>(){}.getType());
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (TESTING) System.out.println("File Loaded!");
+            return temp;
+        } else return null;
+    }
 }
 
