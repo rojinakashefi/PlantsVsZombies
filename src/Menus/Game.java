@@ -63,6 +63,7 @@ import static Miscs.Sounds.*;
  *
  * @// STOPSHIP: 3/30/2021 Project Finished
  * @author RojinaKashefi && HeliaHashemipour
+ * @since 2021
  */
 
 @SuppressWarnings({"BusyWait", "RedundantCast"})
@@ -71,12 +72,12 @@ public class Game extends JFrame {
     private final int[] skyTimer = {25, 30};
     //2 times of when sunflowers creates suns(based on difficulty)
     private final int[] sunflowerTimer = {20, 25};
-    //the delay of zombies based on thier walk delay
+    //the delay of zombies based on their walk delay
     private final int[] walkDelay = {115, 130};
     //the damage of zombies changes +5 from normal to difficult
     private final int[] additionalDamage = {0, 5, 5, 5, 5, 5};
     //the gap for first game play
-    int difficulty, gap = 50, suns = 50;
+    int difficulty, gap = 5, suns = 500;
     //setting game time
     long gameTime = 0;
     boolean[] mowerAvailable = new boolean[5];
@@ -302,7 +303,7 @@ public class Game extends JFrame {
     }
 
     /**
-     * The method which starts game
+     * The method which starts game.
      *
      * @param level as player which is playing game
      * @param mute  as if the game is muted or not
@@ -344,7 +345,7 @@ public class Game extends JFrame {
                 gameTime = (System.currentTimeMillis() / 1000) - startTime;
                 if (TESTING) System.out.println("Game Time: " + gameTime);
                 if (gameTime == sky) {
-                    sky += sky;
+                    sky += skyTimer[difficulty];
                     sunLanding(null);
                 }
                 if (gameTime < gap + duration1 && gameTime >= gap) round = 1;
@@ -442,7 +443,7 @@ public class Game extends JFrame {
      * @param pos if it is null it sends the point from the sky, but if it is not, places the point
      *            just by the origin sunflower.
      */
-    private void sunLanding(int[] pos) {
+    private synchronized void sunLanding(int[] pos) {
         SunPoint sun = new SunPoint(label);
 
         Random random = new Random();
@@ -1191,7 +1192,7 @@ public class Game extends JFrame {
             }
         }
         while (sky < gameTime) {
-            sky += sky;
+            sky += skyTimer[difficulty];
         }
         System.out.println(zombieTime);
         gameTimer();
@@ -1464,7 +1465,9 @@ public class Game extends JFrame {
                     }
                 }
                 //for poleVaulting zombie which jumpes
-                for (Plant plant : Plant.plants) {
+
+                for (int i = 0; i < Plant.plants.size(); i++) {
+                    Plant plant = Plant.plants.get(i);
                     if (plant.row == zombie.row) {
                         int dis = 0;
                         if (zombie.getClass() == PoleVaulting.class)
@@ -1484,7 +1487,7 @@ public class Game extends JFrame {
                                             try {
                                                 ((PoleVaulting) zombie).jumped = true;
                                                 ((PoleVaulting) zombie).isJumping = true;
-                                                Sounds.play(VAULT);
+                                                play(VAULT);
                                                 zombie.setIcon(((PoleVaulting) zombie).jump1);
                                                 zombie.speed = 6;
                                                 Thread.sleep(1250);
