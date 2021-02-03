@@ -6,8 +6,10 @@ import Miscs.Socket.Client;
 
 import javax.swing.*;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import static Main.Main.*;
 import static Miscs.Sounds.*;
@@ -93,6 +95,35 @@ public class MainMenu extends JFrame {
                 }
             }));
             addedShotDownHook = true;
+        }
+    }
+    private void communicate(Client main) {
+        main.send("Main");
+        main.send("Scoreboard");
+        main.send("1");
+        main.send(player.username);
+        String[] received = main.receive();
+        if (received[0].equals("Scoreboard") && received.length > 1) {
+            int i = 1, j = 0;
+            int gamesCount = Integer.parseInt(received[i++]);
+            for (;j < gamesCount; j++) {
+                ArrayList<Integer> cards = new ArrayList<>();
+                ArrayList<GameObjects> objects = new ArrayList<>();
+                int cardsCount = Integer.parseInt(received[i++]);
+                for (int k = 0; k < cardsCount; k++) {
+                    cards.add(Integer.valueOf(received[i++]));
+                }
+                int objectsCount = Integer.parseInt(received[i++]);
+                for (int x = 0; x < objectsCount; x++) {
+                    String name = received[i++];
+                    int health = Integer.parseInt(received[i++]);
+                    Point point = new Point(Integer.parseInt(received[i++]), Integer.parseInt(received[i++]));
+                    GameObjects temp = new GameObjects(name, point, health);
+                    objects.add(temp);
+                }
+                saves.add(new GameSave(objects, Integer.parseInt(received[i++]), cards,
+                        Integer.parseInt(received[i++])));
+            }
         }
     }
     private void background() {
