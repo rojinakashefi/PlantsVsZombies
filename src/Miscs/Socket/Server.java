@@ -1,6 +1,6 @@
 package Miscs.Socket;
 
-
+import Miscs.Scoreboard;
 
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -19,8 +19,9 @@ public class Server {
     static ServerSocket listener;
     int i = 0;
 
-
-
+    /**
+     *
+     */
     public Server() {
         Thread server_activation = new Thread(() -> {
             try {
@@ -40,8 +41,16 @@ public class Server {
             }
         });
         server_activation.start();
+        new Thread(Scoreboard::new).start();
     }
 
+    /**
+     * Sends data to the client
+     * @param SenderType The name of the sender that stored in client class
+     * @param ReceiverType Name of the destination class that stored in client class
+     * @see Client#Names for more information
+     * @param Data Data that transferred between two clients
+     */
     public void send(String SenderType, String ReceiverType, String[] Data) {
         if(TESTING) System.out.println("[SERVER] Sending...");
         try {
@@ -62,7 +71,10 @@ public class Server {
         }
     }
 
-
+    /**
+     * deletes the client from the server property
+     * @param Name the name of the server
+     */
     public void deleteClient(String Name) {
         pointer--;
         clients.remove(Name);

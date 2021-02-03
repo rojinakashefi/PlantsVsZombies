@@ -9,6 +9,12 @@ public class Cards {
     public static final int SNOW_PEA = 0, PEA_SHOOTER = 1, SUNFLOWER = 2, WALL_NUT = 3, CHERRY = 4, REPEATER = 5
             , THREEPEATER = 6, GATLING = 7, POTATO = 8;
 
+    /**
+     * gives the needed card as its number
+     * @param number the number of card
+     * @param c the container to add the card
+     * @return the card
+     */
     public static JLabel getCard(int number, Container c) {
         JLabel tempLabel = new JLabel();
         switch (number) {

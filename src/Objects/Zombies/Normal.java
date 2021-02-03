@@ -1,6 +1,7 @@
 package Objects.Zombies;
 
 import Menus.Game;
+import Miscs.Icons;
 import Miscs.Sounds;
 
 import javax.swing.Timer;
@@ -11,8 +12,8 @@ import java.awt.Container;
 public class Normal extends Zombie {
 
     public Normal(Container c, int row) {
-        super(c, 200, 2, 30, row);
-        walk = new ImageIcon("gfx/normal.pvz");
+        super(c, 200, 2, 5, row);
+        walk = Icons.normalZombie;
         die = new ImageIcon("gfx/normDead.pvz");
         setIcon(walk);
     }

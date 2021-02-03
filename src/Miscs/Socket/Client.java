@@ -8,19 +8,28 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import static Main.Main.*;
-
 public class Client {
     public static ArrayList<String> Names = new ArrayList<>();
     Socket socket;
 
+    /**
+     * the class of the client that connects to the server
+     * @param Name the name of the server
+     */
     public Client(String Name) {
         try {
-            socket = new Socket(host, port);
             Names.add(Name);
+            socket = new Socket(host, port);
         } catch (IOException ignored) {
             if (TESTING) System.out.println("    [Client] Server is out");
+            new Client(Name);
         }
     }
+
+    /**
+     * sends Data to the server
+     * @param Data the data to send
+     */
     public void send(String Data) {
         PrintWriter out;
         try {
@@ -32,6 +41,11 @@ public class Client {
             e.printStackTrace();
         }
     }
+
+    /**
+     * receives data from the server
+     * @return the received data
+     */
     public String[] receive() {
         BufferedReader input;
         int number;
@@ -54,6 +68,10 @@ public class Client {
         if (TESTING) System.out.println("    [CLIENT] Prompting Client");
         return ReturnedInput;
     }
+
+    /**
+     * closes the connection with the server
+     */
     public void close() {
         try {
             send("Client");
@@ -64,5 +82,4 @@ public class Client {
             e.printStackTrace();
         }
     }
-
 }

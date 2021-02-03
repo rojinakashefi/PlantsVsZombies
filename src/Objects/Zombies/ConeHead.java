@@ -1,5 +1,6 @@
 package Objects.Zombies;
 
+import Miscs.Icons;
 import Miscs.Sounds;
 
 import javax.swing.ImageIcon;
@@ -9,12 +10,12 @@ public class ConeHead extends Zombie {
     ImageIcon normWalk = new ImageIcon("gfx/normal.pvz");
 
     public ConeHead(Container c, int row) {
-        super(c, 560, 2, 30, row);
-        walk = new ImageIcon("gfx/cone.pvz");
+        super(c, 560, 2, 10, row);
+        walk = Icons.coneHeadIcon;
         die = new ImageIcon("gfx/normDead.pvz");
         setIcon(walk);
-        sizeX = 100;
-        sizeY = 100;
+        sizeX = 166;
+        sizeY = 144;
         hitSound = Sounds.PLASTIC;
     }
 
@@ -31,6 +32,7 @@ public class ConeHead extends Zombie {
                 this.setIcon(normWalk);
                 this.sizeX = 81;
                 this.sizeY = 131;
+                Sounds.play(Sounds.NONE);
             }
         }
         if (isFrozen && !frozen) {

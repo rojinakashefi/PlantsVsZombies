@@ -35,12 +35,20 @@ public abstract class Zombie extends JLabel {
         health = 0;
         Sounds.play(hitSound);
         this.setIcon(burn?burned:die);
-        if (burn && getClass() == PoleVaulting.class || getClass() == Newspaper.class)
+        if (burn && getClass() == PoleVaulting.class)
             setBounds(getX() + 200, getY(),  getIcon().getIconWidth(), getIcon().getIconHeight());
         Game.removeZombie(this);
-        Timer t = new Timer(getClass()==Football.class?500:1000, e -> {
+        int delay = 1000;
+        if (getClass() == Football.class) delay = 700;
+        if (getClass() == Newspaper.class) delay = 1500;
+        Timer t = new Timer(delay, e -> {
             this.setIcon(null);
             c.remove(this);
+            new Timer(500, ee -> {
+                c.repaint();
+                ((Timer)ee.getSource()).stop();
+            }).start();
+
         });
         t.setRepeats(false);
         t.start();

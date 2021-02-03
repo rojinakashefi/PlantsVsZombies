@@ -8,14 +8,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-
+/**
+ * This class is the sound player of the game. sfx and background musics are played here.
+ */
 public class Sounds {
 
     public static ArrayList<SoundPlayer> backgroundMusic = new ArrayList<>();
     public static boolean muted = false;
     public final static int MAIN_MENU = 0, CHOOSE_DECK = 1, IN_GAME = 2, SHOOT_PEA = 3, MOWER = 4, EAT_PLANTS = 5,
             GRUNT = 6, INSUFFICIENT = 7, WIN = 8, LOSE = 9, STARTING = 10, READY = 11, ZOMBIES_COMING = 12, CHERRY_EXPLOSION = 13,
-            SELECT = 14, PLANT = 15, FREEZE = 16, NEWSPAPER_GRUNT = 17;
+            SELECT = 14, PLANT = 15, FREEZE = 16, NEWSPAPER_GRUNT = 17, VAULT = 18, POTATO_EXPLOSION = 19;
 
     public final static String NONE = "none", PLASTIC = "plastic", METAL = "metal", PAPER = "paper";
     public static void mute() {
@@ -29,7 +31,10 @@ public class Sounds {
         }
     }
 
-
+    /**
+     * plays the background music
+     * @param number gets the track number based on local final integers
+     */
     public static void backPlay(int number) {
         if (!muted)
             new Thread(() -> {
@@ -80,7 +85,10 @@ public class Sounds {
             }).start();
     }
 
-
+    /**
+     * plays the sound effects based on a switch
+     * @param number gets a number related to final fields to play the sound
+     */
     public static void play(int number) {
         if (!muted)
             new Thread(() -> {
@@ -112,6 +120,8 @@ public class Sounds {
                         case WIN -> file = new FileInputStream("sfx/game/win.pvz");
                         case LOSE -> file = new FileInputStream("sfx/game/lose.pvz");
                         case READY -> file = new FileInputStream("sfx/game/ready.pvz");
+                        case VAULT -> file = new FileInputStream("sfx/game/poleVault.pvz");
+                        case POTATO_EXPLOSION -> file = new FileInputStream("sfx/game/mineExp.pvz");
                         case CHERRY_EXPLOSION -> file = new FileInputStream("sfx/game/exCherry.pvz");
 
                         default -> throw new RuntimeException("Error in Sounds.play(1) switch");
@@ -123,6 +133,10 @@ public class Sounds {
             }).start();
     }
 
+    /**
+     * Plays the hit sound
+     * @param typeOfShield sets the type of shield to make the proper sound.
+     */
     public static void play(String typeOfShield) {
         if (!muted)
             new Thread(() -> {
@@ -159,6 +173,9 @@ public class Sounds {
     }
 }
 
+/**
+ * This class keeps the player and file objects to close them when we want to mute the game.
+ */
 class SoundPlayer {
     FileInputStream file;
     Player player;

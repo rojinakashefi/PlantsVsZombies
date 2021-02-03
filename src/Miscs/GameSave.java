@@ -36,15 +36,14 @@ public class GameSave {
         }
         if (TESTING) System.out.println("File Sent!");
     }
-    public static ArrayList<GameSave> load(String name) {
+    public static ArrayList<Miscs.GameSave> load(String name) {
         Reader in;
-        ArrayList<GameSave> temp = new ArrayList<>();
-
+        ArrayList<Miscs.GameSave> temp = new ArrayList<>();
         if (seek(name)) {
             try {
                 in = new FileReader(name + ".json");
                 Gson jsonReader = new Gson();
-                temp = jsonReader.fromJson(in, new TypeToken<List<GameSave>>(){}.getType());
+                temp = jsonReader.fromJson(in, new TypeToken<List<Miscs.GameSave>>(){}.getType());
                 in.close();
             } catch (IOException e) {
                 e.printStackTrace();

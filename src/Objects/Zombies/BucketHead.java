@@ -1,5 +1,6 @@
 package Objects.Zombies;
 
+import Miscs.Icons;
 import Miscs.Sounds;
 
 import javax.swing.ImageIcon;
@@ -9,11 +10,11 @@ public class BucketHead extends Zombie {
     ImageIcon normWalk = new ImageIcon("gfx/normal.pvz");
 
     public BucketHead(Container c, int row) {
-        super(c, 1100, 3, 30, row);
-        walk = new ImageIcon("gfx/bucket.pvz");
+        super(c, 1100, 2, 20, row);
+        walk = Icons.bucketHeadIcon;
         die = new ImageIcon("gfx/normDead.pvz");
-        sizeX = 36;
-        sizeY = 62;
+        sizeX = 166;
+        sizeY = 144;
         setIcon(walk);
         hitSound = Sounds.METAL;
     }
@@ -31,6 +32,7 @@ public class BucketHead extends Zombie {
                 this.setIcon(normWalk);
                 this.sizeX = 81;
                 this.sizeY = 131;
+                Sounds.play(Sounds.NONE);
             }
         }
         if (isFrozen && !frozen) {
