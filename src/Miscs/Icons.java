@@ -2,6 +2,11 @@ package Miscs;
 
 import javax.swing.*;
 
+/**
+ * Icons class represents photos & gifs of this game from gfx file.
+ * @author Hashemipour & Kashefi
+ * @since 2021
+ */
 public class Icons {
     public static ImageIcon firstIcon = new ImageIcon("gfx/first.pvz");
     public static ImageIcon buttonIcon = new ImageIcon("gfx/button.pvz");

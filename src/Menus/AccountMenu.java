@@ -10,9 +10,10 @@ import static Main.Main.*;
 
 /**
  * AccountMenu as first Menu appears when we login in game
- * Contains Gui and logic For signin/signup/createaccount/haveaccount
- * @author RojinaKashefi && HeliaHashemipour
+ * Contains Gui and logic For sign in/signup/create account/have account.
+ * @author Hashemipour
  * @version 1.0
+ * @since 2021
  */
 public class AccountMenu extends JFrame implements Runnable {
     JLabel SecLabel = new JLabel("Enter Game");
@@ -25,10 +26,12 @@ public class AccountMenu extends JFrame implements Runnable {
     JLabel LastLBL = new JLabel("New To Game?");
     SpringLayout Layout = new SpringLayout();
     Container This = this.getContentPane();
-    Client account = new Client("Accounts");
+    Client account;
+
+
 
     /**
-     * Constructor starts from receiving data of players
+     * Constructor starts from receiving data of players.
      * Setting font of buttons
      */
     public AccountMenu() {
@@ -87,14 +90,15 @@ public class AccountMenu extends JFrame implements Runnable {
     }
     /**
      * Receives players data (name,score,wins,losses,difficulty)from server
-     * adding the player to loadedPlayers
+     * adding the player to loadedPlayers.
      */
     private void receive() {
         try {
-            Thread.sleep(500);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        account = new Client("Accounts");
         account.send("Accounts");
         account.send("Scoreboard");
         account.send("0");
@@ -113,7 +117,7 @@ public class AccountMenu extends JFrame implements Runnable {
     }
 
     /**
-     * Adding signuphere button gui which contains haveAccount,Signup,SigninHere
+     * Adding signup here button gui which contains haveAccount,Signup,Sign in Here.
      */
     private void Up() {
         while (this.getHeight() != 300) {
@@ -144,8 +148,7 @@ public class AccountMenu extends JFrame implements Runnable {
     }
 
     /**
-     * Signing in logic after clicking sign in button
-     * @author RojinaKashefi && HeliaHashemipour
+     * Signing in logic after clicking sign in button.
      */
     private void signIn() {
         if (!NameTxt.getText().equals("")) {
@@ -163,7 +166,7 @@ public class AccountMenu extends JFrame implements Runnable {
     }
 
     /**
-     * signing up logic as a new player after clicking sign up button
+     * signing up logic as a new player after clicking sign up button.
      */
     private void signUp() {
         int index = findPlayerIndex(NameTxt.getText());
@@ -181,7 +184,7 @@ public class AccountMenu extends JFrame implements Runnable {
 
     /**
      * Sign in panel(first panel when we open account menu)
-     * contains signinbutton,donthaveaccount,signuphere button
+     * contains sign in button,dont have account,sign up here button
      */
     private void In() {
         while (this.getHeight() != 280) {
@@ -215,7 +218,7 @@ public class AccountMenu extends JFrame implements Runnable {
     }
 
     /**
-     * Runs the new Thread to show the account page
+     * Runs the new Thread to show the account page.
      */
     @Override
     public void run() {

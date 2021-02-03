@@ -7,11 +7,17 @@ import java.util.ArrayList;
 
 import static Main.Main.*;
 
+/**
+ * Scoreboard class performed the scoreboard of the game.
+ * @author Hashemipor
+ * @since 2021
+ */
 
 public class Scoreboard {
 
     /**
-     * return the saved data on the server
+     * The constructor of Scoreboard class returns
+     * the saved data on the server
      */
     public Scoreboard() {
         Client score = new Client("Scoreboard");
@@ -19,9 +25,9 @@ public class Scoreboard {
     }
 
     /**
-     * waits for a call, then returns the requested data
+     * communicate method waits for a call, then returns the requested data from
+     * Ranking & Accounts & Main.
      */
-
     private void communicate(Client score) {
         ArrayList<Player> players = Player.load();
         String[] receive = score.receive();

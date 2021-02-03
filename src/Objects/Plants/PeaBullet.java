@@ -11,16 +11,41 @@ import java.awt.*;
 
 import static Menus.Game.*;
 
+/**
+ * This class represents the duty of the shooter plants .
+ * @author Hashemipour
+ * @since 2021
+ */
 public class PeaBullet extends JLabel {
-
+    /**
+     * The constructor of the PeaBullet.class
+     * @param c the container.
+     * @param origin the plant.
+     * @param isFrozen is frozen or not.
+     * @throws InterruptedException the exception that may trows.
+     */
     public PeaBullet (Container c, Plant origin, boolean isFrozen) throws InterruptedException {
         seekForZombies(c, origin, isFrozen, false);
     }
 
+    /**
+     * The constructor of the PeaBullet.class.
+     * @param label the label of the plant
+     * @param shooterPlant the type of shooter plant
+     * @throws InterruptedException the exception that may trows.
+     */
     public PeaBullet(JLabel label, Plant shooterPlant) throws InterruptedException {
         seekForZombies(label, shooterPlant, false, true);
     }
 
+    /**
+     *This method sets the GUI of the shooters.
+     *
+     * @param c the container.
+     * @param origin the plant.
+     * @param isFrozen is frozen or not.
+     * @param isTriple is triple shooter or not.
+     */
     private void seekForZombies(Container c, Plant origin, boolean isFrozen, boolean isTriple) {
         if (origin.health > 0) {
             if (getFirstZombieByRow(origin) != null) {

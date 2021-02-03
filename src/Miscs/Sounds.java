@@ -10,6 +10,8 @@ import java.util.Random;
 
 /**
  * This class is the sound player of the game. sfx and background musics are played here.
+ * @author Kashefi & Hashemipour
+ * @since 2021
  */
 public class Sounds {
 
@@ -20,6 +22,10 @@ public class Sounds {
             SELECT = 14, PLANT = 15, FREEZE = 16, NEWSPAPER_GRUNT = 17, VAULT = 18, POTATO_EXPLOSION = 19;
 
     public final static String NONE = "none", PLASTIC = "plastic", METAL = "metal", PAPER = "paper";
+
+    /**
+     * This class used for mute condition in setting.
+     */
     public static void mute() {
         for (SoundPlayer soundPlayer : backgroundMusic) {
             soundPlayer.player.close();
@@ -32,7 +38,8 @@ public class Sounds {
     }
 
     /**
-     * plays the background music
+     * This method sets the back play sounds based on the number of each sound and
+     * plays the background music.
      * @param number gets the track number based on local final integers
      */
     public static void backPlay(int number) {
@@ -86,8 +93,8 @@ public class Sounds {
     }
 
     /**
-     * plays the sound effects based on a switch
-     * @param number gets a number related to final fields to play the sound
+     * This method plays the sound effects based on a switch.
+     * @param number gets a number related to final fields to play the sound.
      */
     public static void play(int number) {
         if (!muted)
@@ -134,7 +141,7 @@ public class Sounds {
     }
 
     /**
-     * Plays the hit sound
+     * This method plays the hit sounds.
      * @param typeOfShield sets the type of shield to make the proper sound.
      */
     public static void play(String typeOfShield) {
@@ -162,6 +169,12 @@ public class Sounds {
             }).start();
     }
 
+    /**
+     * This method plays the sound from the player.
+     * @param file the file of the sound.
+     * @throws JavaLayerException the exception that may trows.
+     * @throws IOException the exception that may trows.
+     */
     private static void startSound(FileInputStream file) throws JavaLayerException, IOException {
         if (file != null) {
             Player player = new Player(file);
@@ -180,6 +193,11 @@ class SoundPlayer {
     FileInputStream file;
     Player player;
 
+    /**
+     * Main constructor of the SoundPlayer.class.
+     * @param player the player(sound player).
+     * @param file   the file of the sound.
+     */
     SoundPlayer(Player player, FileInputStream file) {
         this.file = file;
         this.player = player;
