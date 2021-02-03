@@ -8,11 +8,22 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * SavingMenu class performed the GUI and listeners of this section .
+ * @author Kashefi
+ * @since 2021
+ */
 public class SavingMenu extends JFrame {
     SpringLayout layout = new SpringLayout();
     Container This = this.getContentPane();
     JLabel headLabel;
     JButton newSave = new JButton("New Save");
+
+    /**
+     * Main constructor of the SavingMenu.class
+     * @param game the game
+     * @param pauseMenu the pause menue
+     */
     public SavingMenu(Game game, PauseMenu pauseMenu) {
         headLabel = new JLabel("Saving Menu");
         newSave.addActionListener(e -> {
@@ -43,6 +54,10 @@ public class SavingMenu extends JFrame {
         this.setVisible(true);
     }
 
+    /**
+     * This method sets the GUI of the saving menu.
+     * @param menu main menu.
+     */
     public SavingMenu(MainMenu menu) {
         headLabel = new JLabel("Loading Menu");
         this.setLayout(layout);
@@ -63,6 +78,11 @@ public class SavingMenu extends JFrame {
         this.setVisible(true);
     }
 
+    /**
+     * This method sets the GUI of showing saves part of saving menu and sets the listener of the JPanel.
+     * @param game the game.
+     * @param pauseMenu the pause menu.
+     */
     private void showSaves(Game game, PauseMenu pauseMenu) {
         JPanel panel = new JPanel(layout);
         layout.putConstraint(SpringLayout.NORTH, panel, 20, SpringLayout.SOUTH, headLabel);
@@ -107,6 +127,10 @@ public class SavingMenu extends JFrame {
         }
     }
 
+    /**
+     * This method sets the GUI of showing saves and sets the mouse listener of this part.
+     * @param menu the main menu
+     */
     private void showSaves(MainMenu menu) {
         JPanel panel = new JPanel(layout);
         panel.setPreferredSize(new Dimension(300, 300));
@@ -148,6 +172,12 @@ public class SavingMenu extends JFrame {
         }
     }
 
+    /**
+     * This method performed the GUI of this section.
+     * @param panel panel
+     * @param i the index
+     * @return the JPanel that we sets.
+     */
     private JPanel addPanel(JPanel panel, int i) {
         JPanel temp = new JPanel(layout);
         temp.setPreferredSize(new Dimension(295, 95));
