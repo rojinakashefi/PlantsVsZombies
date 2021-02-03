@@ -13,6 +13,8 @@ import static Main.Main.*;
 
 /**
  * This Class is all about saving, loading and keeping player level, data, etc.
+ * @author Hashemipour
+ * @since 2021
  */
 public class Player implements Comparable<Player> {
     public int difficulty;
@@ -40,8 +42,8 @@ public class Player implements Comparable<Player> {
     }
 
     /**
-     * Saves the given player in the local space
-     * @param players the players to be saved
+     * Saves the given player in the local space.
+     * @param players the players to be saved.
      */
     public static void save(ArrayList<Player> players) {
         Writer out;
@@ -58,7 +60,8 @@ public class Player implements Comparable<Player> {
     }
 
     /**
-     * @return the list of all players on the local space
+     * This method loads the previous games.
+     * @return the list of all players on the local space.
      */
     public static ArrayList<Player> load() {
         Reader in;
@@ -79,8 +82,8 @@ public class Player implements Comparable<Player> {
     static boolean seek(String name) { return new File(name + ".json").exists(); }
 
     /**
-     * This method is not used directly on this project
-     * the usage is in the Arrays.sort in Ranking class
+     * This method is not used directly on this project.
+     * the usage is in the Arrays.sort in Ranking class.
      * @see RankingMenu#RankingMenu() For the usage of Array.sort();
      * @see Arrays#toString(Object[])#compareTo(Player) Method in the Library
      * @param compare the player to compare
@@ -93,7 +96,7 @@ public class Player implements Comparable<Player> {
     }
 
     /**
-     * saves the player to the list
+     * Saves the player to the list.
      */
     public void save() {
         if (!loadedPlayers.isEmpty()) {
